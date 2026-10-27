@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dynamic API Configuration (use root-relative paths on port 8000 to prevent cross-origin 127.0.0.1 vs localhost issues)
   const API_BASE_URL = window.API_BASE_URL !== undefined
     ? window.API_BASE_URL
-    : (window.location.port === '8000' ? '' : (['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.protocol === 'file:' || !window.location.hostname ? 'http://localhost:8000' : ''));
-
+    : 'https://safemate-backend-tseo.onrender.com';
   // Persistent Anonymous User ID
   let currentUserId = localStorage.getItem('safemate_user_id');
   if (!currentUserId) {
