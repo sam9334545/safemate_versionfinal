@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>SafeMate — A Silent Shield, A Strong Voice.</title>
   <meta name="description" content="SafeMate is a free, confidential, trauma-informed digital safety platform empowering women, youth, and families facing domestic violence, deepfakes, and cyberstalking.">
   <link rel="icon" type="image/png" href="assets/image_0.png">
@@ -45,13 +45,15 @@
       <!-- Access Mode & Auth Controls -->
       <div class="nav-access-group" id="nav-access-group">
         <button type="button" class="btn-nav-demo-highlight" id="btn-quick-demo-mode" title="Instant access for judges and evaluators without login">
-          Try Demo Mode
+          <span class="nav-label-desktop">Try Demo Mode</span>
+          <span class="nav-label-mobile">Demo</span>
         </button>
         <button type="button" class="btn-nav-guest" id="btn-quick-guest-mode" title="Explore features as guest">
           Guest Mode
         </button>
         <button type="button" class="btn-nav-auth" id="btn-open-auth-modal" title="Sign in or register personal account">
-          Sign In
+          <span class="nav-label-desktop">Sign In</span>
+          <span class="nav-label-mobile">Login</span>
         </button>
       </div>
 
@@ -60,7 +62,7 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="3 11 22 2 13 21 11 13 3 11"/>
         </svg>
-        <span>SafeRoute</span>
+        <span class="nav-label-saferoute">SafeRoute</span>
       </button>
 
       <!-- Stealth Panic Switch (Recipe Disguise) -->
@@ -76,7 +78,8 @@
       <!-- Prominent Emergency 112 Button -->
       <a href="tel:112" class="btn-emergency-pill" id="nav-btn-emergency" title="Instant emergency telephone connection">
         <span class="pulse-indicator"></span>
-        <span>Emergency 112</span>
+        <span class="nav-label-desktop">Emergency 112</span>
+        <span class="nav-label-mobile">112</span>
       </a>
     </div>
   </header>
@@ -652,7 +655,7 @@
         </div>
 
         <!-- Direct Connection Micro-Actions (Tactical High-Contrast Dual Grid) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="sos-direct-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <a id="btn-call-112" href="tel:112" style="background: #D90429; color: #ffffff; border: 1.5px solid #D90429; padding: 15px; font-size: 0.88rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; letter-spacing: 0.02em; transition: all 0.18s ease; box-shadow: 0 2px 6px rgba(217, 4, 41, 0.25);">
             <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             Call 112 (Dispatch)
@@ -769,7 +772,7 @@
       <div class="workspace-modal-body">
         
         <!-- Dual-Mode Sharp Tab Switcher -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #ffffff; padding: 6px; border: 1.5px solid #cbd5e1;" role="tablist">
+        <div class="deepfake-tabs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #ffffff; padding: 6px; border: 1.5px solid #cbd5e1;" role="tablist">
           <button type="button" id="tab-deepfake-image" role="tab" aria-selected="true" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; font-size: 0.82rem; font-weight: 700; color: #ffffff; background: #0B132B; border: 1.5px solid #0B132B; cursor: pointer; transition: all 0.16s ease;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="3" width="18" height="18"/>
@@ -939,7 +942,7 @@
 
       <div class="workspace-modal-body">
         <!-- Mode Tabs (Sharp Segmented Tabs) -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div class="leak-tabs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <button type="button" id="leak-tab-embed" class="btn-primary" style="padding: 12px; font-size: 13px; font-weight: 800; background: #0B132B; border: 1.5px solid #0B132B; color: #ffffff; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em;">
             1. Protect &amp; Watermark Media
           </button>
@@ -955,7 +958,7 @@
           <!-- Gallery / File Input: Chooses from photos / device files -->
           <input type="file" id="leak-file-input" accept="image/*" style="display: none;">
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+          <div class="leak-input-actions-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
             <button type="button" class="btn-primary" id="btn-camera-leak-img" style="padding: 12px; font-size: 13px; font-weight: 800; background: #0B132B; color: #ffffff; border: 1.5px solid #0B132B; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
               <span>📸</span> <span>Take Photo in 1 Go</span>
             </button>
@@ -978,7 +981,7 @@
             <label style="font-size: 0.8rem; font-weight: 800; color: #0B132B; display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em;">
               Watermark Protection Type:
             </label>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="watermark-modes-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
               <label style="display: flex; align-items: flex-start; gap: 8px; padding: 10px; border: 1.5px solid #15803d; background: #f0fdf4; border-radius: 6px; cursor: pointer; font-size: 0.8rem; color: #0f172a; font-weight: 600;">
                 <input type="radio" name="watermark_mode" id="watermark-mode-dual" value="dual" checked style="margin-top: 3px;">
                 <div>
@@ -1402,7 +1405,7 @@
           <strong>Legal Right:</strong> Under Bharatiya Nagarik Suraksha Sanhita (BNSS) Section 173 (formerly CrPC 154), any police station in India is legally obligated to register a <strong>Zero FIR</strong> regardless of territorial jurisdiction.
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="fir-form-dual-row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="complaint-input-group">
             <label>Incident Type</label>
             <select id="fir-incident-type">
@@ -1420,7 +1423,7 @@
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div class="fir-form-dual-row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div class="complaint-input-group">
             <label>Platform / Location</label>
             <input type="text" id="fir-platform" placeholder="Instagram, WhatsApp, Telegram, etc.">

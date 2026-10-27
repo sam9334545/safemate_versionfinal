@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     authModal.style.display = 'flex';
     authModal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
     if (authAlertBox) {
       authAlertBox.style.display = 'none';
       authAlertBox.textContent = '';
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     authModal.style.display = 'none';
     authModal.classList.remove('active');
     document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
   }
 
   function switchAuthTab(tab) {
@@ -3270,6 +3272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tellOnceModal.style.display = 'flex';
     tellOnceModal.classList.add('active');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open');
 
     // Play gentle cue chime once
     playGentleChime('bell');
@@ -3288,6 +3291,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tellOnceModal.classList.remove('active');
     }
     document.body.style.overflow = '';
+    document.body.classList.remove('modal-open');
     stopSpeechRecognition(true);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     clearInterval(speechKeepAliveTimer);
@@ -4229,6 +4233,7 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       modal.style.display = 'flex';
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
       // Auto-focus first input or button inside the modal
       const focusTarget = modal.querySelector('input:not([type="hidden"]), textarea, button.btn-primary');
       if (focusTarget) setTimeout(() => focusTarget.focus(), 120);
@@ -4252,6 +4257,7 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       modal.style.display = 'none';
       modal.classList.remove('active');
       document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
       if (modalId === 'tell-once-modal' || modalId === 'tellOnceModal') {
         stopSpeechRecognition();
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
