@@ -42,19 +42,26 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         logger.warning(f"Database table initialization warning: {type(exc).__name__}: {exc}")
 
-    # Load pretrained still-image model
-    logger.info(f"Attempting model startup load for: {settings.MODEL_ID}")
-    try:
-        model_service.load()
-    except Exception as exc:
-        logger.warning(f"Initial model loading failed: {type(exc).__name__}. Will report unready until loaded.")
+    # Conditional model preloading to avoid out-of-memory crashes on cloud platforms
+    if settings.PRELOAD_MODELS_ON_STARTUP:
+        # Load pretrained still-image model
+        logger.info(f"Attempting model startup load for: {settings.MODEL_ID}")
+        try:
+            model_service.load()
+        except Exception as exc:
+            logger.warning(f"Initial model loading failed: {type(exc).__name__}. Will report unready until loaded.")
 
-    # Load pretrained video deepfake model
-    logger.info(f"Attempting video deepfake startup load for: {settings.VIDEO_DEEPFAKE_MODEL_ID}")
-    try:
-        video_deepfake_service.load()
-    except Exception as exc:
-        logger.warning(f"Initial video deepfake model loading failed: {type(exc).__name__}. Will load lazily or report unready.")
+        # Load pretrained video deepfake model
+        logger.info(f"Attempting video deepfake startup load for: {settings.VIDEO_DEEPFAKE_MODEL_ID}")
+        try:
+            video_deepfake_service.load()
+        except Exception as exc:
+            logger.warning(f"Initial video deepfake model loading failed: {type(exc).__name__}. Will load lazily or report unready.")
+    else:
+        logger.info(
+            "Cloud low-memory mode active (PRELOAD_MODELS_ON_STARTUP=False). "
+            "Heavy neural models will load on demand or via Hugging Face API to protect container RAM."
+        )
 
     yield
 

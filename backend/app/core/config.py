@@ -30,8 +30,11 @@ class Settings(BaseSettings):
 
     # Still Image Model configuration
     MODEL_ID: str = "umm-maybe/AI-image-detector"
+    HF_TOKEN: Optional[str] = None
+    HF_API_URL: str = "https://api-inference.huggingface.co/models/umm-maybe/AI-image-detector"
     HF_HOME: Optional[str] = None
     TRANSFORMERS_CACHE: Optional[str] = None
+    PRELOAD_MODELS_ON_STARTUP: bool = False
 
     # Video Deepfake Model configuration
     VIDEO_DEEPFAKE_MODEL_ID: str = "KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus"

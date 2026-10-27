@@ -86,6 +86,8 @@ class ModelService:
 
             self.device = "cpu"
             cache_kwargs = {}
+            if settings.HF_TOKEN:
+                cache_kwargs["token"] = settings.HF_TOKEN
             if settings.HF_HOME:
                 cache_kwargs["cache_dir"] = settings.HF_HOME
             elif settings.TRANSFORMERS_CACHE:
@@ -118,11 +120,56 @@ class ModelService:
             return False
 
     def predict(self, image: Image.Image) -> Dict[str, Any]:
-        """Perform inference on a validated PIL RGB image."""
+        """Perform inference on a validated PIL RGB image via Hugging Face API or local fallback."""
+        # 1. Attempt lightweight Hugging Face API inference first if token is configured
+        if settings.HF_TOKEN:
+            try:
+                import io
+                import httpx
+                buf = io.BytesIO()
+                image.save(buf, format="JPEG", quality=90)
+                image_bytes = buf.getvalue()
+
+                headers = {"Authorization": f"Bearer {settings.HF_TOKEN}"}
+                api_url = getattr(settings, "HF_API_URL", f"https://api-inference.huggingface.co/models/{self.model_id}")
+                with httpx.Client(timeout=15.0) as client:
+                    resp = client.post(api_url, headers=headers, content=image_bytes)
+
+                if resp.status_code == 200:
+                    hf_results = resp.json()
+                    if isinstance(hf_results, list) and len(hf_results) > 0 and "label" in hf_results[0]:
+                        scores = [
+                            ClassScore(label=item["label"], score=round(float(item["score"]), 6))
+                            for item in hf_results if "label" in item and "score" in item
+                        ]
+                        scores.sort(key=lambda s: s.score, reverse=True)
+                        top_prediction = scores[0]
+                        prediction_result = PredictionResult(
+                            label=top_prediction.label,
+                            score=top_prediction.score,
+                            scores=scores,
+                        )
+                        interpretation_result = generate_interpretation(
+                            label=top_prediction.label,
+                            score=top_prediction.score,
+                            all_scores=scores,
+                        )
+                        return {
+                            "prediction": prediction_result,
+                            "interpretation": interpretation_result,
+                        }
+            except Exception as hf_err:
+                logger.debug(f"HF API inference bypassed, falling back to local model: {hf_err}")
+
+        # 2. Local Model Inference Fallback (On-Demand Lazy Load if not already in memory)
         if not self.is_loaded or self.model is None or self.processor is None:
-            raise ModelNotReadyException(
-                message="Model service is currently unavailable or initializing. Please retry shortly.",
-            )
+            logger.info("On-demand local model loading initiated for predict request.")
+            success = self.load()
+            if not success or self.model is None or self.processor is None:
+                raise ModelNotReadyException(
+                    message="Model service is currently unavailable or initializing. Please retry shortly.",
+                    details={"initialization_error": self.initialization_error},
+                )
 
         try:
             import torch

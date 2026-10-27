@@ -48,8 +48,9 @@ class VideoDeepfakeService:
             from ultralytics import YOLO
 
             # 1. Download model weights and face detector weights from HF Hub
-            model_weights_path = hf_hub_download(self.model_id, "model.safetensors")
-            face_detector_path = hf_hub_download(self.model_id, "yolov8n-face.pt")
+            hf_kwargs = {"token": settings.HF_TOKEN} if settings.HF_TOKEN else {}
+            model_weights_path = hf_hub_download(self.model_id, "model.safetensors", **hf_kwargs)
+            face_detector_path = hf_hub_download(self.model_id, "yolov8n-face.pt", **hf_kwargs)
 
             # 2. Instantiate and load MS-EffGCViT-B0
             self.model = ms_eff_gcvit_b0(pretrained=False)
