@@ -1,20 +1,22 @@
 services:
   - type: web
-    name: ai-image-screening-backend
+    name: safemate-backend
     env: python
     rootDir: backend
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    buildCommand: pip install --upgrade pip && pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-    plan: starter  # Recommend Render Starter (>=1GB RAM); PyTorch Swin Transformer model footprint requires ~700MB-1GB RAM during inference
+    plan: free
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.8
+        value: 3.11.9
+      - key: PRELOAD_MODELS_ON_STARTUP
+        value: "false"
       - key: MODEL_ID
         value: umm-maybe/AI-image-detector
       - key: ENVIRONMENT
         value: production
       - key: CORS_ORIGINS
-        value: http://localhost:5173
+        value: https://safemate-versionfinal.vercel.app,https://safemate-frontend.vercel.app,http://localhost:5173
       - key: MAX_UPLOAD_MB
         value: "10"
       - key: MAX_IMAGE_PIXELS
