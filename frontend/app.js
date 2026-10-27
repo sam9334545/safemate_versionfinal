@@ -2429,13 +2429,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render verified helplines
         if (data.resources && data.resources.length > 0) {
-          outputHtml += `<div style="background:#1C2541; border:1px solid rgba(141, 153, 174, 0.3); border-radius:0px !important; padding:8px 10px; margin-top:8px; font-size:0.8rem; color:#F8F9FA;">`;
-          outputHtml += `<strong style="color:#EF233C;">Verified 24/7 Helplines &amp; Portals:</strong><br>`;
+          outputHtml += `<div class="chat-helpline-box">`;
+          outputHtml += `<strong class="helpline-title">Verified 24/7 Helplines &amp; Portals:</strong>`;
           data.resources.forEach(r => {
             const cleanPh = sanitizePhone(r.phone_number);
-            const telPart = r.phone_number ? `<a href="tel:${cleanPh}" style="color:#EF233C; font-weight:700; text-decoration:none;">Tel: ${r.phone_number}</a>` : '';
-            const portalPart = r.action_url ? `<a href="${r.action_url}" target="_blank" style="margin-left:6px; color:#64DFDF; text-decoration:none;">Portal ↗</a>` : '';
-            outputHtml += `&bull; <strong>${r.display_name}:</strong> ${telPart} ${portalPart}<br>`;
+            const telPart = r.phone_number ? `<a href="tel:${cleanPh}" class="helpline-tel-link">Tel: ${r.phone_number}</a>` : '';
+            const portalPart = r.action_url ? `<a href="${r.action_url}" target="_blank" class="helpline-portal-link">Portal ↗</a>` : '';
+            outputHtml += `<div class="helpline-item">&bull; <strong>${r.display_name}:</strong> ${telPart} ${portalPart}</div>`;
           });
           outputHtml += `</div>`;
         }
@@ -2472,11 +2472,13 @@ document.addEventListener('DOMContentLoaded', () => {
         chatLog.removeChild(thinkingBubble);
       }
       appendAiBubble(`
-        <strong>VERIFIED SAFETY &amp; LEGAL ASSISTANCE:</strong><br>
-        • <strong>National Emergency (Police):</strong> <a href="tel:112" style="color:#dc2626; font-weight:700;">112</a><br>
-        • <strong>Women Safety Helpline:</strong> <a href="tel:1091" style="color:#dc2626; font-weight:700;">1091 / 181</a><br>
-        • <strong>National Cyber Crime Portal:</strong> <a href="tel:1930" style="color:#0284c7; font-weight:700;">1930</a> (cybercrime.gov.in)<br>
-        • <strong>Key Legal Rights:</strong> Zero FIR (mandatorily filed at any police station regardless of jurisdiction under BNSS Section 173 / CrPC 154), Sections 66E, 67A IT Act, BNS Section 78 (stalking).
+        <div class="chat-helpline-box">
+          <strong class="helpline-title">Verified Emergency Safety &amp; Legal Assistance:</strong>
+          <div class="helpline-item">&bull; <strong>National Emergency (Police):</strong> <a href="tel:112" class="helpline-tel-link">Tel: 112</a></div>
+          <div class="helpline-item">&bull; <strong>Women Safety Helpline:</strong> <a href="tel:1091" class="helpline-tel-link">Tel: 1091 / 181</a></div>
+          <div class="helpline-item">&bull; <strong>National Cyber Crime Portal:</strong> <a href="tel:1930" class="helpline-tel-link">Tel: 1930</a> <a href="https://cybercrime.gov.in" target="_blank" class="helpline-portal-link">cybercrime.gov.in ↗</a></div>
+          <div class="helpline-item" style="margin-top:6px;">&bull; <strong>Key Legal Rights:</strong> Zero FIR (mandatorily filed at any police station under BNSS Section 173 / CrPC 154), IT Act Sections 66E/67A, BNS Section 78.</div>
+        </div>
       `);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
