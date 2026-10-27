@@ -6098,5 +6098,129 @@ body.modal-open .emergency-quick-dock,
   }
 }
 
+/* 18. Feature Workspaces Granular Element Refinements */
+@media (max-width: 640px) {
+  .sos-contact-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .sos-contact-bar button {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+
+  .safewalk-countdown-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+  #btn-toggle-safewalk {
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+
+  .safewalk-actions-row,
+  .vault-actions-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .safewalk-actions-row button,
+  .vault-actions-row button {
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+
+  .leak-recipient-actions-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .leak-recipient-actions-grid button,
+  .leak-recipient-actions-grid a {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+
+  .dossier-actions-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .dossier-actions-row > div {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  .dossier-actions-row button {
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: center !important;
+  }
+
+  .recipe-meta-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  .recipe-meta-item {
+    padding: 10px 12px !important;
+    text-align: center !important;
+  }
+
+  .tell-once-dossier-nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 6px !important;
+    padding-bottom: 4px !important;
+  }
+  .tell-once-dossier-nav::-webkit-scrollbar {
+    display: none !important;
+  }
+  .tell-once-dossier-tab-btn {
+    flex-shrink: 0 !important;
+    padding: 8px 12px !important;
+    font-size: 0.74rem !important;
+    white-space: nowrap !important;
+  }
+
+  .saferoute-presets-strip {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+  }
+  .saferoute-presets-strip::-webkit-scrollbar {
+    display: none !important;
+  }
+  .btn-preset-chip {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Prevent overflow in chat streams and text panes */
+  .tell-once-dossier-content-pane,
+  .complaint-draft-output,
+  .simple-chat-log {
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    word-break: break-word !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #btn-send-sos {
+    min-height: 48px !important;
+    text-align: center !important;
+    line-height: 1.35 !important;
+    padding: 14px 12px !important;
+  }
+}
+
+
 
 

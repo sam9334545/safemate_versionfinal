@@ -631,7 +631,7 @@
         </div>
 
         <!-- Active Contact Micro-Card -->
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 16px 20px; border: 1.5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.02);">
+        <div class="sos-contact-bar" style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 16px 20px; border: 1.5px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.02); flex-wrap: wrap; gap: 10px;">
           <div>
             <div style="font-size: 0.72rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; display: flex; align-items: center; gap: 5px;">
               <span style="width: 6px; height: 6px; background: #10b981; display: inline-block;"></span>
@@ -717,7 +717,7 @@
           </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 18px 24px; border: 1.5px solid #cbd5e1; flex-wrap: wrap; gap: 14px;">
+        <div class="safewalk-countdown-bar" style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 18px 24px; border: 1.5px solid #cbd5e1; flex-wrap: wrap; gap: 14px;">
           <div>
             <span style="font-size: 0.72rem; color: #64748b; text-transform: uppercase; font-weight: 800; letter-spacing: 0.06em; display: block;">Active Check-In Countdown</span>
             <span id="safewalk-timer-display" style="color: #D90429; font-family: monospace; font-weight: 800; font-size: 2rem;">20:00</span>
@@ -728,7 +728,7 @@
         </div>
 
         <div id="safewalk-active-actions" style="display: none; gap: 12px; flex-direction: column;">
-          <div style="display: flex; gap: 12px;">
+          <div class="safewalk-actions-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
             <button type="button" id="btn-share-safewalk" class="btn-outline" style="flex: 1; padding: 12px; font-size: 13px; font-weight: 700; background: #1C2541; color: #F8F9FA; border: 1px solid rgba(141, 153, 174, 0.35); cursor: pointer;">
               Share Live Trip Link
             </button>
@@ -1058,7 +1058,7 @@
           <label style="font-size: 0.8rem; font-weight: 800; color: #0B132B; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em;">Incident Note:</label>
           <input type="text" id="vault-note-input" placeholder="Incident note (e.g. Someone following near parking lot)" style="width: 100%; padding: 11px 14px; font-size: 13px; border: 1px solid #cbd5e1; margin-bottom: 16px; box-sizing: border-box; background: #ffffff;">
 
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <div class="vault-actions-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn-primary btn-record-act" id="btn-record-vault" style="flex: 1; padding: 14px 20px; font-size: 13px; font-weight: 800; background: #D90429; color: #ffffff; border: 1.5px solid #D90429; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer;">
               <span class="record-dot"></span>
               <span id="btn-record-vault-text">Record Incident Audio</span>
@@ -1071,7 +1071,7 @@
 
         <div style="background: #ffffff; padding: 20px; border: 1.5px solid #cbd5e1;">
           <span style="font-size: 0.82rem; font-weight: 800; color: #0B132B; display: block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.04em;">Seal Digital Evidence (SHA-256 Stamp):</span>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <div class="vault-actions-row" style="display: flex; gap: 10px; flex-wrap: wrap;">
             <button type="button" class="btn-outline" id="btn-select-vault-file" style="flex: 1; padding: 12px 16px; font-size: 13px; font-weight: 700; background: #f8fafc; color: #0B132B; border: 1.5px solid #cbd5e1; cursor: pointer;">
               Choose File to Seal
             </button>
@@ -1357,7 +1357,7 @@
 
   <!-- Discreet Calculator Disguise Overlay -->
   <div class="modal-overlay" id="calc-disguise-modal" style="z-index: 99999;">
-    <div style="background:#1e293b; border-radius:24px; padding:24px; width:300px; box-shadow:0 20px 50px rgba(0,0,0,0.5); color:#fff;">
+    <div style="background:#1e293b; border-radius:24px; padding:20px; width:min(320px, 94vw); max-width:94vw; margin:0 auto; box-shadow:0 20px 50px rgba(0,0,0,0.5); color:#fff; box-sizing:border-box;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <span style="font-size:0.75rem; color:#94a3b8; font-family:monospace; letter-spacing:0.05em;">STANDARD CALCULATOR</span>
         <button type="button" id="btn-close-calc" style="background:none; border:none; color:#94a3b8; font-size:16px; cursor:pointer;" title="Exit Calculator">✕</button>
@@ -1662,7 +1662,7 @@
         </div>
 
         <!-- Dossier Actions Row -->
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div class="dossier-actions-row" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <div style="display:flex; gap:8px;">
             <button type="button" class="btn-primary" id="btn-copy-dossier" style="padding:9px 16px; font-size:12px; font-weight:700; border-radius:0px !important;">
               Copy Current File

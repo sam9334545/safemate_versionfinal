@@ -1926,7 +1926,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img src="${item.url}" alt="Watermarked copy for ${item.name}" style="max-height:220px; max-width:100%; object-fit:contain; border-radius:4px; display:inline-block;" />
               </div>
 
-              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
+              <div class="leak-recipient-actions-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                 <a href="${item.url}" download="${item.filename}" class="btn-primary" style="display:inline-flex; align-items:center; justify-content:center; gap:5px; padding:9px 10px; font-size:0.75rem; text-decoration:none; background:#0f172a; color:#ffffff; font-weight:700; border-radius:6px; text-align:center;">
                   <span>💾</span> <span>Save Image</span>
                 </a>
