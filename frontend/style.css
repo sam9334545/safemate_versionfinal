@@ -5774,12 +5774,14 @@ body.modal-open .emergency-quick-dock,
   }
 
   .workspace-modal-body,
+  .tell-once-body,
   .tell-once-modal-body,
   .saferoute-modal-body,
   .complaint-modal-body {
-    padding: 14px 12px !important;
+    padding: 14px 12px 40px 12px !important;
     gap: 12px !important;
     flex: 1 1 auto !important;
+    min-height: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
@@ -5832,6 +5834,64 @@ body.modal-open .emergency-quick-dock,
     min-height: 44px !important;
     padding: 10px 14px !important;
     font-size: 0.80rem !important;
+  }
+
+  /* Deepfake Active Model Specification Bar on Mobile */
+  .deepfake-model-spec-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Deepfake Dropzone Mobile Optimization: Prevent Flex Overflow Overlap */
+  #dropzone-deepfake {
+    justify-content: flex-start !important;
+    min-height: auto !important;
+    padding: 18px 14px !important;
+    overflow: visible !important;
+  }
+
+  #dropzone-deepfake #deepfake-dropzone-prompt {
+    width: 100% !important;
+  }
+
+  #dropzone-deepfake .deepfake-dropzone-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  #btn-select-deepfake-file,
+  #btn-deepfake-demo-sample,
+  #btn-download-sample-video {
+    width: 100% !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 10px 14px !important;
+    font-size: 0.78rem !important;
+  }
+
+  #deepfake-staged-file-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    text-align: center !important;
+    gap: 12px !important;
+  }
+
+  #deepfake-staged-file-card #btn-deepfake-change-file {
+    width: 100% !important;
+    min-height: 40px !important;
+  }
+
+  #btn-scan-deepfake {
+    width: 100% !important;
+    min-height: 48px !important;
+    margin-top: 8px !important;
+    margin-bottom: 24px !important;
   }
 
   #btn-camera-leak-img,
@@ -5894,48 +5954,161 @@ body.modal-open .emergency-quick-dock,
 }
 
 /* 12. Tell-Once Intake Sanctuary Deck on Mobile */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .tell-once-modal-header {
+    padding: 10px 12px !important;
+  }
+
+  .tell-once-header-title {
+    font-size: 0.94rem !important;
+  }
+
+  .tell-once-header-sub {
+    display: none !important;
+  }
+
   .tell-once-header-actions {
     width: 100% !important;
     justify-content: space-between !important;
     flex-wrap: wrap !important;
-    gap: 8px !important;
+    gap: 6px !important;
+    margin-top: 4px !important;
   }
 
   .tell-once-voice-toggle-btn {
-    padding: 6px 10px !important;
-    font-size: 0.72rem !important;
+    padding: 5px 8px !important;
+    font-size: 0.68rem !important;
   }
 
+  .tell-once-lang-btn {
+    padding: 3px 8px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .tell-once-stepper-wrap {
+    padding: 6px 12px !important;
+  }
+
+  .tell-once-step-label {
+    font-size: 0.68rem !important;
+  }
+
+  /* Sleek, Compact Audio Deck */
   .tell-once-audio-deck {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px !important;
-    padding: 10px 14px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    padding: 6px 10px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 
-  .audio-deck-left,
+  .audio-deck-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
   .audio-deck-right {
-    width: 100% !important;
-    justify-content: space-between !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
   }
 
   .btn-audio-deck {
-    flex: 1 !important;
-    min-height: 40px !important;
-    justify-content: center !important;
+    padding: 4px 8px !important;
+    font-size: 0.68rem !important;
+    min-height: 32px !important;
+    white-space: nowrap !important;
   }
 
+  .deck-slider {
+    width: 55px !important;
+  }
+
+  .deck-select {
+    font-size: 0.68rem !important;
+    padding: 3px 6px !important;
+    min-height: 32px !important;
+  }
+
+  /* Streamlined Breather Bar */
   .tell-once-breather-bar {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 8px !important;
-    text-align: center !important;
+    padding: 6px 12px !important;
+    gap: 0 !important;
+  }
+
+  .tell-once-breather-hint {
+    display: none !important;
   }
 
   .btn-tell-once-breather {
     width: 100% !important;
+    min-height: 34px !important;
+    padding: 6px 10px !important;
+    font-size: 0.72rem !important;
+    text-align: center !important;
+  }
+
+  /* Scrollable Questionnaire Body with Bottom Clearance */
+  .tell-once-body,
+  #tell-once-conversation-view,
+  #tell-once-dossier-view {
+    padding: 12px 12px 60px 12px !important;
+    gap: 12px !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .tell-once-question-bubble {
+    padding: 12px 14px !important;
+  }
+
+  .tell-once-prompt-text {
+    font-size: 0.88rem !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Touch-Friendly Vertical Chips Stack */
+  .tell-once-chips-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .tell-once-chip {
+    width: 100% !important;
     min-height: 44px !important;
+    padding: 10px 14px !important;
+    font-size: 0.82rem !important;
+    text-align: left !important;
+    line-height: 1.35 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Full-Width Input Bar */
+  .tell-once-input-bar {
+    min-height: 48px !important;
+    padding: 5px 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 6px !important;
+  }
+
+  .tell-once-next-btn {
+    min-height: 38px !important;
+    padding: 6px 14px !important;
+    font-size: 0.80rem !important;
   }
 }
 

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alice&family=Karma:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20261027_01">
+  <link rel="stylesheet" href="style.css?v=20261028_02">
   <!-- MapLibre GL JS for real OpenStreetMap Interactive Maps -->
   <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css">
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
@@ -792,7 +792,7 @@
         </div>
 
         <!-- Model Specification Micro-Bar -->
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1.5px solid #cbd5e1; padding: 12px 16px; font-size: 0.74rem; color: #475569; flex-wrap: wrap; gap: 8px;">
+        <div class="deepfake-model-spec-bar" style="display: flex; align-items: center; justify-content: space-between; background: #ffffff; border: 1.5px solid #cbd5e1; padding: 12px 16px; font-size: 0.74rem; color: #475569; flex-wrap: wrap; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 6px;">
             <span style="font-weight: 800; color: #0B132B; text-transform: uppercase;">Active Neural Engine:</span>
             <span id="deepfake-active-engine-label" style="font-weight: 600;">Swin-Transformer (umm-maybe/AI-image-detector)</span>
@@ -807,7 +807,7 @@
         <input type="file" id="deepfake-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
 
         <!-- Drag & Drop Upload Zone -->
-        <div id="dropzone-deepfake" style="border: 1.5px dashed #cbd5e1; padding: 30px 24px; text-align: center; background: #ffffff; cursor: pointer; transition: all 0.18s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px;">
+        <div id="dropzone-deepfake" style="border: 1.5px dashed #cbd5e1; padding: 24px 20px; text-align: center; background: #ffffff; cursor: pointer; transition: all 0.18s ease; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: auto;">
           
           <!-- Staged File Card (hidden until file chosen) -->
           <div id="deepfake-staged-file-card" style="display: none; align-items: center; gap: 16px; width: 100%; max-width: 580px; text-align: left;">
@@ -827,7 +827,7 @@
           </div>
 
           <!-- Empty Dropzone Prompt -->
-          <div id="deepfake-dropzone-prompt">
+          <div id="deepfake-dropzone-prompt" style="width: 100%;">
             <div id="deepfake-dropzone-icon" style="font-size: 0.82rem; font-weight: 800; color: #8D99AE; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">FILE SELECTION</div>
             <strong id="deepfake-dropzone-headline" style="font-size: 0.95rem; color: #0B132B; display: block;">
               Drag &amp; Drop Image or Click to Select
@@ -835,7 +835,7 @@
             <span id="deepfake-dropzone-sub" style="font-size: 0.76rem; color: #64748b; display: block; margin-top: 4px;">
               Supports JPG, PNG, WEBP (Up to 10MB)
             </span>
-            <div style="margin-top: 14px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+            <div class="deepfake-dropzone-actions" style="margin-top: 14px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <button type="button" id="btn-select-deepfake-file" style="padding: 8px 18px; font-size: 0.76rem; font-weight: 700; background: #0B132B; color: #ffffff; border: 1.5px solid #0B132B; cursor: pointer;">
                 Browse Files
               </button>
