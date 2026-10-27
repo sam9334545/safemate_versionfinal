@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     # CORS configuration: comma-separated string or JSON list
     CORS_ORIGINS: Union[List[str], str] = [
+        "https://safemate-versionfinal.vercel.app",
+        "https://safemate-frontend.vercel.app",
         "https://safemate-frontend.onrender.com",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
@@ -26,7 +28,6 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://localhost:8080",
         "http://127.0.0.1:8080",
-        "*"
     ]
 
     # Still Image Model configuration
