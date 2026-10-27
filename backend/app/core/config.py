@@ -17,6 +17,7 @@ class Settings(BaseSettings):
 
     # CORS configuration: comma-separated string or JSON list
     CORS_ORIGINS: Union[List[str], str] = [
+        "https://safemate-frontend.vercel.app",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:4321",
