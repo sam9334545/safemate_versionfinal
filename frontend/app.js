@@ -2411,16 +2411,16 @@ document.addEventListener('DOMContentLoaded', () => {
           outputHtml += '<div style="background:#0B132B; border:1px solid #D90429; border-left:4px solid #D90429; padding:8px 12px; border-radius:0px !important; margin-bottom:8px; font-weight:700; color:#EF233C;">PRIORITY: IMMEDIATE EMERGENCY DIRECTIVE</div>';
         }
         if (data.title) {
-          outputHtml += `<strong style="display:block; color:#F8F9FA; font-size:0.92rem; margin-bottom:6px;">${data.title}</strong>`;
+          outputHtml += `<strong style="display:block; color:#0B132B; font-weight:800; font-size:0.95rem; margin-bottom:6px;">${data.title}</strong>`;
         }
         if (data.text || data.guidance) {
           const bodyTxt = (data.text || data.guidance).replace(/\n/g, '<br>');
-          outputHtml += `<div style="margin-bottom:8px; line-height:1.5; color:#F8F9FA;">${bodyTxt}</div>`;
+          outputHtml += `<div style="margin-bottom:8px; line-height:1.6; color:#0F172A; font-size:0.88rem;">${bodyTxt}</div>`;
         }
 
         // Render numbered steps if provided
         if (data.numbered_steps && data.numbered_steps.length > 0) {
-          outputHtml += `<ol style="margin-left:20px; margin-bottom:8px; line-height:1.6; font-size:0.84rem; color:#F8F9FA;">`;
+          outputHtml += `<ol style="margin-left:20px; margin-bottom:8px; line-height:1.6; font-size:0.86rem; color:#0F172A;">`;
           data.numbered_steps.forEach(s => {
             outputHtml += `<li>${s}</li>`;
           });

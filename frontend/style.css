@@ -1631,8 +1631,16 @@ body {
 }
 
 .chat-bubble-ai strong {
-  color: #0F172A;
+  color: #0B132B;
   font-weight: 800;
+}
+
+.chat-bubble-ai div,
+.chat-bubble-ai p,
+.chat-bubble-ai span,
+.chat-bubble-ai li,
+.chat-bubble-ai em {
+  color: #0F172A;
 }
 
 .chat-bubble-ai a {
@@ -6113,34 +6121,66 @@ body.modal-open .emergency-quick-dock,
 }
 
 /* 13. Legal Companion Chatbot Mobile Tuning */
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .legal-companion-modal-card {
+    height: 100dvh !important;
+    max-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
   .legal-modal-header {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 8px !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .legal-modal-title {
+    font-size: 0.96rem !important;
+  }
+
+  .legal-modal-sub {
+    display: none !important;
   }
 
   .legal-header-controls {
     width: 100% !important;
     justify-content: space-between !important;
+    gap: 6px !important;
   }
 
   .legal-select-pill {
     flex: 1 !important;
-    font-size: 0.74rem !important;
-    padding: 6px 8px !important;
+    font-size: 0.70rem !important;
+    padding: 5px 6px !important;
   }
 
   .legal-command-strip {
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    padding: 8px 12px !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 6px !important;
+    padding: 6px 10px !important;
+    flex-shrink: 0 !important;
   }
 
   .legal-strip-left {
-    width: 100% !important;
     display: flex !important;
-    justify-content: space-between !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .btn-legal-crimson,
+  .btn-legal-secondary,
+  .btn-legal-wipe {
+    padding: 5px 10px !important;
+    font-size: 0.70rem !important;
+    min-height: 32px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 
   .legal-chips-row {
@@ -6149,28 +6189,112 @@ body.modal-open .emergency-quick-dock,
     flex-wrap: nowrap !important;
     padding: 6px 10px !important;
     gap: 6px !important;
+    flex-shrink: 0 !important;
   }
 
   .chat-chip {
     flex-shrink: 0 !important;
-    font-size: 0.74rem !important;
-    padding: 6px 10px !important;
+    font-size: 0.72rem !important;
+    padding: 5px 10px !important;
+    white-space: nowrap !important;
   }
 
-  .simple-chat-bar {
+  /* CRITICAL: Hide the two giant promotional modules inside the chatbot modal on mobile */
+  .legal-modules-split {
+    display: none !important;
+  }
+
+  /* Chat Stream: Fill remaining viewport height */
+  .legal-chat-stream,
+  .simple-chat-log {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 12px 10px 24px 10px !important;
+    gap: 10px !important;
+  }
+
+  /* Chat Message Bubbles: High Contrast, Clear Typography */
+  .chat-bubble-ai {
+    max-width: 92% !important;
+    padding: 12px 14px !important;
+    font-size: 0.86rem !important;
+    color: #0F172A !important;
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    border-left: 4px solid #D90429 !important;
+    line-height: 1.55 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  .chat-bubble-ai * {
+    color: #0F172A !important;
+  }
+
+  .chat-bubble-ai strong {
+    color: #0B132B !important;
+  }
+
+  .chat-bubble-ai a {
+    color: #D90429 !important;
+  }
+
+  .chat-bubble-user {
+    max-width: 88% !important;
+    padding: 10px 14px !important;
+    font-size: 0.86rem !important;
+  }
+
+  .simple-chat-bar,
+  .legal-input-bar {
     padding: 8px 10px !important;
     gap: 6px !important;
+    flex-shrink: 0 !important;
+    background: #FFFFFF !important;
+    border-top: 1.5px solid #CBD5E1 !important;
+    position: relative !important;
+    z-index: 20 !important;
   }
 
   .legal-input-field {
-    font-size: 16px !important;
-    padding: 9px 12px !important;
+    font-size: 16px !important; /* Prevents mobile browser auto-zoom shift */
+    padding: 10px 12px !important;
+    border: 1.5px solid #CBD5E1 !important;
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    border-radius: 4px !important;
+  }
+
+  .legal-input-field:focus {
+    border-color: #D90429 !important;
+    background: #FFFFFF !important;
   }
 
   .btn-legal-mic,
   .btn-legal-send {
     min-width: 44px !important;
     min-height: 44px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .legal-modal-footer {
+    padding: 6px 12px !important;
+    flex-shrink: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+
+  .legal-footer-disclaimer span {
+    display: none !important;
+  }
+
+  .legal-back-btn {
+    min-height: 34px !important;
+    padding: 4px 10px !important;
+    font-size: 0.72rem !important;
   }
 }
 
