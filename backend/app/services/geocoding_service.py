@@ -618,9 +618,41 @@ SAMPLE_GEOCODE_FIXTURES: List[Dict[str, Any]] = [
         "place_type": "monument",
     },
 
-    # ------------------ Ranchi ------------------
+    # ------------------ Ranchi & Jamshedpur (Jharkhand) ------------------
     {
-        "query_keys": ["main road ranchi", "lalpur ranchi"],
+        "query_keys": ["sakchi", "sakchi market", "sakchi bazar", "sakchi bazaar", "sakchi jamshedpur", "sakchi roundabout"],
+        "display_name": "Sakchi, Jamshedpur, Golmuri-Cum-Jugsalai, East Singhbhum, Jharkhand 831001, India",
+        "name": "Sakchi, Jamshedpur",
+        "lat": 22.8056,
+        "lon": 86.2086,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["bistupur", "bistupur market", "bistupur jamshedpur", "bistupur main road"],
+        "display_name": "Bistupur, Jamshedpur, Golmuri-Cum-Jugsalai, East Singhbhum, Jharkhand 831001, India",
+        "name": "Bistupur, Jamshedpur",
+        "lat": 22.7958,
+        "lon": 86.1854,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["jubilee park", "jubilee park jamshedpur", "sakchi boulevard"],
+        "display_name": "Jubilee Park, Sakchi Boulevard, Jamshedpur, Jharkhand 831001, India",
+        "name": "Jubilee Park, Jamshedpur",
+        "lat": 22.8120,
+        "lon": 86.1969,
+        "place_type": "park",
+    },
+    {
+        "query_keys": ["tatanagar", "tatanagar junction", "jamshedpur station", "tatanagar railway station"],
+        "display_name": "Tatanagar Junction Railway Station, Khasmahal, Jamshedpur, Jharkhand 831002, India",
+        "name": "Tatanagar Junction, Jamshedpur",
+        "lat": 22.7667,
+        "lon": 86.2023,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["main road ranchi", "lalpur ranchi", "albert ekka chowk"],
         "display_name": "Main Road, Albert Ekka Chowk, Ranchi, Jharkhand 834001, India",
         "name": "Main Road, Ranchi",
         "lat": 23.3697,
@@ -675,11 +707,19 @@ class GeocodingService:
         self._last_request_time = time.time()
 
     def _match_offline_fixtures(self, query: str) -> List[GeocodeItem]:
-        """Match against 70+ verified landmarks across all states in India."""
+        """Match against 80+ verified landmarks across all states in India."""
         q_lower = query.lower().strip()
         # Remove common search preambles
         cleaned = re.sub(r"\b(near|at|to|from|the|in|india)\b", "", q_lower).strip()
         tokens = [t for t in re.split(r"[\s,]+", cleaned) if len(t) >= 3]
+
+        # Generic place tokens that should not trigger false positive matches alone
+        common_generic = {
+            "market", "bazar", "bazaar", "mandi", "chowk", "circle", "station",
+            "road", "street", "marg", "lane", "colony", "nagar", "sector", "phase",
+            "block", "mall", "plaza", "centre", "center", "park", "garden", "city",
+            "town", "hub", "place", "point"
+        }
 
         matches: List[Tuple[int, GeocodeItem]] = []
 
@@ -688,10 +728,13 @@ class GeocodingService:
             # Direct key match
             if any(k in q_lower or q_lower in k for k in fixture["query_keys"]):
                 score += 10
-            # Token match
-            matched_tokens = sum(1 for t in tokens if any(t in k for k in fixture["query_keys"]) or t in fixture["name"].lower())
+            # Distinct non-generic token match
+            matched_tokens = sum(
+                1 for t in tokens
+                if t not in common_generic and (any(t in k for k in fixture["query_keys"]) or t in fixture["name"].lower())
+            )
             if matched_tokens:
-                score += matched_tokens * 3
+                score += matched_tokens * 4
 
             if score > 0:
                 item = GeocodeItem(
@@ -768,16 +811,32 @@ class GeocodingService:
                     "limit": str(limit),
                 }
                 resp = await client.get(self.nominatim_url, headers=headers, params=params)
+                raw_data = resp.json() if resp.status_code == 200 else []
 
-                # Fallback attempt if countrycodes=in returned 0: try with general query
-                if resp.status_code == 200 and not resp.json():
+                # Fallback attempt 1: If 0 results and multi-word query, strip common location suffixes (e.g. "sakchi market" -> "sakchi")
+                if not raw_data:
+                    cleaned_suffix = re.sub(
+                        r"\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b",
+                        "",
+                        clean_q,
+                        flags=re.IGNORECASE
+                    ).strip()
+                    if cleaned_suffix and cleaned_suffix.lower() != clean_q.lower() and len(cleaned_suffix) >= 3:
+                        params["q"] = cleaned_suffix
+                        resp_suffix = await client.get(self.nominatim_url, headers=headers, params=params)
+                        if resp_suffix.status_code == 200 and resp_suffix.json():
+                            raw_data = resp_suffix.json()
+
+                # Fallback attempt 2: If still 0 results, try with ", India" suffix without countrycodes restriction
+                if not raw_data:
                     params.pop("countrycodes", None)
                     search_query = clean_q if "india" in clean_q.lower() else f"{clean_q}, India"
                     params["q"] = search_query
-                    resp = await client.get(self.nominatim_url, headers=headers, params=params)
+                    resp_fallback = await client.get(self.nominatim_url, headers=headers, params=params)
+                    if resp_fallback.status_code == 200 and resp_fallback.json():
+                        raw_data = resp_fallback.json()
 
-                if resp.status_code == 200:
-                    raw_data = resp.json()
+                if raw_data:
                     for item in raw_data:
                         disp = item.get("display_name", "")
                         name = item.get("name") or disp.split(",")[0].strip()
@@ -794,7 +853,7 @@ class GeocodingService:
                             )
                         )
                 else:
-                    logger.warning(f"Nominatim returned status {resp.status_code} for '{clean_q}'.")
+                    logger.info(f"Nominatim returned 0 items for '{clean_q}'. Checking offline fixtures.")
         except Exception as exc:
             logger.warning(f"Nominatim geocoding network/timeout exception for '{clean_q}': {exc}")
 

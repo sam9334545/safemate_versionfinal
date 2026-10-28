@@ -15,7 +15,11 @@
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
   <!-- Global Backend API URL configuration matching latest Render deployment -->
   <script>
-    window.API_BASE_URL = window.API_BASE_URL || 'https://safemate-backend-tseo.onrender.com';
+    if (['localhost', '127.0.0.1'].includes(window.location.hostname)) {
+      window.API_BASE_URL = window.API_BASE_URL !== undefined ? window.API_BASE_URL : '';
+    } else {
+      window.API_BASE_URL = window.API_BASE_URL || 'https://safemate-backend-tseo.onrender.com';
+    }
   </script>
   <meta name="safemate-release" content="v1.0.1-prod">
 </head>

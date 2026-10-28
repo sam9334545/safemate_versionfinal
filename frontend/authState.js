@@ -20,8 +20,11 @@ const STORAGE_KEYS = {
 
 class AuthStateManager {
   constructor() {
-    this.apiBaseUrl = (typeof window !== 'undefined' && window.API_BASE_URL) 
-      || 'https://safemate-backend-tseo.onrender.com';
+    this.apiBaseUrl = (typeof window !== 'undefined' && window.API_BASE_URL !== undefined)
+      ? window.API_BASE_URL
+      : ((typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname))
+          ? ''
+          : 'https://safemate-backend-tseo.onrender.com');
     
     this.state = {
       accessMode: 'loading', // 'authenticated' | 'guest' | 'demo' | 'unauthenticated' | 'loading'

@@ -4825,48 +4825,120 @@ body {
   box-shadow: 0 0 0 3px rgba(190, 18, 60, 0.12);
 }
 
-/* Geocoding Dropdown Box */
+/* Geocoding Dropdown Box (Google Maps inspired) */
 .saferoute-suggestions-box {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 5px);
   left: 0;
   right: 0;
   background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  z-index: 1000;
-  max-height: 220px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.16), 0 4px 10px -2px rgba(15, 23, 42, 0.08);
+  z-index: 1050;
+  max-height: 260px;
   overflow-y: auto;
+  animation: fadeInDown 0.15s ease-out;
 }
 
-.suggestion-item {
-  padding: 9px 12px;
-  font-size: 0.8rem;
-  color: #334155;
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.saferoute-suggestion-item, .suggestion-item {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: #1e293b;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  transition: background-color 0.12s ease, border-left-color 0.12s ease;
+  border-left: 3px solid transparent;
 }
 
-.suggestion-item:last-child {
+.saferoute-suggestion-item:last-child, .suggestion-item:last-child {
   border-bottom: none;
 }
 
+.saferoute-suggestion-item:hover, .saferoute-suggestion-item.active,
 .suggestion-item:hover, .suggestion-item.active {
   background: #fff1f2;
+  border-left-color: #be123c;
+}
+
+.sugg-pin-icon {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  background: #fee2e2;
   color: #be123c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
 }
 
-.suggestion-item strong {
+.sugg-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sugg-title, .suggestion-item strong {
   color: #0f172a;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.suggestion-item span {
-  font-size: 0.72rem;
+.sugg-subtitle, .suggestion-item span {
+  font-size: 0.74rem;
   color: #64748b;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.saferoute-suggestion-loading {
+  padding: 14px 16px;
+  font-size: 0.82rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.saferoute-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #cbd5e1;
+  border-top-color: #be123c;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.saferoute-suggestion-empty {
+  padding: 12px 14px;
+  font-size: 0.8rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
 }
 
 /* Quick Presets Strip */

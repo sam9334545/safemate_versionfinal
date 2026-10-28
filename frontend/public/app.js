@@ -21,7 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dynamic API Configuration (use root-relative paths on port 8000 to prevent cross-origin 127.0.0.1 vs localhost issues)
   const API_BASE_URL = window.API_BASE_URL !== undefined
     ? window.API_BASE_URL
-    : 'https://safemate-backend-tseo.onrender.com';
+    : (['localhost', '127.0.0.1'].includes(window.location.hostname)
+        ? ''
+        : 'https://safemate-backend-tseo.onrender.com');
   // Persistent Anonymous User ID
   let currentUserId = localStorage.getItem('safemate_user_id');
   if (!currentUserId) {
@@ -4788,11 +4790,16 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       { name: 'RS Puram, Coimbatore', display_name: 'RS Puram, DB Road, Coimbatore, Tamil Nadu', latitude: 11.0089, longitude: 76.9507 },
       { name: 'Sitabuldi, Nagpur', display_name: 'Sitabuldi Interchange, Nagpur, Maharashtra', latitude: 21.1458, longitude: 79.0882 },
       { name: 'Golden Temple, Amritsar', display_name: 'Golden Temple (Sri Harmandir Sahib), Amritsar, Punjab', latitude: 31.6200, longitude: 74.8765 },
+      // Jharkhand (Jamshedpur & Ranchi)
+      { name: 'Sakchi, Jamshedpur', display_name: 'Sakchi Market / Commercial Area, Jamshedpur, Jharkhand', latitude: 22.8056, longitude: 86.2086 },
+      { name: 'Bistupur, Jamshedpur', display_name: 'Bistupur Main Road, Jamshedpur, Jharkhand', latitude: 22.7958, longitude: 86.1854 },
+      { name: 'Jubilee Park, Jamshedpur', display_name: 'Jubilee Park, Sakchi Boulevard, Jamshedpur, Jharkhand', latitude: 22.8120, longitude: 86.1969 },
+      { name: 'Tatanagar Junction, Jamshedpur', display_name: 'Tatanagar Railway Junction Station, Jamshedpur, Jharkhand', latitude: 22.7667, longitude: 86.2023 },
       { name: 'Main Road, Ranchi', display_name: 'Main Road, Albert Ekka Chowk, Ranchi, Jharkhand', latitude: 23.3697, longitude: 85.3253 },
       { name: 'Lal Chowk, Srinagar', display_name: 'Lal Chowk, Srinagar, Jammu and Kashmir', latitude: 34.0725, longitude: 74.8085 },
     ];
 
-    // Geocoding Autocomplete Logic with Pan-India Coverage
+    // Geocoding Autocomplete Logic with Pan-India Coverage (Google Maps style)
     function setupGeocoding(inputEl, latEl, lonEl, suggestionsEl) {
       if (!inputEl || !suggestionsEl) return;
       let debounceTimer = null;
@@ -4807,6 +4814,15 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           return;
         }
 
+        // Show immediate loading indicator
+        suggestionsEl.innerHTML = `
+          <div class="saferoute-suggestion-loading">
+            <span class="saferoute-spinner"></span>
+            <span>Searching locations across India...</span>
+          </div>
+        `;
+        suggestionsEl.style.display = 'block';
+
         debounceTimer = setTimeout(async () => {
           let items = [];
           try {
@@ -4816,9 +4832,24 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
               if (Array.isArray(data) && data.length > 0) items = data;
             }
           } catch (e) {
-            console.warn('SafeRoute geocode network issue, checking pan-India landmarks:', e);
+            console.warn('SafeRoute geocode network issue:', e);
           }
 
+          // Fallback attempt: if multi-word query returned 0, strip common location suffixes (e.g. "sakchi market" -> "sakchi")
+          if (items.length === 0 && /\s+/.test(query)) {
+            const stripped = query.replace(/\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b/gi, '').trim();
+            if (stripped && stripped.toLowerCase() !== query.toLowerCase() && stripped.length >= 3) {
+              try {
+                const res2 = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(stripped)}&limit=6`);
+                if (res2.ok) {
+                  const data2 = await res2.json();
+                  if (Array.isArray(data2) && data2.length > 0) items = data2;
+                }
+              } catch (err) {}
+            }
+          }
+
+          // Local pan-India landmarks catalog fallback
           if (items.length === 0) {
             const qLower = query.toLowerCase();
             items = PAN_INDIA_LANDMARKS.filter(lm =>
@@ -4827,18 +4858,39 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           }
 
           if (!Array.isArray(items) || items.length === 0) {
-            suggestionsEl.style.display = 'none';
+            suggestionsEl.innerHTML = `
+              <div class="saferoute-suggestion-empty">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>No Indian locations found for "${query.replace(/"/g, '&quot;')}". Try adding city name (e.g. "Sakchi, Jamshedpur").</span>
+              </div>
+            `;
+            suggestionsEl.style.display = 'block';
             return;
           }
 
           suggestionsEl.innerHTML = items.map(item => {
             const itemLat = item.latitude !== undefined ? item.latitude : item.lat;
             const itemLon = item.longitude !== undefined ? item.longitude : item.lon;
-            const subtitle = item.display_name && item.display_name !== item.name ? item.display_name : '';
+            const rawDisp = item.display_name || item.name || '';
+            const name = item.name || rawDisp.split(',')[0].trim();
+            const subtitle = rawDisp && rawDisp !== name ? rawDisp : '';
+            let selectionValue = name;
+            if (!selectionValue.toLowerCase().includes('jamshedpur') && rawDisp.toLowerCase().includes('jamshedpur')) {
+              selectionValue = `${name}, Jamshedpur`;
+            } else if (subtitle && !selectionValue.includes(',')) {
+              const parts = rawDisp.split(',').map(s => s.trim()).filter(Boolean);
+              if (parts.length >= 2) selectionValue = `${parts[0]}, ${parts[1]}`;
+            }
+
             return `
-              <div class="saferoute-suggestion-item" data-lat="${itemLat}" data-lon="${itemLon}" data-name="${item.name.replace(/"/g, '&quot;')}">
-                <strong>${item.name}</strong>
-                ${subtitle ? `<small>${subtitle}</small>` : ''}
+              <div class="saferoute-suggestion-item" data-lat="${itemLat}" data-lon="${itemLon}" data-name="${selectionValue.replace(/"/g, '&quot;')}" data-full="${rawDisp.replace(/"/g, '&quot;')}">
+                <div class="sugg-pin-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="sugg-text">
+                  <strong class="sugg-title">${name}</strong>
+                  ${subtitle ? `<span class="sugg-subtitle">${subtitle}</span>` : ''}
+                </div>
               </div>
             `;
           }).join('');
@@ -5419,17 +5471,28 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           // 4. Real-time API geocoding anywhere across India
           try {
             const res = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(raw)}&limit=1`);
+            let items = [];
             if (res.ok) {
-              const items = await res.json();
-              if (Array.isArray(items) && items.length > 0) {
-                const item = items[0];
-                return {
-                  lat: item.latitude !== undefined ? item.latitude : item.lat,
-                  lon: item.longitude !== undefined ? item.longitude : item.lon,
-                  name: item.name || raw,
-                  displayName: item.display_name
-                };
+              items = await res.json();
+            }
+
+            // Suffix-stripping fallback for multi-word queries like "sakchi market"
+            if ((!Array.isArray(items) || items.length === 0) && /\s+/.test(raw)) {
+              const stripped = raw.replace(/\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b/gi, '').trim();
+              if (stripped && stripped.toLowerCase() !== raw.toLowerCase() && stripped.length >= 3) {
+                const res2 = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(stripped)}&limit=1`);
+                if (res2.ok) items = await res2.json();
               }
+            }
+
+            if (Array.isArray(items) && items.length > 0) {
+              const item = items[0];
+              return {
+                lat: item.latitude !== undefined ? item.latitude : item.lat,
+                lon: item.longitude !== undefined ? item.longitude : item.lon,
+                name: item.name || raw,
+                displayName: item.display_name
+              };
             }
           } catch (e) {
             console.warn('Geocoding lookup error for', raw, e);
