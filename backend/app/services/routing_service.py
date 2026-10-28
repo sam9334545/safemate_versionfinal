@@ -1,4 +1,4 @@
-"""Routing service integrating OSRM / OpenRouteService public infrastructure with resilient fallbacks."""
+"""Routing service integrating OSRM public infrastructure with resilient fallbacks."""
 
 from __future__ import annotations
 
@@ -39,24 +39,19 @@ def generate_curved_corridor_route(
     Coordinates formatted as [longitude, latitude] GeoJSON standard.
     """
     coords = []
-    # Vector from start to end
     dx = end_lon - start_lon
     dy = end_lat - start_lat
 
-    # Perpendicular vector for realistic boulevard curvature
     norm = math.hypot(dx, dy) or 1.0
     px = -dy / norm
     py = dx / norm
 
     for i in range(steps + 1):
         t = i / float(steps)
-        # Baseline linear interpolation
         cur_lon = start_lon + t * dx
         cur_lat = start_lat + t * dy
 
-        # Arc deviation: sin(pi * t) peaks at the midpoint
         arc = math.sin(math.pi * t) * curve_offset
-        # Micro-variation representing road turns
         wiggle = math.sin(2.0 * math.pi * t * 3.0) * (curve_offset * 0.15)
 
         total_offset = arc + wiggle
@@ -84,19 +79,6 @@ class RoutingService:
         dest_lon: float,
         mode: TravelMode = TravelMode.walking,
     ) -> List[Dict[str, Any]]:
-        """
-        Retrieves multiple candidate routes between origin and destination.
-        Returns a list of dicts:
-            {
-                "route_id": str,
-                "name": str,
-                "distance_meters": float,
-                "duration_seconds": float,
-                "geometry": List[List[float]], # [[lon, lat], ...]
-                "road_summary": str,
-                "is_fastest": bool
-            }
-        """
         profile = "foot" if mode == TravelMode.walking else "driving"
         cache_key = f"route:{profile}:{origin_lat:.4f},{origin_lon:.4f}:{dest_lat:.4f},{dest_lon:.4f}"
 
@@ -108,8 +90,6 @@ class RoutingService:
 
         routes_found: List[Dict[str, Any]] = []
 
-        # 1. Attempt Public OSRM API
-        # Format: /route/v1/{profile}/{coordinates}?alternatives=true&overview=full&geometries=geojson
         coords_str = f"{origin_lon},{origin_lat};{dest_lon},{dest_lat}"
         url = f"{self.osrm_base_url}/{profile}/{coords_str}"
         params = {
@@ -130,7 +110,6 @@ class RoutingService:
                         dur_s = float(r.get("duration", 0.0))
                         geom = r.get("geometry", {}).get("coordinates", [])
 
-                        # Extract road names from legs
                         road_names: List[str] = []
                         for leg in r.get("legs", []):
                             for step in leg.get("steps", []):
@@ -153,11 +132,9 @@ class RoutingService:
         except Exception as exc:
             logger.warning(f"OSRM public routing request failed or timed out: {exc}")
 
-        # 2. If OSRM returned fewer than 2 alternatives or failed, generate realistic corridor alternatives
         if len(routes_found) < 2:
             straight_line_dist = haversine_distance_m(origin_lat, origin_lon, dest_lat, dest_lon)
             
-            # Walking pace ~ 1.3 m/s (~4.7 km/h); Driving pace ~ 8.5 m/s (~30 km/h in urban streets)
             speed_mps = 1.3 if mode == TravelMode.walking else 8.5
             dist_factor_a = 1.22
             dist_factor_b = 1.35
@@ -198,10 +175,8 @@ class RoutingService:
             if not routes_found:
                 routes_found = fallback_routes
             elif len(routes_found) == 1:
-                # Add the second alternative
                 routes_found.append(fallback_routes[1])
 
-        # Mark fastest route accurately based on duration
         min_dur = min(r["duration_seconds"] for r in routes_found)
         for r in routes_found:
             r["is_fastest"] = abs(r["duration_seconds"] - min_dur) < 1.0
