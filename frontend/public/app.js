@@ -5039,8 +5039,16 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
         police: '#dc2626',
         fuel: '#8b5cf6',
         transit: '#6366f1',
-        cctv: '#94a3b8'
+        cctv: '#0284c7'
       };
+      if (category === 'cctv') {
+        return `<div style="background:#0284c7; width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="CCTV Surveillance Camera">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </div>`;
+      }
       const color = catColors[category] || '#64748b';
       return `<div style="background:${color}; width:20px; height:20px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="${category}"></div>`;
     }
@@ -5312,6 +5320,10 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           ? alt.assistance_nodes_count
           : (scoreBreakdown.assistance_points_count || 0);
 
+        const cctvCount = alt.cctv_nodes_count !== undefined
+          ? alt.cctv_nodes_count
+          : (scoreBreakdown.cctv_points_count || 0);
+
         const longestGap = alt.longest_low_activity_segment_meters !== undefined
           ? alt.longest_low_activity_segment_meters
           : (scoreBreakdown.longest_low_activity_segment_meters || 0);
@@ -5380,6 +5392,10 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
               <div class="ground-item">
                 <span class="ground-label">Assistance Nodes:</span>
                 <strong class="ground-val">${assistCount} nearby (Police/Medical)</strong>
+              </div>
+              <div class="ground-item">
+                <span class="ground-label">CCTV Surveillance:</span>
+                <strong class="ground-val">${cctvCount > 0 ? `${cctvCount} mapped camera(s)` : 'Unmapped corridor'}</strong>
               </div>
               <div class="ground-item">
                 <span class="ground-label">Longest Low-Activity Segment:</span>

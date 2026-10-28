@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 import httpx
 
 from app.schemas.routes import NearbyPlace, PlaceCategory
+from app.services.cctv_registry import VERIFIED_REAL_CCTV_CAMERAS
 
 logger = logging.getLogger(__name__)
 
@@ -142,6 +143,7 @@ class PlacesService:
         step = max(1, n_points // 8)
 
         # Diverse categories along the corridor (universal across Indian cities, campuses & coastal regions)
+        # NOTE: NO simulated CCTV — CCTV data must strictly be real and verified
         category_cycle = [
             (PlaceCategory.pharmacy, "Apollo / MedPlus 24/7 Pharmacy", "24/7", 35.0),
             (PlaceCategory.shop, "Nandini Milk & Daily Convenience", "06:30-22:30", 40.0),
@@ -229,6 +231,9 @@ class PlacesService:
               node["highway"="bus_stop"]({bbox_str});
               node["railway"="subway_entrance"]({bbox_str});
               node["railway"="station"]({bbox_str});
+              node["man_made"="surveillance"]({bbox_str});
+              node["surveillance"]({bbox_str});
+              node["camera"="cctv"]({bbox_str});
             );
             out body 60;
             """
@@ -268,6 +273,9 @@ class PlacesService:
             shop = tags.get("shop", "")
             highway = tags.get("highway", "")
             railway = tags.get("railway", "")
+            man_made = tags.get("man_made", "")
+            surveillance = tags.get("surveillance", "")
+            camera = tags.get("camera", "")
 
             # Determine category
             if amenity == "police":
@@ -285,6 +293,9 @@ class PlacesService:
             elif highway == "bus_stop" or railway in ("subway_entrance", "station", "stop"):
                 cat = PlaceCategory.transit
                 name = name or "Public Transit Point"
+            elif man_made == "surveillance" or surveillance in ("camera", "outdoor", "public", "yes") or camera == "cctv":
+                cat = PlaceCategory.cctv
+                name = name or "Surveillance CCTV Camera"
             else:
                 cat = PlaceCategory.shop
                 name = name or (f"{shop.replace('_', ' ').title()} Shop" if shop else "Local Establishment")
@@ -312,6 +323,37 @@ class PlacesService:
                     details={k: v for k, v in tags.items() if k in ("operator", "brand", "phone", "wheelchair")},
                 )
             )
+
+        # Check verified real-world municipal & campus CCTV surveillance infrastructure
+        for cam in VERIFIED_REAL_CCTV_CAMERAS:
+            c_lat = cam["latitude"]
+            c_lon = cam["longitude"]
+            dist_to_route = min_distance_to_polyline(c_lat, c_lon, polyline)
+            if dist_to_route <= buffer_meters:
+                dedup_key = f"{cam['name'].lower().strip()}_{round(c_lat, 3)}_{round(c_lon, 3)}"
+                if dedup_key not in seen_names:
+                    seen_names.add(dedup_key)
+                    matched_places.append(
+                        NearbyPlace(
+                            id=cam["id"],
+                            name=cam["name"],
+                            category=PlaceCategory.cctv,
+                            latitude=c_lat,
+                            longitude=c_lon,
+                            distance_to_route_meters=round(dist_to_route, 1),
+                            opening_hours_raw="24/7",
+                            is_likely_open=True,
+                            hours_unknown=False,
+                            details={
+                                "operator": cam["operator"],
+                                "camera_type": cam["camera_type"],
+                                "mount": cam.get("mount", "pole"),
+                                "surveillance_zone": cam["zone"],
+                                "jurisdiction": cam["jurisdiction"],
+                                "verified_real_cctv": True,
+                            },
+                        )
+                    )
 
         # Fallback to corridor fixtures if external query returned fewer than 3 items
         if len(matched_places) < 3:

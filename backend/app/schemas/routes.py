@@ -86,6 +86,7 @@ class RouteScoreBreakdown(BaseModel):
     unknown_hours_count: int = Field(default=0, ge=0)
     assistance_points_count: int = Field(default=0, ge=0, description="Police stations, hospitals, clinics")
     transit_points_count: int = Field(default=0, ge=0, description="Bus stops, metro stations, transit hubs")
+    cctv_points_count: int = Field(default=0, ge=0, description="Surveillance cameras or campus CCTV posts")
     longest_low_activity_segment_meters: float = Field(default=0.0, ge=0.0)
     low_activity_segments_count: int = Field(default=0, ge=0)
     road_characteristics_summary: str = Field(..., description="Summary of road types used (main roads, residential, etc.)")
@@ -117,6 +118,7 @@ class RouteAlternative(BaseModel):
     open_establishments_count: Optional[int] = Field(default=None)
     unknown_hours_count: Optional[int] = Field(default=None)
     assistance_nodes_count: Optional[int] = Field(default=None)
+    cctv_nodes_count: Optional[int] = Field(default=None)
     longest_low_activity_segment_meters: Optional[float] = Field(default=None)
     road_characteristics: Optional[str] = Field(default=None)
     nearby_places: List[NearbyPlace] = Field(default_factory=list)
@@ -142,6 +144,8 @@ class RouteAlternative(BaseModel):
             self.unknown_hours_count = self.score.unknown_hours_count
         if self.assistance_nodes_count is None:
             self.assistance_nodes_count = self.score.assistance_points_count
+        if self.cctv_nodes_count is None:
+            self.cctv_nodes_count = self.score.cctv_points_count
         if self.longest_low_activity_segment_meters is None:
             self.longest_low_activity_segment_meters = self.score.longest_low_activity_segment_meters
         if self.road_characteristics is None:

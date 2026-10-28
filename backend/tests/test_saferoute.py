@@ -332,3 +332,76 @@ def test_plan_routes_nit_surathkal_campus_to_beach():
     assert 1 <= selected["duration_minutes"] <= 45
     assert len(selected["nearby_places"]) >= 1
 
+
+def test_cctv_surveillance_integration_and_scoring():
+    """Verify that mapped CCTV surveillance cameras are parsed, scored, and returned."""
+    payload = {
+        "origin_lat": 13.0104,
+        "origin_lon": 74.7946,
+        "origin_address": "NITK Main Gate, Surathkal",
+        "destination_lat": 13.0116,
+        "destination_lon": 74.7865,
+        "destination_address": "NITK Beach, Surathkal",
+        "travel_mode": "walking",
+        "leave_now": True,
+    }
+    response = client.post("/api/v1/routes/plan", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["routes"]) >= 1
+
+    route = data["routes"][0]
+    score_comp = route["score"]["components"]
+    assert "cctv" in score_comp
+
+    # Mapped corridor places now include surveillance cameras
+    cctv_places = [p for p in route["nearby_places"] if p["category"] == "cctv"]
+    assert len(cctv_places) >= 1
+    assert route["score"]["cctv_points_count"] >= 1
+    assert route["cctv_nodes_count"] >= 1
+
+    # Verify component scoring
+    cctv_comp = score_comp["cctv"]
+    assert cctv_comp["available"] is True
+    assert cctv_comp["score"] >= 70.0
+    assert cctv_comp["weight"] > 0.0
+    assert "surveillance camera" in cctv_comp["description"].lower()
+
+    # Verify real attributes — NO simulation
+    first_cctv = cctv_places[0]
+    assert first_cctv["details"].get("verified_real_cctv") is True
+    assert first_cctv["details"].get("operator") is not None
+    assert first_cctv["is_likely_open"] is True
+
+
+def test_unmapped_corridor_honestly_reports_zero_cctv_without_simulation():
+    """Verify that a corridor with no verified cameras does NOT simulate CCTV and reports 0 cameras."""
+    # Route in an area with no registered CCTV cameras
+    geometry = [
+        [75.1000, 14.1000],
+        [75.1050, 14.1050],
+        [75.1100, 14.1100],
+    ]
+    # Synthetic places only, without CCTV
+    places = places_service._generate_synthetic_corridor_places(geometry, datetime.datetime.now())
+    # Verify synthetic POIs have ZERO CCTV (no simulation)
+    assert not any(p.category == PlaceCategory.cctv for p in places)
+
+    # Evaluate route
+    breakdown = night_activity_service.evaluate_route(
+        geometry=geometry,
+        distance_meters=1500.0,
+        road_summary="Secondary Road",
+        places=places,
+        mode=TravelMode.walking,
+        has_cctv_data=False,
+    )
+    assert breakdown.cctv_points_count == 0
+    cctv_comp = breakdown.components["cctv"]
+    assert cctv_comp.available is False
+    assert cctv_comp.weight == 0.0
+    assert cctv_comp.score == 0.0
+    assert "unmapped" in cctv_comp.description.lower()
+
+
+

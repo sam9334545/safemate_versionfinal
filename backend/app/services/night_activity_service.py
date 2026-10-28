@@ -39,7 +39,7 @@ class NightActivityService:
             "road_characteristics": 0.15,
             "assistance_points": 0.20,
             "public_transport": 0.15,
-            "cctv": 0.0,  # Typically unavailable publicly
+            "cctv": 0.10,  # Dynamically factored when mapped surveillance is present
         }
 
         self.weights_driving: Dict[str, float] = {
@@ -48,7 +48,7 @@ class NightActivityService:
             "distribution": 0.15,
             "assistance_points": 0.20,
             "public_transport": 0.10,
-            "cctv": 0.0,
+            "cctv": 0.05,
         }
 
     def _calculate_distribution_and_gaps(
@@ -246,8 +246,19 @@ class NightActivityService:
             score_transit = 40.0
 
         # 6. Component: CCTV
-        cctv_available = has_cctv_data
-        score_cctv = 0.0
+        cctv_count = sum(1 for p in places if p.category == PlaceCategory.cctv)
+        cctv_available = has_cctv_data and cctv_count > 0
+        if cctv_available:
+            if cctv_count >= 3:
+                score_cctv = 95.0
+            elif cctv_count == 2:
+                score_cctv = 85.0
+            else:
+                score_cctv = 70.0
+            cctv_desc = f"{cctv_count} verified surveillance camera(s) / campus CCTV post(s) mapped along corridor."
+        else:
+            score_cctv = 0.0
+            cctv_desc = "Verified public CCTV coverage data is currently unmapped for this corridor (weight cleanly redistributed)."
 
         # Build raw components dictionary
         raw_components = {
@@ -279,7 +290,7 @@ class NightActivityService:
             "cctv": (
                 score_cctv,
                 cctv_available,
-                "Verified public CCTV coverage data is currently unavailable for this geographic corridor.",
+                cctv_desc,
             ),
         }
 
@@ -329,6 +340,7 @@ class NightActivityService:
             unknown_hours_count=unknown_count,
             assistance_points_count=assistance_total,
             transit_points_count=transit_count,
+            cctv_points_count=cctv_count,
             longest_low_activity_segment_meters=longest_gap,
             low_activity_segments_count=len(low_act_segments),
             road_characteristics_summary=road_summary,

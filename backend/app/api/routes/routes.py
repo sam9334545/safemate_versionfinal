@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from app.schemas.routes import (
     GeocodeItem,
     NearbyPlace,
+    PlaceCategory,
     RouteAlternative,
     RouteHealthResponse,
     RoutePlanRequest,
@@ -157,6 +158,9 @@ async def plan_and_compare_routes(request: RoutePlanRequest) -> RoutePlanRespons
         places_res = all_places[idx]
         places = places_res if isinstance(places_res, list) else []
 
+        # Detect if any mapped CCTV / surveillance nodes are along the corridor
+        has_cctv = any(p.category == PlaceCategory.cctv for p in places)
+
         # Compute deterministic Night Activity Score
         score_breakdown = night_activity_service.evaluate_route(
             geometry=geom,
@@ -164,7 +168,7 @@ async def plan_and_compare_routes(request: RoutePlanRequest) -> RoutePlanRespons
             road_summary=road_sum,
             places=places,
             mode=request.travel_mode,
-            has_cctv_data=False,
+            has_cctv_data=has_cctv,
         )
 
         # Get low-activity segments from distribution analysis
