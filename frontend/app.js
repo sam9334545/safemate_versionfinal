@@ -644,21 +644,62 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
+  // Latest known GPS fix, kept locally so the share button can build a Google Maps URL
+  let lastKnownCoords = null;
+
+  function getCurrentCoords(timeoutMs = 8000) {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(lastKnownCoords);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          lastKnownCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          resolve(lastKnownCoords);
+        },
+        () => resolve(lastKnownCoords),
+        { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 10000 }
+      );
+    });
+  }
+
+  function buildGoogleMapsUrl(c) {
+    // Universal Google Maps link: opens the Maps app on phones, maps.google.com on laptops
+    return `https://www.google.com/maps?q=${c.lat.toFixed(6)},${c.lng.toFixed(6)}`;
+  }
+
+  async function copyTextFallback(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (e) {}
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async function pingLocationUpdate(token) {
     if (!navigator.geolocation || !token) return;
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      try {
-        await fetch(`${API_BASE_URL}/api/v1/safewalk/update-location`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token: token,
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude
-          })
-        });
-      } catch (e) {}
-    });
+    const c = await getCurrentCoords();
+    if (!c) return;
+    try {
+      await fetch(`${API_BASE_URL}/api/v1/safewalk/update-location`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, latitude: c.lat, longitude: c.lng })
+      });
+    } catch (e) {}
   }
 
   if (btnToggleSafeWalk) {
@@ -757,16 +798,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Share Live SafeWalk Link
+  // Share Live SafeWalk Location (Google Maps URL built from latitude/longitude)
   if (btnShareSafeWalk) {
-    btnShareSafeWalk.addEventListener('click', () => {
-      const link = activeShareableLink || `${window.location.origin}/#safewalk-section`;
-      const shareText = `Follow my live SafeWalk escort home on SafeMate: ${link}`;
+    btnShareSafeWalk.addEventListener('click', async () => {
+      const originalLabel = btnShareSafeWalk.textContent;
+      btnShareSafeWalk.textContent = 'Getting location...';
+      const coords = await getCurrentCoords();
+      btnShareSafeWalk.textContent = originalLabel;
+
+      if (!coords) {
+        alert('Could not read your GPS location. Please allow location access in the browser and try again.');
+        return;
+      }
+
+      const mapsUrl = buildGoogleMapsUrl(coords);
+      const shareText = `Follow my live SafeWalk escort on SafeMate. My current location: ${mapsUrl}`;
+
+      // Phones / browsers with Web Share API. Do NOT pass `url` separately:
+      // many apps then replace the text with the page URL or drop one of them.
       if (navigator.share) {
-        navigator.share({ title: 'SafeMate Live Escort', text: shareText, url: link }).catch(() => {});
+        try {
+          await navigator.share({ title: 'SafeMate Live Location', text: shareText });
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return; // user closed the share sheet
+        }
+      }
+
+      // Laptop / desktop fallback: copy, and offer WhatsApp Web
+      const copied = await copyTextFallback(shareText);
+      const wa = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+      if (copied) {
+        alert(`Google Maps location link copied to clipboard:\n\n${mapsUrl}`);
       } else {
-        navigator.clipboard.writeText(shareText);
-        alert(`SafeWalk Live Escort link copied to clipboard:\n${shareText}`);
+        window.prompt('Copy this Google Maps link:', mapsUrl);
+      }
+      if (confirm('Open WhatsApp to send this location now?')) {
+        window.open(wa, '_blank', 'noopener');
       }
     });
   }
