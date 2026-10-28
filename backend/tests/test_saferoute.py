@@ -224,3 +224,63 @@ def test_safewalk_contract_compatibility():
 
     assert isinstance(safewalk_destination, str) and len(safewalk_destination) > 0
     assert isinstance(safewalk_duration, int) and 1 <= safewalk_duration <= 1440
+
+
+def test_pan_india_geocoding_major_cities():
+    """Verify geocoding suggestions work for major cities across India."""
+    test_queries = [
+        ("Marine Drive Mumbai", "Mumbai"),
+        ("Koramangala Bangalore", "Bengaluru"),
+        ("Park Street Kolkata", "Kolkata"),
+        ("Anna Nagar Chennai", "Chennai"),
+        ("Banjara Hills Hyderabad", "Hyderabad"),
+        ("FC Road Pune", "Pune"),
+    ]
+    for q, expected_city in test_queries:
+        response = client.get(f"/api/v1/routes/geocode?q={q}&limit=2")
+        assert response.status_code == 200, f"Failed for {q}"
+        items = response.json()
+        assert len(items) >= 1, f"No results for {q}"
+        assert -90 <= items[0]["latitude"] <= 90
+        assert -180 <= items[0]["longitude"] <= 180
+
+
+def test_pan_india_plan_routes_mumbai():
+    """Verify route planning works in Mumbai (Bandra West to Marine Drive)."""
+    payload = {
+        "origin_lat": 19.0583,
+        "origin_lon": 72.8303,
+        "origin_address": "Bandra West, Mumbai",
+        "destination_lat": 18.9432,
+        "destination_lon": 72.8230,
+        "destination_address": "Marine Drive, Mumbai",
+        "travel_mode": "driving",
+        "leave_now": True,
+    }
+    response = client.post("/api/v1/routes/plan", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert len(data["routes"]) >= 2
+    assert "Mumbai" in data["origin_resolved"]["display_name"] or "Bandra" in data["origin_resolved"]["display_name"]
+
+
+def test_pan_india_plan_routes_bengaluru():
+    """Verify route planning works in Bengaluru (Indiranagar to Koramangala)."""
+    payload = {
+        "origin_lat": 12.9719,
+        "origin_lon": 77.6412,
+        "origin_address": "Indiranagar, Bengaluru",
+        "destination_lat": 12.9352,
+        "destination_lon": 77.6245,
+        "destination_address": "Koramangala, Bengaluru",
+        "travel_mode": "walking",
+        "leave_now": True,
+    }
+    response = client.post("/api/v1/routes/plan", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert len(data["routes"]) >= 2
+    assert data["routes"][0]["score"]["overall_night_activity_score"] is not None
+

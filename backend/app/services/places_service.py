@@ -141,14 +141,14 @@ class PlacesService:
         n_points = len(polyline)
         step = max(1, n_points // 8)
 
-        # Diverse categories along the corridor
+        # Diverse categories along the corridor (generic across Indian cities & towns)
         category_cycle = [
             (PlaceCategory.pharmacy, "Apollo 24/7 Pharmacy", "24/7", 35.0),
             (PlaceCategory.shop, "24-Seven Convenience Store", "24/7", 45.0),
-            (PlaceCategory.transit, "Metro Station Gate 2", "06:00-23:30", 50.0),
-            (PlaceCategory.police, "Delhi Police Assistance Post", "24/7", 60.0),
-            (PlaceCategory.fuel, "Indian Oil Petrol Station", "24/7", 40.0),
-            (PlaceCategory.hospital, "Max Super Speciality Urgent Care", "24/7", 90.0),
+            (PlaceCategory.transit, "Metro / Transit Station Gate", "06:00-23:30", 50.0),
+            (PlaceCategory.police, "Police Assistance Booth / Chowki", "24/7", 60.0),
+            (PlaceCategory.fuel, "Indian Oil / BPCL Petrol Station", "24/7", 40.0),
+            (PlaceCategory.hospital, "Emergency Medical Care / Clinic", "24/7", 90.0),
             (PlaceCategory.shop, "Daily Needs Supermarket", "07:00-22:00", 65.0),
             (PlaceCategory.transit, "City Bus Transit Shelter", None, 30.0),
         ]
@@ -233,11 +233,14 @@ class PlacesService:
             out body 60;
             """
             try:
-                async with httpx.AsyncClient(timeout=3.0) as client:
+                async with httpx.AsyncClient(timeout=4.0) as client:
                     resp = await client.post(
                         self.overpass_url,
                         data={"data": query},
-                        headers={"User-Agent": "SafeMate-WomenSafetyApp/1.0"},
+                        headers={
+                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (SafeMate-Platform/1.0)",
+                            "Accept": "application/json",
+                        },
                     )
                     if resp.status_code == 200:
                         data = resp.json()

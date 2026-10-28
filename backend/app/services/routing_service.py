@@ -100,8 +100,8 @@ class RoutingService:
         }
 
         try:
-            async with httpx.AsyncClient(timeout=3.0) as client:
-                resp = await client.get(url, params=params, headers={"User-Agent": "SafeMate-WomenSafetyApp/1.0"})
+            async with httpx.AsyncClient(timeout=6.0) as client:
+                resp = await client.get(url, params=params, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (SafeMate/1.0)"})
                 if resp.status_code == 200:
                     data = resp.json()
                     osrm_routes = data.get("routes", [])

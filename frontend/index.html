@@ -1727,7 +1727,7 @@
                 </button>
               </label>
               <div class="autocomplete-wrapper" style="position:relative;">
-                <input type="text" id="saferoute-origin-input" class="saferoute-input" placeholder="Enter starting address or landmark..." value="Connaught Place, New Delhi" autocomplete="off" />
+                <input type="text" id="saferoute-origin-input" class="saferoute-input" placeholder="Enter any starting address, colony, or city in India..." value="Connaught Place, New Delhi" autocomplete="off" />
                 <div id="saferoute-origin-suggestions" class="saferoute-suggestions-box" style="display:none;"></div>
               </div>
               <input type="hidden" id="saferoute-origin-lat" value="28.6315" />
@@ -1737,10 +1737,10 @@
             <!-- Destination -->
             <div class="saferoute-input-group">
               <label for="saferoute-dest-input" class="saferoute-label">
-                <span>Where are you going? (Destination)</span>
+                <span>Where are you going? (Destination across India)</span>
               </label>
               <div class="autocomplete-wrapper" style="position:relative;">
-                <input type="text" id="saferoute-dest-input" class="saferoute-input" placeholder="Enter destination address or landmark..." value="India Gate, New Delhi" autocomplete="off" />
+                <input type="text" id="saferoute-dest-input" class="saferoute-input" placeholder="Enter any destination anywhere in India (e.g. Marine Drive, Indiranagar)..." value="India Gate, New Delhi" autocomplete="off" />
                 <div id="saferoute-dest-suggestions" class="saferoute-suggestions-box" style="display:none;"></div>
               </div>
               <input type="hidden" id="saferoute-dest-lat" value="28.6129" />
@@ -1748,14 +1748,17 @@
             </div>
           </div>
 
-          <!-- Quick Suggestion Landmarks Strip -->
+          <!-- Quick Suggestion Landmarks Strip (Pan-India Cities) -->
           <div class="saferoute-presets-strip">
-            <span class="presets-label">Popular Destinations:</span>
-            <button type="button" class="btn-preset-chip" data-name="India Gate, New Delhi" data-lat="28.6129" data-lon="77.2295">India Gate</button>
-            <button type="button" class="btn-preset-chip" data-name="Select Citywalk Saket" data-lat="28.5283" data-lon="77.2190">Saket Mall</button>
-            <button type="button" class="btn-preset-chip" data-name="Hauz Khas Village" data-lat="28.5494" data-lon="77.1936">Hauz Khas</button>
-            <button type="button" class="btn-preset-chip" data-name="South Extension Market" data-lat="28.5689" data-lon="77.2223">South Ex</button>
-            <button type="button" class="btn-preset-chip" data-name="Delhi University North Campus" data-lat="28.6903" data-lon="77.2066">North Campus</button>
+            <span class="presets-label">Popular Indian Hubs:</span>
+            <button type="button" class="btn-preset-chip" data-name="India Gate, New Delhi" data-lat="28.6129" data-lon="77.2295">Delhi (India Gate)</button>
+            <button type="button" class="btn-preset-chip" data-name="Marine Drive, Mumbai" data-lat="18.9432" data-lon="72.8230">Mumbai (Marine Drive)</button>
+            <button type="button" class="btn-preset-chip" data-name="Indiranagar, Bengaluru" data-lat="12.9719" data-lon="77.6412">Bengaluru (Indiranagar)</button>
+            <button type="button" class="btn-preset-chip" data-name="Banjara Hills, Hyderabad" data-lat="17.4177" data-lon="78.4399">Hyderabad (Banjara Hills)</button>
+            <button type="button" class="btn-preset-chip" data-name="Park Street, Kolkata" data-lat="22.5552" data-lon="88.3501">Kolkata (Park Street)</button>
+            <button type="button" class="btn-preset-chip" data-name="Anna Nagar, Chennai" data-lat="13.0882" data-lon="80.2073">Chennai (Anna Nagar)</button>
+            <button type="button" class="btn-preset-chip" data-name="FC Road, Pune" data-lat="18.5204" data-lon="73.8415">Pune (FC Road)</button>
+            <button type="button" class="btn-preset-chip" data-name="Hawa Mahal, Jaipur" data-lat="26.9239" data-lon="75.8267">Jaipur (Hawa Mahal)</button>
           </div>
 
           <!-- Travel Controls & Execution Strip -->
