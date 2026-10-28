@@ -4817,7 +4817,11 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       { name: 'RS Puram, Coimbatore', display_name: 'RS Puram, DB Road, Coimbatore, Tamil Nadu', latitude: 11.0089, longitude: 76.9507 },
       { name: 'Sitabuldi, Nagpur', display_name: 'Sitabuldi Interchange, Nagpur, Maharashtra', latitude: 21.1458, longitude: 79.0882 },
       { name: 'Golden Temple, Amritsar', display_name: 'Golden Temple (Sri Harmandir Sahib), Amritsar, Punjab', latitude: 31.6200, longitude: 74.8765 },
-      // Jharkhand (Jamshedpur & Ranchi)
+      // Jharkhand (NIT Jamshedpur, Jamshedpur & Ranchi)
+      { name: 'NIT Jamshedpur, Adityapur', display_name: 'National Institute of Technology (NIT) Jamshedpur, Adityapur, Jamshedpur, Jharkhand', latitude: 22.7765, longitude: 86.1438 },
+      { name: 'NIT Jamshedpur Main Gate', display_name: 'NIT Jamshedpur Main Security Gate, Tata-Kandra Road, Adityapur, Jharkhand', latitude: 22.7765, longitude: 86.1438 },
+      { name: 'NIT Jamshedpur Academic Complex', display_name: 'Central Library & Diamond Jubilee Academic Complex, NIT Jamshedpur', latitude: 22.7775, longitude: 86.1445 },
+      { name: 'Adityapur, Jamshedpur', display_name: 'Adityapur Industrial Town, Tata-Kandra Road, Jamshedpur, Jharkhand', latitude: 22.7845, longitude: 86.1580 },
       { name: 'Sakchi, Jamshedpur', display_name: 'Sakchi Market / Commercial Area, Jamshedpur, Jharkhand', latitude: 22.8056, longitude: 86.2086 },
       { name: 'Bistupur, Jamshedpur', display_name: 'Bistupur Main Road, Jamshedpur, Jharkhand', latitude: 22.7958, longitude: 86.1854 },
       { name: 'Jubilee Park, Jamshedpur', display_name: 'Jubilee Park, Sakchi Boulevard, Jamshedpur, Jharkhand', latitude: 22.8120, longitude: 86.1969 },

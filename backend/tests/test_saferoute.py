@@ -404,4 +404,53 @@ def test_unmapped_corridor_honestly_reports_zero_cctv_without_simulation():
     assert "unmapped" in cctv_comp.description.lower()
 
 
+def test_nit_jamshedpur_and_jharkhand_geocoding():
+    """Verify forward geocoding precision for NIT Jamshedpur, Adityapur, Sakchi, and Bistupur."""
+    queries = [
+        "nit jamshedpur",
+        "nitjsr",
+        "adityapur",
+        "sakchi",
+        "bistupur",
+        "tatanagar station",
+    ]
+    for q in queries:
+        resp = client.get(f"/api/v1/routes/geocode?q={q}&limit=2")
+        assert resp.status_code == 200, f"Query '{q}' failed with status {resp.status_code}"
+        items = resp.json()
+        assert len(items) >= 1, f"Expected suggestions for '{q}', got 0"
+        top = items[0]
+        assert 22.70 <= top["latitude"] <= 22.90, f"Latitude {top['latitude']} out of Jamshedpur range for '{q}'"
+        assert 86.10 <= top["longitude"] <= 86.25, f"Longitude {top['longitude']} out of Jamshedpur range for '{q}'"
+
+
+def test_plan_routes_nit_jamshedpur_campus_to_bistupur():
+    """Verify route planning works accurately in Jamshedpur (NIT Jamshedpur to Bistupur Market)."""
+    payload = {
+        "origin_lat": 22.7765,
+        "origin_lon": 86.1438,
+        "origin_address": "NIT Jamshedpur Main Gate, Adityapur",
+        "destination_lat": 22.7958,
+        "destination_lon": 86.1854,
+        "destination_address": "Bistupur Market, Jamshedpur",
+        "travel_mode": "driving",
+        "leave_now": True,
+    }
+    response = client.post("/api/v1/routes/plan", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert len(data["routes"]) >= 1
+    assert data["origin_resolved"] is not None
+    assert data["destination_resolved"] is not None
+    selected = data["routes"][0]
+    assert 2.0 <= selected["distance_km"] <= 12.0
+    assert 2 <= selected["duration_minutes"] <= 60
+    assert len(selected["nearby_places"]) >= 1
+    # Check that verified CCTV surveillance along Adityapur-Bistupur corridor is detected
+    cctvs = [p for p in selected["nearby_places"] if p["category"] == "cctv"]
+    assert len(cctvs) >= 1
+
+
+
 

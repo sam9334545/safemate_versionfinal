@@ -848,6 +848,38 @@ SAMPLE_GEOCODE_FIXTURES: List[Dict[str, Any]] = [
         "place_type": "park",
     },
     {
+        "query_keys": ["nit jamshedpur", "nitjsr", "national institute of technology jamshedpur", "nit jamshedpur campus", "nit jamshedpur main gate"],
+        "display_name": "National Institute of Technology (NIT) Jamshedpur, Adityapur, Jamshedpur, Jharkhand 831014, India",
+        "name": "NIT Jamshedpur",
+        "lat": 22.7765,
+        "lon": 86.1438,
+        "place_type": "college",
+    },
+    {
+        "query_keys": ["nit jamshedpur library", "djac nit jamshedpur", "nit jamshedpur academic block"],
+        "display_name": "Central Library & Diamond Jubilee Academic Complex, NIT Jamshedpur, Jharkhand 831014, India",
+        "name": "NIT Jamshedpur Academic Complex",
+        "lat": 22.7775,
+        "lon": 86.1445,
+        "place_type": "college",
+    },
+    {
+        "query_keys": ["nit jamshedpur hostel", "hostel j nit jamshedpur", "rlb hostel nit jamshedpur", "mega hostel nit jamshedpur"],
+        "display_name": "Mega Hostel & Rani Laxmi Bai Hall, NIT Jamshedpur, Jharkhand 831014, India",
+        "name": "NIT Jamshedpur Hostels",
+        "lat": 22.7795,
+        "lon": 86.1420,
+        "place_type": "college",
+    },
+    {
+        "query_keys": ["adityapur", "adityapur toll bridge", "adityapur jamshedpur", "adityapur industrial area"],
+        "display_name": "Adityapur, Jamshedpur, Seraikela Kharsawan, Jharkhand 831013, India",
+        "name": "Adityapur, Jamshedpur",
+        "lat": 22.7845,
+        "lon": 86.1580,
+        "place_type": "suburb",
+    },
+    {
         "query_keys": ["tatanagar", "tatanagar junction", "jamshedpur station", "tatanagar railway station"],
         "display_name": "Tatanagar Junction Railway Station, Khasmahal, Jamshedpur, Jharkhand 831002, India",
         "name": "Tatanagar Junction, Jamshedpur",
@@ -912,6 +944,13 @@ INSTITUTION_ALIASES: Dict[str, str] = {
     "sakchi": "Sakchi, Jamshedpur",
     "sakchi market": "Sakchi, Jamshedpur",
     "bistupur": "Bistupur, Jamshedpur",
+    "nit jamshedpur": "National Institute of Technology, Jamshedpur",
+    "nitjsr": "National Institute of Technology, Jamshedpur",
+    "nit jamshedpur campus": "National Institute of Technology, Jamshedpur",
+    "nit jamshedpur main gate": "NIT Jamshedpur Main Gate, Adityapur",
+    "nit jamshedpur library": "Central Library, NIT Jamshedpur",
+    "adityapur": "Adityapur, Jamshedpur",
+    "adityapur toll bridge": "Adityapur Toll Bridge, Jamshedpur",
 }
 
 

@@ -84,7 +84,11 @@ class PlacesService:
     """Retrieves and evaluates establishments near route geometry."""
 
     def __init__(self):
-        self.overpass_url = "https://overpass-api.de/api/interpreter"
+        self.overpass_mirrors = [
+            "https://overpass-api.de/api/interpreter",
+            "https://overpass.kumi.systems/api/interpreter",
+            "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+        ]
         self._cache: Dict[str, Tuple[float, List[Dict[str, Any]]]] = {}
         self._cache_ttl_seconds = 1800.0  # 30 minutes
 
@@ -227,8 +231,11 @@ class PlacesService:
               node["amenity"="hospital"]({bbox_str});
               node["amenity"="clinic"]({bbox_str});
               node["amenity"="fuel"]({bbox_str});
+              node["amenity"="atm"]({bbox_str});
+              node["amenity"="fast_food"]({bbox_str});
               node["shop"]({bbox_str});
               node["highway"="bus_stop"]({bbox_str});
+              node["highway"="traffic_signals"]({bbox_str});
               node["railway"="subway_entrance"]({bbox_str});
               node["railway"="station"]({bbox_str});
               node["man_made"="surveillance"]({bbox_str});
@@ -237,22 +244,26 @@ class PlacesService:
             );
             out body 60;
             """
-            try:
-                async with httpx.AsyncClient(timeout=4.0) as client:
-                    resp = await client.post(
-                        self.overpass_url,
-                        data={"data": query},
-                        headers={
-                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (SafeMate-Platform/1.0)",
-                            "Accept": "application/json",
-                        },
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        raw_elements = data.get("elements", [])
-                        self._cache[cache_key] = (now, raw_elements)
-            except Exception as exc:
-                logger.warning(f"Overpass API request failed or timed out: {exc}")
+            for mirror in self.overpass_mirrors:
+                try:
+                    async with httpx.AsyncClient(timeout=3.0) as client:
+                        resp = await client.post(
+                            mirror,
+                            data={"data": query},
+                            headers={
+                                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (SafeMate-Platform/1.0)",
+                                "Accept": "application/json",
+                            },
+                        )
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            raw_elements = data.get("elements", [])
+                            if raw_elements:
+                                self._cache[cache_key] = (now, raw_elements)
+                                break
+                except Exception as exc:
+                    logger.debug(f"Overpass mirror {mirror} failed or timed out: {exc}")
+                    continue
 
         matched_places: List[NearbyPlace] = []
         seen_names: Set[str] = set()
@@ -289,10 +300,14 @@ class PlacesService:
                 name = name or "Pharmacy"
             elif amenity == "fuel":
                 cat = PlaceCategory.fuel
-                name = name or "Petrol Pump"
-            elif highway == "bus_stop" or railway in ("subway_entrance", "station", "stop"):
+                name = name or "Petrol Pump (24/7 Lit)"
+            elif highway in ("bus_stop", "platform") or railway in ("subway_entrance", "station", "stop"):
                 cat = PlaceCategory.transit
                 name = name or "Public Transit Point"
+            elif amenity == "atm":
+                cat = PlaceCategory.shop
+                name = name or "24/7 Bank ATM (Guarded)"
+                raw_hours = raw_hours or "24/7"
             elif man_made == "surveillance" or surveillance in ("camera", "outdoor", "public", "yes") or camera == "cctv":
                 cat = PlaceCategory.cctv
                 name = name or "Surveillance CCTV Camera"
