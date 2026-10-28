@@ -284,3 +284,51 @@ def test_pan_india_plan_routes_bengaluru():
     assert len(data["routes"]) >= 2
     assert data["routes"][0]["score"]["overall_night_activity_score"] is not None
 
+
+def test_nit_surathkal_and_karnataka_geocoding():
+    """Verify high-accuracy geocoding around NIT Surathkal, Mangaluru, and Karnataka."""
+    queries = [
+        "nit surathkal",
+        "nitk",
+        "nitk beach",
+        "surathkal lighthouse",
+        "surathkal railway station",
+        "mukka",
+        "hampankatta",
+        "tiger circle manipal",
+        "mysore palace",
+    ]
+    for q in queries:
+        resp = client.get(f"/api/v1/routes/geocode?q={q}&limit=2")
+        assert resp.status_code == 200, f"Query '{q}' failed with status {resp.status_code}"
+        items = resp.json()
+        assert len(items) >= 1, f"Expected suggestions for '{q}', got 0"
+        top = items[0]
+        assert 12.0 <= top["latitude"] <= 16.0, f"Latitude {top['latitude']} out of Karnataka range for '{q}'"
+        assert 74.0 <= top["longitude"] <= 78.0, f"Longitude {top['longitude']} out of Karnataka range for '{q}'"
+
+
+def test_plan_routes_nit_surathkal_campus_to_beach():
+    """Verify route planning works accurately in NIT Surathkal (NITK Main Gate to NITK Beach)."""
+    payload = {
+        "origin_lat": 13.0104,
+        "origin_lon": 74.7946,
+        "origin_address": "NITK Main Gate, Surathkal",
+        "destination_lat": 13.0116,
+        "destination_lon": 74.7865,
+        "destination_address": "NITK Beach, Surathkal",
+        "travel_mode": "walking",
+        "leave_now": True,
+    }
+    response = client.post("/api/v1/routes/plan", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert len(data["routes"]) >= 1
+    assert data["origin_resolved"] is not None
+    assert data["destination_resolved"] is not None
+    selected = data["routes"][0]
+    assert 0.5 <= selected["distance_km"] <= 3.0
+    assert 1 <= selected["duration_minutes"] <= 45
+    assert len(selected["nearby_places"]) >= 1
+

@@ -220,6 +220,210 @@ SAMPLE_GEOCODE_FIXTURES: List[Dict[str, Any]] = [
         "place_type": "suburb",
     },
 
+    # ------------------ NIT Surathkal, Mangaluru & Coastal Karnataka ------------------
+    {
+        "query_keys": ["nit surathkal", "nitk", "nitk surathkal", "national institute of technology karnataka", "nitk campus", "nit surathkal campus"],
+        "display_name": "National Institute of Technology Karnataka (NITK), NH 66, Srinivasnagar, Surathkal, Mangaluru, Dakshina Kannada, Karnataka 575025, India",
+        "name": "NIT Surathkal (NITK), Karnataka",
+        "lat": 13.0112,
+        "lon": 74.7961,
+        "place_type": "education",
+    },
+    {
+        "query_keys": ["nitk main gate", "nit surathkal main gate", "nitk gate", "nitk nh66"],
+        "display_name": "NITK Main Gate, National Highway 66, Surathkal, Mangaluru, Karnataka 575025, India",
+        "name": "NITK Main Gate, Surathkal",
+        "lat": 13.0104,
+        "lon": 74.7946,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["nitk beach", "surathkal beach", "nit surathkal beach", "sadashiva temple beach"],
+        "display_name": "NITK Beach & Surathkal Beach Promenade, Arabian Sea Coast, Surathkal, Mangaluru, Karnataka 575025, India",
+        "name": "NITK Beach (Surathkal Beach)",
+        "lat": 13.0116,
+        "lon": 74.7865,
+        "place_type": "leisure",
+    },
+    {
+        "query_keys": ["surathkal lighthouse", "nitk lighthouse", "lighthouse surathkal"],
+        "display_name": "Surathkal Lighthouse, Lighthouse Road, Sadashiva Gadi, Surathkal, Mangaluru, Karnataka 575014, India",
+        "name": "Surathkal Lighthouse, Mangaluru",
+        "lat": 13.0048,
+        "lon": 74.7897,
+        "place_type": "monument",
+    },
+    {
+        "query_keys": ["surathkal", "surathkal town", "surathkal junction", "surathkal market"],
+        "display_name": "Surathkal Town Circle, NH 66 Junction, Mangaluru Taluk, Dakshina Kannada, Karnataka 575014, India",
+        "name": "Surathkal Town, Mangaluru",
+        "lat": 13.0012,
+        "lon": 74.8015,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["surathkal railway station", "surathkal station", "krishnapura station"],
+        "display_name": "Surathkal Railway Station (SL), Konkan Railway, Krishnapura, Surathkal, Mangaluru, Karnataka 575014, India",
+        "name": "Surathkal Railway Station",
+        "lat": 12.9902,
+        "lon": 74.8054,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["mukka", "mukka beach", "srinivas hospital mukka", "mukka junction", "srinivas medical college"],
+        "display_name": "Mukka, Srinivas Medical Institute & Hospital, NH 66, Mangaluru, Karnataka 575021, India",
+        "name": "Mukka (Srinivas Hospital), Mangaluru",
+        "lat": 13.0224,
+        "lon": 74.7900,
+        "place_type": "suburb",
+    },
+    {
+        "query_keys": ["panambur", "panambur beach", "new mangalore port", "nmpt"],
+        "display_name": "Panambur Beach, Panambur Port Corridor, Mangaluru, Dakshina Kannada, Karnataka 575010, India",
+        "name": "Panambur Beach, Mangaluru",
+        "lat": 12.9373,
+        "lon": 74.8042,
+        "place_type": "leisure",
+    },
+    {
+        "query_keys": ["baikampady", "baikampady industrial area"],
+        "display_name": "Baikampady Industrial Area, NH 66, Mangaluru, Karnataka 575011, India",
+        "name": "Baikampady, Mangaluru",
+        "lat": 12.9692,
+        "lon": 74.8118,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["tannirbhavi", "tannirbhavi beach", "tannirbhavi tree park"],
+        "display_name": "Tannirbhavi Beach & Marine Tree Park, Bengre, Mangaluru, Karnataka 575010, India",
+        "name": "Tannirbhavi Beach, Mangaluru",
+        "lat": 12.8943,
+        "lon": 74.8183,
+        "place_type": "leisure",
+    },
+    {
+        "query_keys": ["hampankatta", "hampankatta mangalore", "hampankatta bus stop", "light house hill road"],
+        "display_name": "Hampankatta Commercial Centre, Light House Hill Road, Mangaluru, Karnataka 575001, India",
+        "name": "Hampankatta, Mangaluru",
+        "lat": 12.8691,
+        "lon": 74.8434,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["kadri", "kadri park", "kadri temple", "kadri mangalore", "kadri manjunatha"],
+        "display_name": "Kadri Park & Temple Quarter, Nanthoor-Kadri Road, Mangaluru, Karnataka 575002, India",
+        "name": "Kadri Park, Mangaluru",
+        "lat": 12.8891,
+        "lon": 74.8562,
+        "place_type": "park",
+    },
+    {
+        "query_keys": ["kankanady", "kankanady mangalore", "father muller hospital"],
+        "display_name": "Kankanady Junction & Medical Hub, Mangaluru, Karnataka 575002, India",
+        "name": "Kankanady, Mangaluru",
+        "lat": 12.8646,
+        "lon": 74.8600,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["bejai", "bejai ksrtc", "mangalore bus stand", "bejai bus stand", "ksrtc mangalore"],
+        "display_name": "KSRTC Central Bus Stand, Bejai Main Road, Mangaluru, Karnataka 575004, India",
+        "name": "Bejai KSRTC Bus Terminal, Mangaluru",
+        "lat": 12.8845,
+        "lon": 74.8492,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["mangalore central", "mangalore central railway station", "maq station", "state bank mangalore"],
+        "display_name": "Mangaluru Central Railway Station (MAQ), Attavar, Mangaluru, Karnataka 575001, India",
+        "name": "Mangaluru Central Railway Station",
+        "lat": 12.8647,
+        "lon": 74.8436,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["tiger circle", "tiger circle manipal", "manipal town"],
+        "display_name": "Tiger Circle, Malpe-Manipal Road, Indrali, Manipal, Udupi District, Karnataka 576104, India",
+        "name": "Tiger Circle, Manipal",
+        "lat": 13.3524,
+        "lon": 74.7873,
+        "place_type": "commercial",
+    },
+    {
+        "query_keys": ["mit manipal", "manipal institute of technology", "mit campus manipal"],
+        "display_name": "Manipal Institute of Technology (MIT), Visvesvaraya Road, Manipal, Karnataka 576104, India",
+        "name": "MIT Manipal, Karnataka",
+        "lat": 13.3467,
+        "lon": 74.7943,
+        "place_type": "education",
+    },
+    {
+        "query_keys": ["kmc manipal", "kasturba medical college", "kmc hospital manipal"],
+        "display_name": "Kasturba Medical College & Hospital (KMC), Tiger Circle Road, Manipal, Karnataka 576104, India",
+        "name": "KMC Hospital, Manipal",
+        "lat": 13.3533,
+        "lon": 74.7845,
+        "place_type": "hospital",
+    },
+    {
+        "query_keys": ["udupi", "udupi krishna temple", "sri krishna matha udupi", "car street udupi"],
+        "display_name": "Sri Krishna Matha Temple, Car Street, Udupi, Karnataka 576101, India",
+        "name": "Sri Krishna Matha, Udupi",
+        "lat": 13.3409,
+        "lon": 74.7516,
+        "place_type": "monument",
+    },
+    {
+        "query_keys": ["malpe", "malpe beach", "malpe sea walk", "st marys island"],
+        "display_name": "Malpe Beach & Sea Walk Promenade, Malpe, Udupi, Karnataka 576108, India",
+        "name": "Malpe Beach, Udupi",
+        "lat": 13.3620,
+        "lon": 74.6979,
+        "place_type": "leisure",
+    },
+
+    # ------------------ Mysuru & Greater Karnataka ------------------
+    {
+        "query_keys": ["mysore palace", "mysuru palace", "ambavilas palace mysore"],
+        "display_name": "Mysore Palace (Amba Vilas), Sayyaji Rao Road, Agrahara, Chamrajpura, Mysuru, Karnataka 570001, India",
+        "name": "Mysore Palace, Mysuru",
+        "lat": 12.3052,
+        "lon": 76.6554,
+        "place_type": "monument",
+    },
+    {
+        "query_keys": ["chamundi hill", "chamundeshwari temple", "chamundi hills mysore"],
+        "display_name": "Chamundi Hill, Chamundeshwari Temple Road, Mysuru, Karnataka 570010, India",
+        "name": "Chamundi Hill, Mysuru",
+        "lat": 12.2944,
+        "lon": 76.6821,
+        "place_type": "monument",
+    },
+    {
+        "query_keys": ["hubli", "hubballi", "chennamma circle", "cbt hubli", "rani chennamma circle hubli"],
+        "display_name": "Rani Chennamma Circle & Central Bus Terminus (CBT), Kamaripet, Hubballi, Karnataka 580020, India",
+        "name": "Chennamma Circle, Hubballi",
+        "lat": 15.3503,
+        "lon": 75.1376,
+        "place_type": "transit",
+    },
+    {
+        "query_keys": ["vidyanagar hubli", "bvb hubli", "kle technological university", "bvb engineering college"],
+        "display_name": "KLE Technological University (BVB College), Vidyanagar, Hubballi, Karnataka 580031, India",
+        "name": "KLE Tech (BVB), Hubballi",
+        "lat": 15.3725,
+        "lon": 75.1234,
+        "place_type": "education",
+    },
+    {
+        "query_keys": ["belgaum", "belagavi", "tilakwadi belgaum", "camp belgaum"],
+        "display_name": "Tilakwadi / Camp Area, Khanapur Road, Belagavi, Karnataka 590006, India",
+        "name": "Tilakwadi, Belagavi",
+        "lat": 15.8497,
+        "lon": 74.4977,
+        "place_type": "commercial",
+    },
+
     # ------------------ Hyderabad ------------------
     {
         "query_keys": ["banjara hills", "road no 1 banjara hills", "road no 12 banjara hills"],
@@ -681,6 +885,35 @@ SAMPLE_GEOCODE_FIXTURES: List[Dict[str, Any]] = [
     },
 ]
 
+# Educational, civic, and regional place alias map to ensure 100% precision with OSM Nominatim
+INSTITUTION_ALIASES: Dict[str, str] = {
+    "nit surathkal": "National Institute of Technology Karnataka, Surathkal",
+    "nitk": "National Institute of Technology Karnataka, Surathkal",
+    "nitk surathkal": "National Institute of Technology Karnataka, Surathkal",
+    "nit surathkal campus": "National Institute of Technology Karnataka, Surathkal",
+    "nitk campus": "National Institute of Technology Karnataka, Surathkal",
+    "nitk beach": "Surathkal Beach, Mangaluru",
+    "nit surathkal beach": "Surathkal Beach, Mangaluru",
+    "nitk lighthouse": "Surathkal Lighthouse, Mangaluru",
+    "surathkal lighthouse": "Surathkal Lighthouse, Mangaluru",
+    "nitk main gate": "NITK Main Gate, Surathkal, Mangaluru",
+    "surathkal station": "Surathkal Railway Station, Mangaluru",
+    "surathkal railway station": "Surathkal Railway Station, Mangaluru",
+    "srinivas hospital mukka": "Srinivas Hospital, Mukka, Mangaluru",
+    "mit manipal": "Manipal Institute of Technology, Manipal",
+    "kmc manipal": "Kasturba Medical College, Manipal",
+    "tiger circle": "Tiger Circle, Manipal",
+    "tiger circle manipal": "Tiger Circle, Manipal",
+    "iisc bangalore": "Indian Institute of Science, Bengaluru",
+    "iisc": "Indian Institute of Science, Bengaluru",
+    "mysore palace": "Mysore Palace, Mysuru",
+    "chamundi hill": "Chamundi Hill, Mysuru",
+    "bvb hubli": "KLE Technological University, Hubballi",
+    "sakchi": "Sakchi, Jamshedpur",
+    "sakchi market": "Sakchi, Jamshedpur",
+    "bistupur": "Bistupur, Jamshedpur",
+}
+
 
 class GeocodingService:
     """Provides forward and reverse geocoding across India with caching, rate courtesy, and multi-tier fallbacks."""
@@ -798,13 +1031,16 @@ class GeocodingService:
             "Referer": "https://nominatim.openstreetmap.org/",
         }
 
+        # Check institution / colloquial query aliases (e.g. "nit surathkal" -> "National Institute of Technology Karnataka, Surathkal")
+        search_q = INSTITUTION_ALIASES.get(clean_q.lower(), clean_q)
+
         # 3. Query Nominatim with India country priority
         try:
             await self._rate_limit_wait()
             async with httpx.AsyncClient(timeout=6.5) as client:
-                # Primary attempt: Restrict search to India
+                # Primary attempt: Restrict search to India using expanded search query
                 params = {
-                    "q": clean_q,
+                    "q": search_q,
                     "countrycodes": "in",
                     "format": "json",
                     "addressdetails": "1",
@@ -813,24 +1049,31 @@ class GeocodingService:
                 resp = await client.get(self.nominatim_url, headers=headers, params=params)
                 raw_data = resp.json() if resp.status_code == 200 else []
 
-                # Fallback attempt 1: If 0 results and multi-word query, strip common location suffixes (e.g. "sakchi market" -> "sakchi")
+                # Fallback attempt 1: If 0 results and multi-word query, strip common location suffixes
                 if not raw_data:
                     cleaned_suffix = re.sub(
                         r"\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b",
                         "",
-                        clean_q,
+                        search_q,
                         flags=re.IGNORECASE
                     ).strip()
-                    if cleaned_suffix and cleaned_suffix.lower() != clean_q.lower() and len(cleaned_suffix) >= 3:
+                    if cleaned_suffix and cleaned_suffix.lower() != search_q.lower() and len(cleaned_suffix) >= 3:
                         params["q"] = cleaned_suffix
                         resp_suffix = await client.get(self.nominatim_url, headers=headers, params=params)
                         if resp_suffix.status_code == 200 and resp_suffix.json():
                             raw_data = resp_suffix.json()
 
-                # Fallback attempt 2: If still 0 results, try with ", India" suffix without countrycodes restriction
+                # Fallback attempt 2: If alias was used and returned 0, try original clean_q
+                if not raw_data and search_q != clean_q:
+                    params["q"] = clean_q
+                    resp_orig = await client.get(self.nominatim_url, headers=headers, params=params)
+                    if resp_orig.status_code == 200 and resp_orig.json():
+                        raw_data = resp_orig.json()
+
+                # Fallback attempt 3: If still 0 results, try with ", India" suffix without countrycodes restriction
                 if not raw_data:
                     params.pop("countrycodes", None)
-                    search_query = clean_q if "india" in clean_q.lower() else f"{clean_q}, India"
+                    search_query = search_q if "india" in search_q.lower() else f"{search_q}, India"
                     params["q"] = search_query
                     resp_fallback = await client.get(self.nominatim_url, headers=headers, params=params)
                     if resp_fallback.status_code == 200 and resp_fallback.json():

@@ -141,16 +141,16 @@ class PlacesService:
         n_points = len(polyline)
         step = max(1, n_points // 8)
 
-        # Diverse categories along the corridor (generic across Indian cities & towns)
+        # Diverse categories along the corridor (universal across Indian cities, campuses & coastal regions)
         category_cycle = [
-            (PlaceCategory.pharmacy, "Apollo 24/7 Pharmacy", "24/7", 35.0),
-            (PlaceCategory.shop, "24-Seven Convenience Store", "24/7", 45.0),
-            (PlaceCategory.transit, "Metro / Transit Station Gate", "06:00-23:30", 50.0),
+            (PlaceCategory.pharmacy, "Apollo / MedPlus 24/7 Pharmacy", "24/7", 35.0),
+            (PlaceCategory.shop, "Nandini Milk & Daily Convenience", "06:30-22:30", 40.0),
+            (PlaceCategory.transit, "KSRTC / City Bus Transit Shelter", "05:30-23:30", 45.0),
             (PlaceCategory.police, "Police Assistance Booth / Chowki", "24/7", 60.0),
-            (PlaceCategory.fuel, "Indian Oil / BPCL Petrol Station", "24/7", 40.0),
-            (PlaceCategory.hospital, "Emergency Medical Care / Clinic", "24/7", 90.0),
-            (PlaceCategory.shop, "Daily Needs Supermarket", "07:00-22:00", 65.0),
-            (PlaceCategory.transit, "City Bus Transit Shelter", None, 30.0),
+            (PlaceCategory.fuel, "Indian Oil / BPCL 24/7 Petrol Station", "24/7", 40.0),
+            (PlaceCategory.hospital, "Emergency Medical Care / Clinic", "24/7", 85.0),
+            (PlaceCategory.shop, "Daily Provisions & Grocery Store", "07:00-22:00", 55.0),
+            (PlaceCategory.transit, "Railway / Campus Transit Point", "05:00-23:59", 50.0),
         ]
 
         idx = 0

@@ -4746,6 +4746,33 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       { name: 'Whitefield, Bengaluru', display_name: 'ITPL Main Road, Whitefield, Bengaluru', latitude: 12.9698, longitude: 77.7499 },
       { name: 'Electronic City, Bengaluru', display_name: 'Electronic City Phase 1, Bengaluru', latitude: 12.8452, longitude: 77.6602 },
       { name: 'Jayanagar, Bengaluru', display_name: 'Jayanagar 4th Block, Bengaluru, Karnataka', latitude: 12.9299, longitude: 77.5833 },
+      // Coastal Karnataka (NIT Surathkal, Mangaluru, Udupi, Manipal)
+      { name: 'NIT Surathkal (NITK), Karnataka', display_name: 'National Institute of Technology Karnataka (NITK), NH 66, Surathkal, Mangaluru', latitude: 13.0112, longitude: 74.7961 },
+      { name: 'NITK Main Gate, Surathkal', display_name: 'NITK Main Gate, NH 66, Surathkal, Mangaluru, Karnataka', latitude: 13.0104, longitude: 74.7946 },
+      { name: 'NITK Beach (Surathkal Beach)', display_name: 'NITK Beach Promenade, Arabian Sea Coast, Surathkal, Mangaluru', latitude: 13.0116, longitude: 74.7865 },
+      { name: 'Surathkal Lighthouse, Mangaluru', display_name: 'Surathkal Lighthouse, Lighthouse Road, Surathkal, Mangaluru', latitude: 13.0048, longitude: 74.7897 },
+      { name: 'Surathkal Town, Mangaluru', display_name: 'Surathkal Town Circle, NH 66, Mangaluru, Karnataka', latitude: 13.0012, longitude: 74.8015 },
+      { name: 'Surathkal Railway Station', display_name: 'Surathkal Railway Station (SL), Konkan Railway, Surathkal, Mangaluru', latitude: 12.9902, longitude: 74.8054 },
+      { name: 'Mukka (Srinivas Hospital), Mangaluru', display_name: 'Mukka, Srinivas Medical Institute & Hospital, NH 66, Mangaluru', latitude: 13.0224, longitude: 74.7900 },
+      { name: 'Panambur Beach, Mangaluru', display_name: 'Panambur Beach & Port Corridor, Mangaluru, Karnataka', latitude: 12.9373, longitude: 74.8042 },
+      { name: 'Baikampady, Mangaluru', display_name: 'Baikampady Industrial Estate, NH 66, Mangaluru, Karnataka', latitude: 12.9692, longitude: 74.8118 },
+      { name: 'Tannirbhavi Beach, Mangaluru', display_name: 'Tannirbhavi Beach & Marine Tree Park, Mangaluru, Karnataka', latitude: 12.8943, longitude: 74.8183 },
+      { name: 'Hampankatta, Mangaluru', display_name: 'Hampankatta Commercial Centre, Light House Hill Road, Mangaluru', latitude: 12.8691, longitude: 74.8434 },
+      { name: 'Kadri Park, Mangaluru', display_name: 'Kadri Park & Temple, Nanthoor-Kadri Road, Mangaluru', latitude: 12.8891, longitude: 74.8562 },
+      { name: 'Kankanady, Mangaluru', display_name: 'Kankanady Junction & Father Muller Hospital, Mangaluru', latitude: 12.8646, longitude: 74.8600 },
+      { name: 'Bejai KSRTC Bus Terminal, Mangaluru', display_name: 'KSRTC Central Bus Stand, Bejai, Mangaluru, Karnataka', latitude: 12.8845, longitude: 74.8492 },
+      { name: 'Mangaluru Central Railway Station', display_name: 'Mangaluru Central (MAQ), Attavar, Mangaluru, Karnataka', latitude: 12.8647, longitude: 74.8436 },
+      { name: 'Tiger Circle, Manipal', display_name: 'Tiger Circle, Malpe-Manipal Road, Manipal, Udupi, Karnataka', latitude: 13.3524, longitude: 74.7873 },
+      { name: 'MIT Manipal, Karnataka', display_name: 'Manipal Institute of Technology (MIT), Visvesvaraya Road, Manipal', latitude: 13.3467, longitude: 74.7943 },
+      { name: 'KMC Hospital, Manipal', display_name: 'Kasturba Medical College & Hospital (KMC), Tiger Circle, Manipal', latitude: 13.3533, longitude: 74.7845 },
+      { name: 'Sri Krishna Matha, Udupi', display_name: 'Sri Krishna Matha Temple, Car Street, Udupi, Karnataka', latitude: 13.3409, longitude: 74.7516 },
+      { name: 'Malpe Beach, Udupi', display_name: 'Malpe Beach & Sea Walk Promenade, Malpe, Udupi, Karnataka', latitude: 13.3620, longitude: 74.6979 },
+      // Mysuru & Greater Karnataka
+      { name: 'Mysore Palace, Mysuru', display_name: 'Mysore Palace (Amba Vilas), Sayyaji Rao Road, Mysuru, Karnataka', latitude: 12.3052, longitude: 76.6554 },
+      { name: 'Chamundi Hill, Mysuru', display_name: 'Chamundi Hill, Chamundeshwari Temple Road, Mysuru, Karnataka', latitude: 12.2944, longitude: 76.6821 },
+      { name: 'Chennamma Circle, Hubballi', display_name: 'Rani Chennamma Circle & CBT, Hubballi, Karnataka', latitude: 15.3503, longitude: 75.1376 },
+      { name: 'KLE Tech (BVB), Hubballi', display_name: 'KLE Technological University (BVB College), Vidyanagar, Hubballi', latitude: 15.3725, longitude: 75.1234 },
+      { name: 'Tilakwadi, Belagavi', display_name: 'Tilakwadi / Camp Area, Khanapur Road, Belagavi, Karnataka', latitude: 15.8497, longitude: 74.4977 },
       // Hyderabad
       { name: 'Banjara Hills, Hyderabad', display_name: 'Banjara Hills Road No 1/12, Hyderabad, Telangana', latitude: 17.4177, longitude: 78.4399 },
       { name: 'Jubilee Hills, Hyderabad', display_name: 'Jubilee Hills Road 36, Hyderabad, Telangana', latitude: 17.4319, longitude: 78.4073 },
@@ -4852,16 +4879,32 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           // Local pan-India landmarks catalog fallback
           if (items.length === 0) {
             const qLower = query.toLowerCase();
-            items = PAN_INDIA_LANDMARKS.filter(lm =>
-              lm.name.toLowerCase().includes(qLower) || lm.display_name.toLowerCase().includes(qLower)
-            );
+            const aliasMap = {
+              'nit surathkal': 'nitk',
+              'nitk surathkal': 'nitk',
+              'nit surathkal campus': 'nitk',
+              'nitk beach': 'surathkal beach',
+              'nit surathkal beach': 'surathkal beach',
+              'mit manipal': 'manipal institute of technology',
+              'kmc manipal': 'kasturba medical college',
+              'tiger circle': 'tiger circle manipal',
+              'mysore palace': 'mysuru palace',
+              'chamundi hill': 'chamundeshwari',
+              'bvb hubli': 'kle tech',
+            };
+            const alias = aliasMap[qLower];
+            items = PAN_INDIA_LANDMARKS.filter(lm => {
+              const n = lm.name.toLowerCase();
+              const d = lm.display_name.toLowerCase();
+              return n.includes(qLower) || d.includes(qLower) || (alias && (n.includes(alias) || d.includes(alias)));
+            });
           }
 
           if (!Array.isArray(items) || items.length === 0) {
             suggestionsEl.innerHTML = `
               <div class="saferoute-suggestion-empty">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>No Indian locations found for "${query.replace(/"/g, '&quot;')}". Try adding city name (e.g. "Sakchi, Jamshedpur").</span>
+                <span>No Indian locations found for "${query.replace(/"/g, '&quot;')}". Try adding city name (e.g. "NIT Surathkal" or "Hampankatta, Mangaluru").</span>
               </div>
             `;
             suggestionsEl.style.display = 'block';
@@ -4875,7 +4918,13 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
             const name = item.name || rawDisp.split(',')[0].trim();
             const subtitle = rawDisp && rawDisp !== name ? rawDisp : '';
             let selectionValue = name;
-            if (!selectionValue.toLowerCase().includes('jamshedpur') && rawDisp.toLowerCase().includes('jamshedpur')) {
+            if (!selectionValue.toLowerCase().includes('surathkal') && rawDisp.toLowerCase().includes('surathkal')) {
+              selectionValue = `${name}, Surathkal`;
+            } else if (!selectionValue.toLowerCase().includes('mangaluru') && (rawDisp.toLowerCase().includes('mangaluru') || rawDisp.toLowerCase().includes('mangalore'))) {
+              selectionValue = `${name}, Mangaluru`;
+            } else if (!selectionValue.toLowerCase().includes('manipal') && rawDisp.toLowerCase().includes('manipal')) {
+              selectionValue = `${name}, Manipal`;
+            } else if (!selectionValue.toLowerCase().includes('jamshedpur') && rawDisp.toLowerCase().includes('jamshedpur')) {
               selectionValue = `${name}, Jamshedpur`;
             } else if (subtitle && !selectionValue.includes(',')) {
               const parts = rawDisp.split(',').map(s => s.trim()).filter(Boolean);
@@ -5456,14 +5505,27 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
             return { lat: latVal, lon: lonVal, name: raw };
           }
 
-          // 3. Match against pan-India landmarks catalog
+          // 3. Match against pan-India landmarks catalog (with alias expansion)
           const qLower = raw.toLowerCase();
-          const localMatch = PAN_INDIA_LANDMARKS.find(lm =>
-            lm.name.toLowerCase() === qLower ||
-            lm.display_name.toLowerCase().includes(qLower) ||
-            qLower.includes(lm.name.toLowerCase()) ||
-            lm.name.toLowerCase().includes(qLower)
-          );
+          const aliasMap = {
+            'nit surathkal': 'nitk',
+            'nitk surathkal': 'nitk',
+            'nit surathkal campus': 'nitk',
+            'nitk beach': 'surathkal beach',
+            'nit surathkal beach': 'surathkal beach',
+            'mit manipal': 'manipal institute of technology',
+            'kmc manipal': 'kasturba medical college',
+            'tiger circle': 'tiger circle manipal',
+            'mysore palace': 'mysuru palace',
+            'chamundi hill': 'chamundeshwari',
+            'bvb hubli': 'kle tech',
+          };
+          const alias = aliasMap[qLower];
+          const localMatch = PAN_INDIA_LANDMARKS.find(lm => {
+            const n = lm.name.toLowerCase();
+            const d = lm.display_name.toLowerCase();
+            return n === qLower || d.includes(qLower) || qLower.includes(n) || (alias && (n.includes(alias) || d.includes(alias)));
+          });
           if (localMatch) {
             return { lat: localMatch.latitude, lon: localMatch.longitude, name: localMatch.name };
           }
