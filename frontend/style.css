@@ -4367,6 +4367,10 @@ body {
   position: relative;
   border: 1px solid #e2e8f0;
   box-sizing: border-box;
+  max-height: 90vh;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .auth-modal-header {
@@ -6457,6 +6461,11 @@ body.modal-open .emergency-quick-dock,
     padding: 20px 16px !important;
     margin: auto !important;
     border-radius: 12px !important;
+    max-height: 88vh !important;
+    max-height: 88dvh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
   }
 
   .fast-access-buttons {
