@@ -10,13 +10,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 import uuid
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models import EvidenceRecord, UserModel
-from app.utils.auth import get_current_user
+from app.utils.auth import decode_access_token, get_current_user, get_optional_current_user
 from app.schemas.evidence import (
     EvidenceDeleteResponse,
     EvidenceRecordDetail,
@@ -274,9 +274,25 @@ async def verify_evidence_integrity(
 async def download_evidence(
     evidence_id: str,
     db: Session = Depends(get_db),
-    current_user: UserModel = Depends(get_current_user),
+    token: Optional[str] = Query(None, description='Optional JWT authorization token via query string'),
+    current_user: Optional[UserModel] = Depends(get_optional_current_user),
 ):
     """Download stored evidence file binary, verifying record ownership."""
+    if not current_user and token:
+        try:
+            payload = decode_access_token(token)
+            email = payload.get('sub')
+            if email:
+                current_user = db.query(UserModel).filter(UserModel.email == email).first()
+        except Exception:
+            pass
+
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Authentication required to export evidence file. Please provide Bearer token or token query parameter.',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
     entry = db.query(EvidenceRecord).filter(EvidenceRecord.evidence_id == evidence_id).first()
     if not entry:
         raise HTTPException(

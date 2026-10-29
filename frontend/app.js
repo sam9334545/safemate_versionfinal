@@ -2367,7 +2367,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <strong style="color:#0B132B;">${filename}</strong><br>
               <span style="color:#64748b; font-size:0.74rem;">Hash: ${data.sha256_checksum.substring(0, 18)}... • ${new Date().toLocaleTimeString()}</span>
             </div>
-            <a href="${API_BASE_URL}/api/v1/evidence/download/${data.evidence_id}" target="_blank" class="btn-outline" style="padding:5px 10px; font-size:11px; text-decoration:none; background:#1C2541; color:#ffffff; font-weight:700;">
+            <a href="${API_BASE_URL}/api/v1/evidence/download/${data.evidence_id}${token ? "?token=" + encodeURIComponent(token) : ""}" target="_blank" class="btn-outline" style="padding:5px 10px; font-size:11px; text-decoration:none; background:#1C2541; color:#ffffff; font-weight:700;">
               Export
             </a>
           `;
