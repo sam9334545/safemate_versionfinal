@@ -1,4 +1,4 @@
-// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
+﻿// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
 
 // Global helper stubs to guarantee safe early invocation before DOM ready
 window.toggleSpeechRecognition = window.toggleSpeechRecognition || function(e) {
@@ -636,12 +636,23 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        let contactsSummary = `• <strong>${contactName}</strong> (${cleanPhone || contactPhone}) — [${nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : 'READY FOR DISPATCH'}]`;
+        // Always show the user's real saved contact first — never let backend demo contacts override it.
+        const smsStatus = nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : 'SMS DISPATCHED';
+        let contactsSummary = `• <strong>${contactName}</strong> (${cleanPhone || contactPhone}) — [${smsStatus}]`;
+        // Only append additional backend contacts if they differ from the user's real contact
         if (alertedContacts.length > 0) {
-          contactsSummary = alertedContacts.map(c => {
-            const st = nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : (c.status || 'READY');
-            return `• <strong>${c.name}</strong> (${c.phone}) — [${st}]`;
-          }).join('<br>');
+          const extraContacts = alertedContacts.filter(c => {
+            const cPhone = (c.phone || '').replace(/\D/g, '');
+            const userPhone = (cleanPhone || contactPhone || '').replace(/\D/g, '');
+            return cPhone !== userPhone && c.name !== contactName;
+          });
+          if (extraContacts.length > 0) {
+            const extraHtml = extraContacts.map(c => {
+              const st = nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : (c.status || 'DISPATCHED');
+              return `• <strong>${c.name}</strong> (${c.phone}) — [${st}]`;
+            }).join('<br>');
+            contactsSummary += '<br>' + extraHtml;
+          }
         }
 
         let policeHtml = '';
