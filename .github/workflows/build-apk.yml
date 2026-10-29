@@ -29,8 +29,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # GitHub Actions ubuntu-latest already includes Android SDK in $ANDROID_HOME.
+      # We simply accept the licenses directly without the broken third-party action.
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Install Frontend Dependencies
         run: |
@@ -52,15 +55,14 @@ jobs:
           cd frontend/android
           chmod +x gradlew
 
-      - name: Build Debug APK
+      - name: Build Debug APK with Gradle
         run: |
           cd frontend/android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SafeMate-Emergency-debug.apk
+          name: SafeMate-Emergency-debug
           path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-
