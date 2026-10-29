@@ -217,13 +217,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (state.accessMode === 'authenticated') {
       if (judgeDemoBanner) judgeDemoBanner.style.display = 'none';
       const userEmail = (state.user && state.user.email) ? state.user.email : 'Personal Account';
-      const displayEmail = userEmail.length > 20 ? userEmail.substring(0, 18) + '...' : userEmail;
+      const shortUser = userEmail.includes('@') ? userEmail.split('@')[0] : userEmail;
+      const displayEmail = shortUser.length > 9 ? shortUser.substring(0, 8) + '..' : shortUser;
       navAccessGroup.innerHTML = `
         <span class="access-mode-pill authenticated" title="Authenticated personal account: ${userEmail}">
-          ${displayEmail}
+          <span class="auth-dot">●</span>
+          <span class="auth-email-full">${userEmail.length > 18 ? userEmail.substring(0, 16) + ".." : userEmail}</span>
+          <span class="auth-email-short">${displayEmail}</span>
         </span>
         <button type="button" class="btn-nav-auth" id="btn-navbar-logout" title="Sign out of your account">
-          Sign Out
+          <span class="nav-label-desktop">Sign Out</span>
+          <span class="nav-label-mobile">⏻</span>
         </button>
       `;
       const logoutBtn = document.getElementById('btn-navbar-logout');

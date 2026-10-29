@@ -370,10 +370,37 @@ body {
     height: 16px;
   }
   .nav-actions {
+    display: flex;
+    align-items: center;
     gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+  .nav-actions::-webkit-scrollbar {
+    display: none;
   }
   .nav-access-group {
+    display: flex;
+    align-items: center;
     gap: 6px;
+    flex-shrink: 0;
+  }
+  .auth-email-full {
+    display: none !important;
+  }
+  .auth-email-short {
+    display: inline !important;
+  }
+  .access-mode-pill {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
   }
   .btn-nav-demo-highlight {
     padding: 7px 10px;
@@ -393,10 +420,10 @@ body {
   .nav-label-mobile {
     display: inline !important;
   }
-  .btn-panic-text,
   .kbd-hint {
     display: none !important;
   }
+  /* .btn-panic-text (Disguise label) is intentionally visible on mobile */
   .btn-panic {
     padding: 7px 10px;
   }
@@ -419,8 +446,23 @@ body {
     width: 28px;
     height: 28px;
   }
-  .nav-label-saferoute {
+  /* Horizontal scroll on mobile nav — all buttons accessible by swiping */
+  .nav-actions {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding-bottom: 2px;
+  }
+  .nav-actions::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide Guest Mode button to save space; Demo Mode is enough */
+  .btn-nav-guest {
     display: none !important;
+  }
+  .nav-label-saferoute {
+    display: inline !important; /* keep SafeRoute label on mobile */
   }
   .btn-nav-saferoute {
     padding: 6px 8px;
@@ -448,14 +490,16 @@ body {
     gap: 4px;
   }
   .btn-nav-auth {
-    display: none !important;
+    padding: 4px 6px;
+    font-size: 0.68rem;
   }
   .btn-nav-saferoute {
-    display: none !important;
+    padding: 4px 6px;
+    font-size: 0.68rem;
   }
   .btn-nav-demo-highlight {
-    padding: 5px 8px;
-    font-size: 0.72rem;
+    padding: 4px 6px;
+    font-size: 0.68rem;
   }
   .btn-emergency-pill {
     padding: 5px 8px;
@@ -4265,6 +4309,19 @@ body {
   background: #ecfdf5;
   color: #065f46;
   border: 1px solid #34d399;
+}
+
+.auth-dot {
+  font-size: 0.65rem;
+  color: #10b981;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.auth-email-full {
+  display: inline;
+}
+.auth-email-short {
+  display: none;
 }
 
 /* Floating Judge Demo Mode Notice Banner */
