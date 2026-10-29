@@ -530,7 +530,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // NON-NEGOTIABLE SAFETY ISOLATION IN DEMO MODE
         if (window.SafeMateAuth && window.SafeMateAuth.isDemoMode()) {
-          sosStatusBox.innerHTML = `
+          let policeHtml = '';
+        if (nearestPolice) {
+          policeHtml = `
+            <div style="background:#eff6ff; border:1.5px solid #93c5fd; padding:10px 12px; margin-bottom:10px; border-radius:3px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="color:#1e40af; font-weight:800; font-size:0.86rem; text-transform:uppercase; letter-spacing:0.02em;">
+                  🛡️ Nearest Police Assistance (${nearestPolice.distance_text})
+                </span>
+                <span style="background:#1d4ed8; color:#fff; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:3px;">
+                  112 Active
+                </span>
+              </div>
+              <div style="font-size:0.80rem; color:#1e3a8a; line-height:1.4; margin-bottom:6px;">
+                <strong>${nearestPolice.name}</strong><br>
+                <span style="color:#475569;">${nearestPolice.address || 'Universal National Police & Women Safety Network'}</span>
+              </div>
+              <a href="tel:112" class="btn-primary" style="display:block; text-align:center; padding:8px 12px; font-size:12px; font-weight:800; background:#1d4ed8; border-color:#1d4ed8; text-decoration:none; text-transform:uppercase;">
+                Dial 112 Police Now
+              </a>
+            </div>
+          `;
+        }
+
+        sosStatusBox.innerHTML = `
             <div style="color:#d97706; font-weight:800; font-size:0.95rem; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; gap:8px;">
               <span>SIMULATED SOS DISPATCH (DEMO MODE)</span>
             </div>
@@ -546,7 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
               • Campus Women's Emergency Cell — [SIMULATED LOGGED]<br>
               <strong>Status:</strong> <span style="color:#059669; font-weight:700;">Simulated Workflow Verified (Safe Test)</span>
             </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
+            ${policeHtml}
+
+          <div style="display:flex; flex-direction:column; gap:8px;">
               <button type="button" class="btn-primary" style="background:#78350f; border-color:#78350f; text-align:center; padding:10px; font-size:12px; font-weight:800; cursor:pointer;" onclick="alert('Demo Mode: Live phone dialer call suppressed for safety.')">
                 Simulation Complete (No Real Call Placed)
               </button>
@@ -557,6 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let backendDispatched = false;
         let alertedContacts = [];
+        let nearestPolice = null;
 
         try {
           const res = await fetch(`${API_BASE_URL}/api/v1/emergency/sos`, {
@@ -566,19 +592,79 @@ document.addEventListener('DOMContentLoaded', () => {
               latitude: lat,
               longitude: lng,
               user_id: currentUserId,
-              message: distressText
+              message: distressText,
+              client_contacts: [
+                {
+                  name: contactName,
+                  phone: cleanPhone || contactPhone,
+                  relationship: 'Primary Emergency Contact'
+                }
+              ]
             })
           });
           if (res.ok) {
             backendDispatched = true;
             const data = await res.json();
             alertedContacts = data.contacts || [];
+            nearestPolice = data.nearest_police || null;
           }
         } catch (err) {}
 
-        let contactsSummary = `${contactName} (${contactPhone})`;
+        // Native Android Direct Silent Dispatch via Capacitor (0 Extra Taps)
+        let isNative = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform();
+        let nativeSmsSent = false;
+        let nativeCallPlaced = false;
+
+        if (isNative && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.EmergencyDirect) {
+          try {
+            const smsRes = await window.Capacitor.Plugins.EmergencyDirect.sendDirectSms({
+              phone: cleanPhone,
+              message: distressText
+            });
+            if (smsRes && smsRes.success) nativeSmsSent = true;
+          } catch (nativeSmsErr) {
+            console.warn('[SafeMate Android] Direct SMS dispatch note:', nativeSmsErr);
+          }
+
+          try {
+            const callRes = await window.Capacitor.Plugins.EmergencyDirect.makeDirectCall({
+              number: '112'
+            });
+            if (callRes && callRes.success) nativeCallPlaced = true;
+          } catch (nativeCallErr) {
+            console.warn('[SafeMate Android] Direct 112 call note:', nativeCallErr);
+          }
+        }
+
+        let contactsSummary = `• <strong>${contactName}</strong> (${cleanPhone || contactPhone}) — [${nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : 'READY FOR DISPATCH'}]`;
         if (alertedContacts.length > 0) {
-          contactsSummary = alertedContacts.map(c => `• <strong>${c.name}</strong> (${c.phone}) — [${c.status}]`).join('<br>');
+          contactsSummary = alertedContacts.map(c => {
+            const st = nativeSmsSent ? 'SENT SILENTLY VIA SIM (0 TAPS)' : (c.status || 'READY');
+            return `• <strong>${c.name}</strong> (${c.phone}) — [${st}]`;
+          }).join('<br>');
+        }
+
+        let policeHtml = '';
+        if (nearestPolice) {
+          policeHtml = `
+            <div style="background:#eff6ff; border:1.5px solid #93c5fd; padding:10px 12px; margin-bottom:10px; border-radius:3px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="color:#1e40af; font-weight:800; font-size:0.86rem; text-transform:uppercase; letter-spacing:0.02em;">
+                  🛡️ Nearest Police Assistance (${nearestPolice.distance_text})
+                </span>
+                <span style="background:#1d4ed8; color:#fff; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:3px;">
+                  112 Active
+                </span>
+              </div>
+              <div style="font-size:0.80rem; color:#1e3a8a; line-height:1.4; margin-bottom:6px;">
+                <strong>${nearestPolice.name}</strong><br>
+                <span style="color:#475569;">${nearestPolice.address || 'Universal National Police & Women Safety Network'}</span>
+              </div>
+              <a href="tel:112" class="btn-primary" style="display:block; text-align:center; padding:8px 12px; font-size:12px; font-weight:800; background:#1d4ed8; border-color:#1d4ed8; text-decoration:none; text-transform:uppercase;">
+                Dial 112 Police Now
+              </a>
+            </div>
+          `;
         }
 
         sosStatusBox.innerHTML = `
@@ -591,6 +677,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>Dispatched Alerts:</strong><br>${contactsSummary}<br>
             <strong>Backend Status:</strong> <span style="color:${backendDispatched ? '#059669' : '#d97706'}; font-weight:700;">${backendDispatched ? 'Dispatched via Server & Logged' : 'Cellular SMS Fallback Ready'}</span>
           </div>
+
+          ${policeHtml}
 
           <div style="display:flex; flex-direction:column; gap:8px;">
             <a href="tel:${cleanPhone}" class="btn-primary" style="background:#D90429; border-color:#D90429; text-decoration:none; text-align:center; padding:12px; font-size:13px; font-weight:800; text-transform:uppercase;">
@@ -607,7 +695,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
 
-        window.location.href = `tel:${cleanPhone}`;
+        if (!nativeCallPlaced) {
+          window.location.href = `tel:${cleanPhone}`;
+        }
       };
 
       if (navigator.geolocation) {

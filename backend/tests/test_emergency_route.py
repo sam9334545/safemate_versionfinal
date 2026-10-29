@@ -374,3 +374,31 @@ def test_emergency_alert_lifecycle_and_resolution(client, test_user):
     assert updated_detail["resolved_at"] is not None
     assert updated_detail["resolution_notes"] == "Safe at home. Verified by escort."
 
+
+def test_sos_with_client_provided_loved_ones(client):
+    """Verify SOS dispatch prioritizes client-provided loved ones (Mom) and nearest police."""
+    payload = {
+        "latitude": 22.78133,
+        "longitude": 86.14401,
+        "message": "Immediate help needed",
+        "client_contacts": [
+            {
+                "name": "Mom",
+                "phone": "+91-9876543210",
+                "relationship": "Mother",
+            }
+        ],
+    }
+    res = client.post("/api/v1/emergency/sos", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert len(data["contacts"]) == 1
+    assert data["contacts"][0]["name"] == "Mom"
+    assert data["contacts"][0]["phone"] == "+91-9876543210"
+    assert "nearest_police" in data
+    assert data["nearest_police"] is not None
+    assert "name" in data["nearest_police"]
+    assert "distance_text" in data["nearest_police"]
+    assert data["nearest_police"]["emergency_dial"] == "112"
+

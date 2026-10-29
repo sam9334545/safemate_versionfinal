@@ -141,6 +141,7 @@ export default function EmergencySOSModal({
       let backendSuccess = false;
       let alertedContacts = [];
       let alertId = null;
+      let nearestPolice = null;
 
       try {
         const res = await fetch(`${resolvedApiBase}/api/v1/emergency/sos`, {
@@ -150,7 +151,14 @@ export default function EmergencySOSModal({
             latitude: lat,
             longitude: lng,
             user_id: userId,
-            message: distressText
+            message: distressText,
+            client_contacts: [
+              {
+                name: contactName,
+                phone: cleanPhone || contactPhone,
+                relationship: 'Primary Emergency Contact'
+              }
+            ]
           })
         });
         if (res.ok) {
@@ -159,9 +167,36 @@ export default function EmergencySOSModal({
           alertedContacts = data.contacts || [];
           alertId = data.alert_id;
           if (data.google_maps_url) mapsUrl = data.google_maps_url;
+          nearestPolice = data.nearest_police || null;
         }
       } catch {
         // Fallback gracefully
+      }
+
+      // Native Android Direct Silent Dispatch via Capacitor (0 Extra Taps)
+      let isNative = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform();
+      let nativeSmsSent = false;
+      let nativeCallPlaced = false;
+
+      if (isNative && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.EmergencyDirect) {
+        try {
+          const smsRes = await window.Capacitor.Plugins.EmergencyDirect.sendDirectSms({
+            phone: cleanPhone,
+            message: distressText
+          });
+          if (smsRes && smsRes.success) nativeSmsSent = true;
+        } catch (nativeSmsErr) {
+          console.warn('[SafeMate Android] Direct SMS dispatch note:', nativeSmsErr);
+        }
+
+        try {
+          const callRes = await window.Capacitor.Plugins.EmergencyDirect.makeDirectCall({
+            number: '112'
+          });
+          if (callRes && callRes.success) nativeCallPlaced = true;
+        } catch (nativeCallErr) {
+          console.warn('[SafeMate Android] Direct 112 call note:', nativeCallErr);
+        }
       }
 
       setIsBroadcasting(false);
@@ -176,7 +211,10 @@ export default function EmergencySOSModal({
         alertId,
         mapsUrl,
         distressText,
-        cleanPhone
+        cleanPhone,
+        nearestPolice,
+        nativeSmsSent,
+        nativeCallPlaced
       });
 
       if (onDispatched) {
@@ -184,7 +222,7 @@ export default function EmergencySOSModal({
       }
 
       // Automatically trigger dialer after short delay
-      if (cleanPhone) {
+      if (cleanPhone && !nativeCallPlaced) {
         setTimeout(() => {
           window.location.href = `tel:${cleanPhone}`;
         }, 300);
@@ -639,6 +677,50 @@ export default function EmergencySOSModal({
                       </div>
                     )}
                   </div>
+
+                  {/* Nearest Police Station Card */}
+                  {statusReport.nearestPolice && (
+                    <div
+                      style={{
+                        backgroundColor: '#eff6ff',
+                        border: '1.5px solid #93c5fd',
+                        borderRadius: '4px',
+                        padding: '10px 14px',
+                        marginBottom: '12px'
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <span style={{ color: '#1e40af', fontWeight: 800, fontSize: '0.86rem', textTransform: 'uppercase' }}>
+                          🛡️ Nearest Police Help ({statusReport.nearestPolice.distance_text})
+                        </span>
+                        <span style={{ backgroundColor: '#1d4ed8', color: '#ffffff', fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '3px' }}>
+                          112 Active
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '0.80rem', color: '#1e3a8a', lineHeight: 1.4, marginBottom: '8px' }}>
+                        <strong>{statusReport.nearestPolice.name}</strong><br />
+                        <span style={{ color: '#64748b' }}>{statusReport.nearestPolice.address || 'Universal National Police & Women Safety Network'}</span>
+                      </div>
+                      <a
+                        href="tel:112"
+                        style={{
+                          display: 'block',
+                          textAlign: 'center',
+                          padding: '8px 12px',
+                          fontSize: '0.78rem',
+                          fontWeight: 800,
+                          backgroundColor: '#1d4ed8',
+                          color: '#ffffff',
+                          textDecoration: 'none',
+                          borderRadius: '3px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.03em'
+                        }}
+                      >
+                        Call 112 Police Now
+                      </a>
+                    </div>
+                  )}
 
                   {/* Immediate Multi-Channel Fallbacks */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>

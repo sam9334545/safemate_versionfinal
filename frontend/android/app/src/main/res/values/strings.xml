@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SafeMate Emergency</string>
+    <string name="title_activity_main">SafeMate Emergency</string>
+    <string name="package_name">com.safemate.emergency</string>
+    <string name="custom_url_scheme">com.safemate.emergency</string>
+</resources>

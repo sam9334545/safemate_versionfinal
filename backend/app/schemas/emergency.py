@@ -76,6 +76,28 @@ class ContactDeleteResponse(BaseModel):
 # ---------------------------------------------------------------------------
 # Emergency SOS Panic Trigger Schemas
 # ---------------------------------------------------------------------------
+class EmergencyContact(BaseModel):
+    """Schema representing an individual trusted emergency contact."""
+
+    name: str = Field(..., description="Full name of the trusted emergency contact")
+    phone: str = Field(..., description="Phone number configured for emergency alerts")
+    relationship: Optional[str] = Field(
+        default="Emergency Contact", description="Relationship to user (e.g., Sister, Roommate)"
+    )
+    email: Optional[str] = Field(default=None, description="Optional email address")
+
+
+class NearestPoliceStationInfo(BaseModel):
+    """Nearest police station assistance information resolved from live GPS."""
+
+    name: str = Field(..., description="Name of the closest police station or chowki")
+    distance_meters: float = Field(..., description="Straight-line distance in meters")
+    distance_text: str = Field(..., description="Formatted distance string, e.g. '850m' or '2.1 km'")
+    address: Optional[str] = Field(default=None, description="Street address or locality description")
+    phone: Optional[str] = Field(default="112", description="Local station phone or helpline")
+    emergency_dial: str = Field(default="112", description="Standard 1-tap emergency dial number")
+
+
 class SOSRequest(BaseModel):
     """Request payload submitted when the emergency SOS panic button is pressed."""
 
@@ -108,6 +130,10 @@ class SOSRequest(BaseModel):
         description="Optional client timestamp recorded when the panic button was activated",
         examples=["2026-10-24T16:27:38Z"],
     )
+    client_contacts: Optional[List[EmergencyContact]] = Field(
+        default=None,
+        description="Optional list of trusted emergency contacts provided directly by the client",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -120,15 +146,6 @@ class SOSRequest(BaseModel):
             }
         }
     }
-
-
-class EmergencyContact(BaseModel):
-    """Schema representing an individual trusted emergency contact."""
-
-    name: str = Field(..., description="Full name of the trusted emergency contact")
-    phone: str = Field(..., description="Phone number configured for emergency alerts")
-    relationship: str = Field(..., description="Relationship to user (e.g., Sister, Roommate)")
-    email: Optional[str] = Field(default=None, description="Optional email address")
 
 
 class DispatchedAlertInfo(BaseModel):
@@ -156,6 +173,10 @@ class SOSResponse(BaseModel):
     contacts: List[DispatchedAlertInfo] = Field(
         default_factory=list,
         description="List of trusted contacts who received the emergency dispatch",
+    )
+    nearest_police: Optional[NearestPoliceStationInfo] = Field(
+        default=None,
+        description="Nearest police station or chowki identified from GPS coordinates",
     )
 
 

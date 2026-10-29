@@ -1,0 +1,7 @@
+{
+  "appId": "com.safemate.emergency",
+  "appName": "SafeMate Emergency",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}
+
