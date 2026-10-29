@@ -1,4 +1,4 @@
-# SafeMate — A Silent Shield, A Strong Voice
+﻿# SafeMate — A Silent Shield, A Strong Voice
 ### Digital Sanctuary, Forensic Defense, and Statutory Justice for Women and Survivors
 
 SafeMate is a trauma-informed, privacy-first digital safety platform engineered to protect women, youth, and vulnerable individuals facing domestic violence, intimate image abuse, weaponized deepfakes, online blackmail, and physical transit danger.
@@ -70,6 +70,12 @@ When physical violence is imminent and quiet escape is impossible, tapping **112
 
 #### 3. Fake Escape Call Simulator
 When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Call** simulator triggers an authentic incoming call screen with customizable ringtones, caller identities, and voice prompts, giving the survivor a socially clean exit excuse.
+
+![Fake Escape Call Simulator: Incoming Ringing Screen for Discreet De-escalation](docs/screenshots/19_fake_escape_call_simulator.png)
+
+* **Realistic Incoming Call Screen:** Simulates an authentic full-screen incoming phone call from "Mom" (or customizable contact) with native-style answer and decline controls.
+* **Audio Ringtone & Speech Synthesis:** Triggers a genuine ringing tone via Web Audio API, followed by an automatic spoken voice prompt (*"Hey, please come home right now, there is an urgent family emergency"*) when answered to justify an immediate exit.
+* **Dual Action Protocol:** If an actual threat escalates, survivors can tap the instant red button to immediately connect a real phone call to their emergency circle or 112.
 
 ---
 
