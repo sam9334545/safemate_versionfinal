@@ -267,13 +267,23 @@ Abusers frequently intimidate victims into deleting chat logs or photos, later c
 * **Calculator Camouflage:** One-click camouflage transforms the vault into a functional calculator.
 
 
-#### 5. 24/7 Statutory Legal Assistant (AI Chatbot)
-For questions about rights, divorce, domestic violence protection orders, or emergency cybercrime reporting, survivors can consult the **Safety & Legal Assistant**:
+#### 5. 24/7 Statutory Legal Assistant & Zero FIR Generator (AI Chatbot)
+For immediate guidance on legal rights, matrimonial relief, domestic violence protection orders, or emergency cybercrime recourse, survivors can consult the **Safety & Legal Assistant**:
 
 ![Safety and Legal Assistant Chatbot with Zero FIR Directive](docs/screenshots/13_legal_chatbot_zero_fir_consult.png)
 
-* **Grounded Legal Intelligence:** Clarifies rights in plain language, explaining protection orders under the Protection of Women from Domestic Violence Act (PWDVA) 2005.
-* **Panic Memory Purge:** One-tap session wipe destroys all chat history instantly.
+* **Grounded Legal Intelligence:** Clarifies rights in plain language, demystifying court injunctions, maintenance rights, and protection orders under the Protection of Women from Domestic Violence Act (PWDVA) 2005.
+* **Statutory Zero FIR Directive:** Educates survivors on their non-negotiable rights under **Section 173 of the Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023** (formerly Section 154 CrPC), confirming that police officers cannot turn a survivor away on grounds of territorial jurisdiction.
+* **Panic Memory Purge:** A single tap destroys active conversation state and volatile RAM storage immediately.
+
+Directly from the Chatbot command strip, clicking **Draft Statutory Zero FIR** launches the built-in legal drafting engine:
+
+![Interactive Zero FIR and Cyber Crime Complaint Generator Modal](docs/screenshots/21_chatbot_zero_fir_generator.png)
+
+* **Automated Statutory Complaint Drafting:** Ingests incident facts, platform channels, and suspect handles to generate a formal, ready-to-sign complaint addressed to the Station House Officer (SHO).
+* **Binding Supreme Court Precedent:** Cites *Lalita Kumari v. Govt. of U.P. [(2014) 2 SCC 1]* alongside relevant statutory penalties (**IT Act Sections 66E / 67A**, **BNS Sections 308 & 351** for extortion and criminal intimidation).
+* **Digital Evidence Preservation Injunction (Section 94 BNSS):** Formulates formal prayers for immediate preservation orders served to intermediaries (Meta, WhatsApp, Google) to freeze suspect IP logs, MAC addresses, and account registration data before alteration.
+* **One-Click Print & Police Action Checklist:** Provides one-click browser printing and clipboard copy alongside a strict police submission protocol (insisting on signed General Diary / Daily Diary acknowledgment entries).
 
 ---
 
