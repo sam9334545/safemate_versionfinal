@@ -20,11 +20,8 @@ const STORAGE_KEYS = {
 
 class AuthStateManager {
   constructor() {
-    this.apiBaseUrl = (typeof window !== 'undefined' && window.API_BASE_URL !== undefined)
-      ? window.API_BASE_URL
-      : ((typeof window !== 'undefined' && ['localhost', '127.0.0.1'].includes(window.location.hostname))
-          ? ''
-          : 'https://safemate-backend-tseo.onrender.com');
+    this.apiBaseUrl = (typeof window !== 'undefined' && window.API_BASE_URL) 
+      || 'https://safemate-backend-tseo.onrender.com';
     
     this.state = {
       accessMode: 'loading', // 'authenticated' | 'guest' | 'demo' | 'unauthenticated' | 'loading'
@@ -355,7 +352,12 @@ class AuthStateManager {
   persistSession(mode, token, user) {
     try {
       localStorage.setItem(STORAGE_KEYS.ACCESS_MODE, mode);
-      if (token) localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+      if (token) {
+        if (localStorage.getItem(STORAGE_KEYS.TOKEN) !== token || !localStorage.getItem('safemate_session_started')) {
+          localStorage.setItem('safemate_session_started', new Date().toISOString());
+        }
+        localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+      }
       if (user) localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
     } catch (e) {
       console.warn('Unable to persist session to localStorage', e);

@@ -50,6 +50,8 @@ class WatermarkService:
         owner_id: Optional[str] = "usr_safemate",
         notes: Optional[str] = None,
         visible_stamp: bool = True,
+        creator_label: Optional[str] = None,
+        session_ts: Optional[str] = None,
     ) -> Tuple[bytes, str, Dict[str, Any]]:
         """Embed a per-recipient cryptographic watermark invisibly into an image."""
         recipient_name = recipient_name.strip()
@@ -64,6 +66,8 @@ class WatermarkService:
             "r": recipient_name,
             "id": rec_id,
             "o": owner_id or "usr_safemate",
+            "c": creator_label or owner_id or "unknown",
+            "s": session_ts or now_ts,
             "t": now_ts,
             "n": notes or "Confidential personal distribution",
         }
@@ -95,14 +99,19 @@ class WatermarkService:
         # Burn visible forensic security watermark banner if requested
         if visible_stamp:
             w_img, h_img = img_rgb.size
-            bar_height = max(34, int(h_img * 0.055))
+            bar_height = max(48, int(h_img * 0.075))
             stamp_layer = Image.new("RGBA", (w_img, h_img), (0, 0, 0, 0))
             draw = ImageDraw.Draw(stamp_layer)
             draw.rectangle([(0, h_img - bar_height), (w_img, h_img)], fill=(11, 19, 43, 225))
             draw.line([(0, h_img - bar_height), (w_img, h_img - bar_height)], fill=(217, 4, 41, 255), width=2)
             stamp_text = f"SAFEMATE FORENSIC COPY • FOR: {recipient_name} • TRACKING ID: {rec_id} • LEAK TRACER ACTIVE"
-            y_text = h_img - bar_height + max(4, int((bar_height - 14) / 2))
+            y_text = h_img - bar_height + max(5, int(bar_height * 0.14))
             draw.text((12, y_text), stamp_text, fill=(255, 255, 255, 250))
+            creator_text = (
+                f"SEALED BY: {creator_label or owner_id or 'unknown'} • "
+                f"SESSION: {session_ts or now_ts} • ISSUED: {now_ts}"
+            )
+            draw.text((12, y_text + max(16, int(bar_height * 0.42))), creator_text, fill=(148, 215, 255, 250))
             img_rgb = Image.alpha_composite(img_rgb.convert("RGBA"), stamp_layer).convert("RGB")
 
         arr = np.array(img_rgb, dtype=np.uint8).copy()
@@ -142,6 +151,8 @@ class WatermarkService:
             "recipient_name": recipient_name,
             "recipient_id": rec_id,
             "owner_id": owner_id,
+            "creator": creator_label or owner_id,
+            "session_ts": session_ts or now_ts,
             "timestamp": now_ts,
             "fingerprint": fingerprint,
             "dimensions": f"{w}x{h}",
@@ -159,6 +170,8 @@ class WatermarkService:
         owner_id: Optional[str] = "usr_safemate",
         notes: Optional[str] = None,
         visible_stamp: bool = True,
+        creator_label: Optional[str] = None,
+        session_ts: Optional[str] = None,
     ) -> Tuple[bytes, str]:
         """Generate a complete ZIP bundle of individual watermarked copies for each recipient."""
         recipients = [r.strip() for r in recipients if r.strip()]
@@ -179,6 +192,8 @@ class WatermarkService:
                     owner_id=owner_id,
                     notes=notes,
                     visible_stamp=visible_stamp,
+                    creator_label=creator_label,
+                    session_ts=session_ts,
                 )
 
                 zf.writestr(filename, img_bytes)
@@ -193,6 +208,8 @@ class WatermarkService:
             # Add distribution audit manifest inside the ZIP
             manifest_doc = {
                 "generated_at": self._now_iso(),
+                "created_by": creator_label or owner_id,
+                "session_started_at": session_ts,
                 "total_recipients": len(recipients),
                 "platform": "Safemate Forensic Leak Tracer",
                 "instructions": (

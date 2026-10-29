@@ -21,9 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Dynamic API Configuration (use root-relative paths on port 8000 to prevent cross-origin 127.0.0.1 vs localhost issues)
   const API_BASE_URL = window.API_BASE_URL !== undefined
     ? window.API_BASE_URL
-    : (['localhost', '127.0.0.1'].includes(window.location.hostname)
-        ? ''
-        : 'https://safemate-backend-tseo.onrender.com');
+    : 'https://safemate-backend-tseo.onrender.com';
   // Persistent Anonymous User ID
   let currentUserId = localStorage.getItem('safemate_user_id');
   if (!currentUserId) {
@@ -55,6 +53,69 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     return null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Authenticated creator identity for seals / certificates / exports
+  // ---------------------------------------------------------------------------
+  function getCreatorIdentity() {
+    const st = window.SafeMateAuth ? window.SafeMateAuth.getState() : null;
+    const mode = st ? st.accessMode : 'unauthenticated';
+    const user = (st && st.user) || {};
+    const valid = mode === 'authenticated' || mode === 'guest' || mode === 'demo';
+    const id = user.id != null ? String(user.id) : (mode === 'demo' ? 'demo' : '');
+    const email = user.email || (mode === 'demo' ? 'demo@safemate.local' : '');
+    return {
+      valid: valid && (mode === 'demo' || !!(st && st.token)),
+      mode,
+      id,
+      email,
+      label: `${email || 'unknown'} (ID ${id || 'n/a'}${mode === 'guest' ? ', guest session' : mode === 'demo' ? ', demo' : ''})`,
+      sessionStartedAt: localStorage.getItem('safemate_session_started') || new Date().toISOString(),
+    };
+  }
+
+  // Blocks exports for signed-out users and opens the login dialog.
+  function requireAuthForExport() {
+    const who = getCreatorIdentity();
+    if (!who.valid) {
+      alert('Please log in (or continue as guest) before exporting a sealed certificate or image.');
+      try { openAuthModal('login'); } catch (e) {}
+      return null;
+    }
+    return who;
+  }
+
+  // Verifies with the backend that the stored login token is STILL accepted before exporting.
+  // (Tokens expire server-side, and a restarted/reset server may no longer know the account.)
+  async function verifyExportSession() {
+    const who = requireAuthForExport();
+    if (!who) return null;
+    if (who.mode === 'demo') return who; // demo mode exports locally; there is no server token
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/v1/auth/me`, {
+        headers: window.SafeMateAuth.getAuthHeaders(),
+      });
+      if (res.ok) {
+        const profile = await res.json();
+        if (profile && profile.id != null) {
+          who.id = String(profile.id);
+          who.email = profile.email || who.email;
+          who.label = `${who.email} (ID ${who.id}${profile.is_guest ? ', guest session' : ''})`;
+        }
+        return who;
+      }
+      if (res.status === 401) {
+        window.SafeMateAuth.logout();
+        alert('Your login is no longer valid on the server (the token expired, or the server was restarted and no longer knows this account). Please log in again, then retry the export.');
+        try { openAuthModal('login'); } catch (e) {}
+        return null;
+      }
+      return who; // other server errors: let the export call report the real problem
+    } catch (netErr) {
+      alert('Cannot reach the SafeMate server right now. Check your connection and try again.');
+      return null;
+    }
   }
 
   // Navbar and UI Access Mode Wiring
@@ -523,9 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
       sosStatusBox.innerHTML = `<div>Acquiring verified GPS coordinates...</div>`;
 
       const executeSosDispatch = async (lat, lng, accuracy) => {
-        const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
+        const mapsUrl = `https://www.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}`;
         const timeNow = new Date().toLocaleTimeString();
-        const distressText = `EMERGENCY SOS: I need urgent help! My live location: ${mapsUrl} (recorded at ${timeNow})`;
+        const distressText = `EMERGENCY SOS: I need urgent help! My GPS: ${lat.toFixed(6)}, ${lng.toFixed(6)} - Google Maps: ${mapsUrl} (recorded at ${timeNow})`;
         const cleanPhone = sanitizePhone(contactPhone);
 
         // NON-NEGOTIABLE SAFETY ISOLATION IN DEMO MODE
@@ -556,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let backendDispatched = false;
+        let serverSentCount = 0;
         let alertedContacts = [];
 
         try {
@@ -573,6 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
             backendDispatched = true;
             const data = await res.json();
             alertedContacts = data.contacts || [];
+            serverSentCount = alertedContacts.filter(c => String(c.status).startsWith('SENT_')).length;
           }
         } catch (err) {}
 
@@ -589,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <strong>GPS Coordinates:</strong> ${lat.toFixed(5)}, ${lng.toFixed(5)} (±${accuracy}m accuracy)<br>
             <strong>Time:</strong> ${timeNow}<br>
             <strong>Dispatched Alerts:</strong><br>${contactsSummary}<br>
-            <strong>Backend Status:</strong> <span style="color:${backendDispatched ? '#059669' : '#d97706'}; font-weight:700;">${backendDispatched ? 'Dispatched via Server & Logged' : 'Cellular SMS Fallback Ready'}</span>
+            <strong>Backend Status:</strong> <span style="color:${serverSentCount > 0 ? '#059669' : '#d97706'}; font-weight:700;">${serverSentCount > 0 ? 'Delivered by server to ' + serverSentCount + ' contact(s)' : 'Server could NOT auto-send - tap WhatsApp / SMS / Call below to send your location now'}</span>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:8px;">
@@ -610,14 +673,23 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = `tel:${cleanPhone}`;
       };
 
+      const gpsFailed = () => {
+        sosStatusBox.innerHTML = `<div style="color:#D90429;font-weight:800;">Could not get your GPS location. Allow location access (and turn on device location) then press SOS again. No alert was sent with a guessed location.</div>
+          <a href="tel:${sanitizePhone(contactPhone)}" class="btn-primary" style="display:block;margin-top:8px;background:#D90429;border-color:#D90429;text-decoration:none;text-align:center;padding:12px;">Call ${contactName} Now</a>`;
+      };
       if (navigator.geolocation) {
+        // Try high accuracy first, then retry with network location before giving up
         navigator.geolocation.getCurrentPosition(
           (p) => executeSosDispatch(p.coords.latitude, p.coords.longitude, Math.round(p.coords.accuracy)),
-          () => executeSosDispatch(28.6139, 77.2090, 25),
+          () => navigator.geolocation.getCurrentPosition(
+            (p) => executeSosDispatch(p.coords.latitude, p.coords.longitude, Math.round(p.coords.accuracy)),
+            gpsFailed,
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+          ),
           { enableHighAccuracy: true, timeout: 8000 }
         );
       } else {
-        executeSosDispatch(28.6139, 77.2090, 25);
+        gpsFailed();
       }
     });
   }
@@ -1333,7 +1405,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDownloadCert = document.getElementById('btn-download-cert');
     if (btnDownloadCert) {
       btnDownloadCert.addEventListener('click', () => {
+        const who = requireAuthForExport();
+        if (!who) return;
         const certData = {
+          issuedTo: {
+            userId: who.id,
+            email: who.email,
+            accessMode: who.mode,
+            sessionStartedAt: who.sessionStartedAt,
+            exportedAt: new Date().toISOString()
+          },
           certificate: isVid
             ? "SafeMate Section 63 BSA Video Deepfake Forensic Verification Certificate"
             : "SafeMate Forensic Neural Verification Certificate",
@@ -1685,7 +1766,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function generateClientWatermarkedCopy(sourceFile, recipientName, isDualMode) {
+  function generateClientWatermarkedCopy(sourceFile, recipientName, isDualMode, creator) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const objectUrl = URL.createObjectURL(sourceFile);
@@ -1706,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fingerprint = 'hmac_sha256_' + Math.random().toString(36).substring(2, 12);
 
         if (isDualMode) {
-          const barHeight = Math.max(40, Math.floor(canvas.height * 0.08));
+          const barHeight = Math.max(56, Math.floor(canvas.height * 0.1));
           ctx.fillStyle = 'rgba(11, 19, 43, 0.92)';
           ctx.fillRect(0, canvas.height - barHeight, canvas.width, barHeight);
 
@@ -1721,7 +1802,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
           ctx.fillStyle = '#94a3b8';
           ctx.font = `${Math.max(10, Math.floor(barHeight * 0.26))}px monospace, sans-serif`;
-          ctx.fillText(`HMAC-SHA256: ${fingerprint.substring(0, 18)}... • EVIDENCE INTEGRITY VALID • ${timestamp}`, 16, canvas.height - (barHeight * 0.24));
+          ctx.fillText(`HMAC-SHA256: ${fingerprint.substring(0, 18)}... • EVIDENCE INTEGRITY VALID • ${timestamp}`, 16, canvas.height - (barHeight * 0.38));
+          ctx.fillStyle = '#7dd3fc';
+          ctx.fillText(`SEALED BY: ${creator ? creator.label : 'unknown'} • SESSION: ${creator ? creator.sessionStartedAt : timestamp}`, 16, canvas.height - (barHeight * 0.12));
         }
 
         canvas.toBlob((blob) => {
@@ -1825,6 +1908,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnGenLeakTrace) {
     btnGenLeakTrace.addEventListener('click', async () => {
       if (isGeneratingWatermarks) return;
+      const creatorWho = await verifyExportSession();
+      if (!creatorWho) return;
       isGeneratingWatermarks = true;
       btnGenLeakTrace.disabled = true;
       btnGenLeakTrace.style.opacity = '0.7';
@@ -1904,7 +1989,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const formData = new FormData();
           formData.append('file', fileToUpload);
           formData.append('recipient_name', name);
-          formData.append('owner_id', currentUserId);
+          formData.append('owner_id', creatorWho.id || currentUserId);
+          formData.append('session_started_at', creatorWho.sessionStartedAt);
           formData.append('visible_stamp', isDualMode ? 'true' : 'false');
 
           let resBlob = null;
@@ -1912,10 +1998,18 @@ document.addEventListener('DOMContentLoaded', () => {
           let recId = '';
 
           try {
+            if (creatorWho.mode === 'demo') throw new Error('demo-local');
+            const authHeaders = window.SafeMateAuth ? window.SafeMateAuth.getAuthHeaders() : {};
             const res = await fetch(`${API_BASE_URL}/api/v1/watermark/embed`, {
               method: 'POST',
+              headers: authHeaders,
               body: formData,
             });
+            if (res.status === 401) {
+              let detail = '';
+              try { detail = (await res.json()).detail || ''; } catch (e) {}
+              throw new Error('Your session expired. Please log in again to export.' + (detail ? ` (Server: ${detail})` : ''));
+            }
 
             if (res.ok) {
               resBlob = await res.blob();
@@ -1926,11 +2020,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           } catch (embedErr) {
             console.warn(`Watermark backend request notice for ${name}:`, embedErr);
+            if (embedErr && /session expired/i.test(embedErr.message || '')) {
+              // Never export an unverifiable copy for an expired session
+              errors.push(`${name}: ${embedErr.message}`);
+              try { openAuthModal('login'); } catch (e) {}
+              continue;
+            }
           }
 
           if (!resBlob) {
             try {
-              const clientRes = await generateClientWatermarkedCopy(fileToUpload, name, isDualMode);
+              const clientRes = await generateClientWatermarkedCopy(fileToUpload, name, isDualMode, creatorWho);
               resBlob = clientRes.blob;
               fingerprint = clientRes.fingerprint;
               recId = clientRes.recId;
@@ -2024,11 +2124,13 @@ document.addEventListener('DOMContentLoaded', () => {
               const zipFormData = new FormData();
               zipFormData.append('file', fileToUpload);
               zipFormData.append('recipients', recipientList.join(', '));
-              zipFormData.append('owner_id', currentUserId);
+              zipFormData.append('owner_id', creatorWho.id || currentUserId);
+              zipFormData.append('session_started_at', creatorWho.sessionStartedAt);
               zipFormData.append('visible_stamp', isDualMode ? 'true' : 'false');
 
               const zipRes = await fetch(`${API_BASE_URL}/api/v1/watermark/batch-embed`, {
                 method: 'POST',
+                headers: window.SafeMateAuth ? window.SafeMateAuth.getAuthHeaders() : {},
                 body: zipFormData,
               });
 
@@ -4717,233 +4819,59 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
       });
     }
 
-    // Pan-India landmarks catalog for instant suggestions and reliable offline matching
-    const PAN_INDIA_LANDMARKS = [
-      // Delhi NCR
-      { name: 'Connaught Place, New Delhi', display_name: 'Connaught Place, Inner Circle, New Delhi', latitude: 28.6315, longitude: 77.2167 },
-      { name: 'India Gate, New Delhi', display_name: 'India Gate, Rajpath, New Delhi', latitude: 28.6129, longitude: 77.2295 },
-      { name: 'Hauz Khas Village, New Delhi', display_name: 'Hauz Khas Village, Sri Aurobindo Marg, New Delhi', latitude: 28.5494, longitude: 77.1936 },
-      { name: 'Select Citywalk Saket, New Delhi', display_name: 'Select Citywalk, Saket District Centre, New Delhi', latitude: 28.5283, longitude: 77.2190 },
-      { name: 'South Extension, New Delhi', display_name: 'South Extension Part II, New Delhi', latitude: 28.5689, longitude: 77.2223 },
-      { name: 'Lajpat Nagar Market, New Delhi', display_name: 'Lajpat Nagar Central Market, New Delhi', latitude: 28.5700, longitude: 77.2373 },
-      { name: 'DU North Campus, Delhi', display_name: 'Delhi University North Campus, Delhi', latitude: 28.6903, longitude: 77.2066 },
-      { name: 'DLF Cyber Hub, Gurugram', display_name: 'DLF Cyber Hub, Phase 2, Gurugram, Haryana', latitude: 28.4950, longitude: 77.0895 },
-      { name: 'Sector 18, Noida', display_name: 'Sector 18 Commercial Market, Noida, Uttar Pradesh', latitude: 28.5705, longitude: 77.3229 },
-      // Mumbai & MMR
-      { name: 'Marine Drive, Mumbai', display_name: 'Marine Drive Promenade, Mumbai, Maharashtra', latitude: 18.9432, longitude: 72.8230 },
-      { name: 'Bandra West, Mumbai', display_name: 'Bandra West (Linking Road / Carter Road), Mumbai', latitude: 19.0583, longitude: 72.8303 },
-      { name: 'Gateway of India, Mumbai', display_name: 'Gateway of India, Colaba, Mumbai', latitude: 18.9220, longitude: 72.8347 },
-      { name: 'Juhu Beach, Mumbai', display_name: 'Juhu Tara Road, Juhu Beach, Mumbai', latitude: 19.0988, longitude: 72.8264 },
-      { name: 'Andheri West, Mumbai', display_name: 'Andheri West Station / Link Road, Mumbai', latitude: 19.1197, longitude: 72.8464 },
-      { name: 'Powai, Mumbai', display_name: 'Hiranandani Gardens, Powai, Mumbai', latitude: 19.1176, longitude: 72.9060 },
-      { name: 'Thane West, MMR', display_name: 'Thane West City Centre, Maharashtra', latitude: 19.2183, longitude: 72.9781 },
-      { name: 'Vashi, Navi Mumbai', display_name: 'Sector 17, Vashi, Navi Mumbai, Maharashtra', latitude: 19.0771, longitude: 72.9986 },
-      // Bengaluru
-      { name: 'MG Road, Bengaluru', display_name: 'MG Road / Brigade Road, Bengaluru, Karnataka', latitude: 12.9756, longitude: 77.6066 },
-      { name: 'Indiranagar, Bengaluru', display_name: '100 Feet Road, Indiranagar, Bengaluru, Karnataka', latitude: 12.9719, longitude: 77.6412 },
-      { name: 'Koramangala, Bengaluru', display_name: 'Koramangala 5th Block, Bengaluru, Karnataka', latitude: 12.9352, longitude: 77.6245 },
-      { name: 'HSR Layout, Bengaluru', display_name: 'HSR Layout Sector 1/2, Bengaluru, Karnataka', latitude: 12.9121, longitude: 77.6446 },
-      { name: 'Whitefield, Bengaluru', display_name: 'ITPL Main Road, Whitefield, Bengaluru', latitude: 12.9698, longitude: 77.7499 },
-      { name: 'Electronic City, Bengaluru', display_name: 'Electronic City Phase 1, Bengaluru', latitude: 12.8452, longitude: 77.6602 },
-      { name: 'Jayanagar, Bengaluru', display_name: 'Jayanagar 4th Block, Bengaluru, Karnataka', latitude: 12.9299, longitude: 77.5833 },
-      // Coastal Karnataka (NIT Surathkal, Mangaluru, Udupi, Manipal)
-      { name: 'NIT Surathkal (NITK), Karnataka', display_name: 'National Institute of Technology Karnataka (NITK), NH 66, Surathkal, Mangaluru', latitude: 13.0112, longitude: 74.7961 },
-      { name: 'NITK Main Gate, Surathkal', display_name: 'NITK Main Gate, NH 66, Surathkal, Mangaluru, Karnataka', latitude: 13.0104, longitude: 74.7946 },
-      { name: 'NITK Beach (Surathkal Beach)', display_name: 'NITK Beach Promenade, Arabian Sea Coast, Surathkal, Mangaluru', latitude: 13.0116, longitude: 74.7865 },
-      { name: 'Surathkal Lighthouse, Mangaluru', display_name: 'Surathkal Lighthouse, Lighthouse Road, Surathkal, Mangaluru', latitude: 13.0048, longitude: 74.7897 },
-      { name: 'Surathkal Town, Mangaluru', display_name: 'Surathkal Town Circle, NH 66, Mangaluru, Karnataka', latitude: 13.0012, longitude: 74.8015 },
-      { name: 'Surathkal Railway Station', display_name: 'Surathkal Railway Station (SL), Konkan Railway, Surathkal, Mangaluru', latitude: 12.9902, longitude: 74.8054 },
-      { name: 'Mukka (Srinivas Hospital), Mangaluru', display_name: 'Mukka, Srinivas Medical Institute & Hospital, NH 66, Mangaluru', latitude: 13.0224, longitude: 74.7900 },
-      { name: 'Panambur Beach, Mangaluru', display_name: 'Panambur Beach & Port Corridor, Mangaluru, Karnataka', latitude: 12.9373, longitude: 74.8042 },
-      { name: 'Baikampady, Mangaluru', display_name: 'Baikampady Industrial Estate, NH 66, Mangaluru, Karnataka', latitude: 12.9692, longitude: 74.8118 },
-      { name: 'Tannirbhavi Beach, Mangaluru', display_name: 'Tannirbhavi Beach & Marine Tree Park, Mangaluru, Karnataka', latitude: 12.8943, longitude: 74.8183 },
-      { name: 'Hampankatta, Mangaluru', display_name: 'Hampankatta Commercial Centre, Light House Hill Road, Mangaluru', latitude: 12.8691, longitude: 74.8434 },
-      { name: 'Kadri Park, Mangaluru', display_name: 'Kadri Park & Temple, Nanthoor-Kadri Road, Mangaluru', latitude: 12.8891, longitude: 74.8562 },
-      { name: 'Kankanady, Mangaluru', display_name: 'Kankanady Junction & Father Muller Hospital, Mangaluru', latitude: 12.8646, longitude: 74.8600 },
-      { name: 'Bejai KSRTC Bus Terminal, Mangaluru', display_name: 'KSRTC Central Bus Stand, Bejai, Mangaluru, Karnataka', latitude: 12.8845, longitude: 74.8492 },
-      { name: 'Mangaluru Central Railway Station', display_name: 'Mangaluru Central (MAQ), Attavar, Mangaluru, Karnataka', latitude: 12.8647, longitude: 74.8436 },
-      { name: 'Tiger Circle, Manipal', display_name: 'Tiger Circle, Malpe-Manipal Road, Manipal, Udupi, Karnataka', latitude: 13.3524, longitude: 74.7873 },
-      { name: 'MIT Manipal, Karnataka', display_name: 'Manipal Institute of Technology (MIT), Visvesvaraya Road, Manipal', latitude: 13.3467, longitude: 74.7943 },
-      { name: 'KMC Hospital, Manipal', display_name: 'Kasturba Medical College & Hospital (KMC), Tiger Circle, Manipal', latitude: 13.3533, longitude: 74.7845 },
-      { name: 'Sri Krishna Matha, Udupi', display_name: 'Sri Krishna Matha Temple, Car Street, Udupi, Karnataka', latitude: 13.3409, longitude: 74.7516 },
-      { name: 'Malpe Beach, Udupi', display_name: 'Malpe Beach & Sea Walk Promenade, Malpe, Udupi, Karnataka', latitude: 13.3620, longitude: 74.6979 },
-      // Mysuru & Greater Karnataka
-      { name: 'Mysore Palace, Mysuru', display_name: 'Mysore Palace (Amba Vilas), Sayyaji Rao Road, Mysuru, Karnataka', latitude: 12.3052, longitude: 76.6554 },
-      { name: 'Chamundi Hill, Mysuru', display_name: 'Chamundi Hill, Chamundeshwari Temple Road, Mysuru, Karnataka', latitude: 12.2944, longitude: 76.6821 },
-      { name: 'Chennamma Circle, Hubballi', display_name: 'Rani Chennamma Circle & CBT, Hubballi, Karnataka', latitude: 15.3503, longitude: 75.1376 },
-      { name: 'KLE Tech (BVB), Hubballi', display_name: 'KLE Technological University (BVB College), Vidyanagar, Hubballi', latitude: 15.3725, longitude: 75.1234 },
-      { name: 'Tilakwadi, Belagavi', display_name: 'Tilakwadi / Camp Area, Khanapur Road, Belagavi, Karnataka', latitude: 15.8497, longitude: 74.4977 },
-      // Hyderabad
-      { name: 'Banjara Hills, Hyderabad', display_name: 'Banjara Hills Road No 1/12, Hyderabad, Telangana', latitude: 17.4177, longitude: 78.4399 },
-      { name: 'Jubilee Hills, Hyderabad', display_name: 'Jubilee Hills Road 36, Hyderabad, Telangana', latitude: 17.4319, longitude: 78.4073 },
-      { name: 'HITEC City, Hyderabad', display_name: 'HITEC City / Cyber Towers, Madhapur, Hyderabad', latitude: 17.4483, longitude: 78.3808 },
-      { name: 'Charminar, Hyderabad', display_name: 'Charminar Historical Quarter, Hyderabad', latitude: 17.3616, longitude: 78.4747 },
-      { name: 'Secunderabad Station, Hyderabad', display_name: 'Secunderabad Junction Railway Station, Telangana', latitude: 17.4334, longitude: 78.5015 },
-      // Chennai
-      { name: 'Marina Beach, Chennai', display_name: 'Marina Beach Promenade, Chennai, Tamil Nadu', latitude: 13.0500, longitude: 80.2824 },
-      { name: 'T. Nagar, Chennai', display_name: 'Thyagaraya Nagar (T. Nagar), Chennai, Tamil Nadu', latitude: 13.0418, longitude: 80.2341 },
-      { name: 'Anna Nagar, Chennai', display_name: 'Anna Nagar Roundtana, Chennai, Tamil Nadu', latitude: 13.0882, longitude: 80.2073 },
-      { name: 'Adyar, Chennai', display_name: 'Adyar / Besant Nagar, South Chennai, Tamil Nadu', latitude: 13.0012, longitude: 80.2565 },
-      // Kolkata
-      { name: 'Park Street, Kolkata', display_name: 'Park Street (Mother Teresa Sarani), Kolkata, West Bengal', latitude: 22.5552, longitude: 88.3501 },
-      { name: 'Victoria Memorial, Kolkata', display_name: 'Victoria Memorial, Maidan, Kolkata, West Bengal', latitude: 22.5448, longitude: 88.3426 },
-      { name: 'Salt Lake Sector V, Kolkata', display_name: 'Sector V, Salt Lake, Kolkata, West Bengal', latitude: 22.5726, longitude: 88.4312 },
-      { name: 'Howrah Station, Kolkata', display_name: 'Howrah Railway Station & Bridge, West Bengal', latitude: 22.5830, longitude: 88.3428 },
-      // Pune
-      { name: 'FC Road, Pune', display_name: 'Fergusson College Road (FC Road), Deccan, Pune', latitude: 18.5204, longitude: 73.8415 },
-      { name: 'Koregaon Park, Pune', display_name: 'Koregaon Park, North Main Road, Pune, Maharashtra', latitude: 18.5362, longitude: 73.8940 },
-      { name: 'Hinjewadi IT Park, Pune', display_name: 'Hinjewadi Phase 1 IT Park, Pune, Maharashtra', latitude: 18.5913, longitude: 73.7389 },
-      // Ahmedabad & Gujarat
-      { name: 'SG Highway, Ahmedabad', display_name: 'SG Highway Corridor, Ahmedabad, Gujarat', latitude: 23.0484, longitude: 72.5074 },
-      { name: 'Sabarmati Riverfront, Ahmedabad', display_name: 'Sabarmati Riverfront Promenade, Ahmedabad, Gujarat', latitude: 23.0338, longitude: 72.5714 },
-      // Jaipur & Rajasthan
-      { name: 'Hawa Mahal, Jaipur', display_name: 'Hawa Mahal, Badi Choupad, Pink City, Jaipur, Rajasthan', latitude: 26.9239, longitude: 75.8267 },
-      { name: 'MI Road, Jaipur', display_name: 'Mirza Ismail Road (MI Road), Jaipur, Rajasthan', latitude: 26.9185, longitude: 75.8078 },
-      // Lucknow & UP
-      { name: 'Hazratganj, Lucknow', display_name: 'Hazratganj Main Market, Lucknow, Uttar Pradesh', latitude: 26.8475, longitude: 80.9432 },
-      { name: 'Gomti Nagar, Lucknow', display_name: 'Gomti Nagar, Vibhuti Khand, Lucknow, Uttar Pradesh', latitude: 26.8623, longitude: 80.9995 },
-      // Other Major Capitals & Hubs
-      { name: 'Sector 17, Chandigarh', display_name: 'Sector 17 City Centre Plaza, Chandigarh', latitude: 30.7398, longitude: 76.7827 },
-      { name: 'Marine Drive, Kochi', display_name: 'Marine Drive Promenade, Ernakulam, Kochi, Kerala', latitude: 9.9796, longitude: 76.2755 },
-      { name: 'Vijay Nagar, Indore', display_name: 'Vijay Nagar, AB Road, Indore, Madhya Pradesh', latitude: 22.7533, longitude: 75.8937 },
-      { name: 'MP Nagar, Bhopal', display_name: 'MP Nagar Zone 1, Bhopal, Madhya Pradesh', latitude: 23.2332, longitude: 77.4344 },
-      { name: 'Boring Road, Patna', display_name: 'Boring Road Crossing, Patna, Bihar', latitude: 25.6186, longitude: 85.1215 },
-      { name: 'Patia / Infocity, Bhubaneswar', display_name: 'Patia, Infocity Road, Bhubaneswar, Odisha', latitude: 20.3541, longitude: 85.8193 },
-      { name: 'GS Road, Guwahati', display_name: 'GS Road, Christian Basti, Guwahati, Assam', latitude: 26.1528, longitude: 91.7774 },
-      { name: 'Dashashwamedh Ghat, Varanasi', display_name: 'Dashashwamedh Ghat, Godowlia, Varanasi, Uttar Pradesh', latitude: 25.3076, longitude: 83.0107 },
-      { name: 'Rajpur Road, Dehradun', display_name: 'Rajpur Road, Clock Tower, Dehradun, Uttarakhand', latitude: 30.3256, longitude: 78.0437 },
-      { name: 'Panaji / Miramar, Goa', display_name: 'Miramar Beach, Panaji, Goa', latitude: 15.4868, longitude: 73.8080 },
-      { name: 'RK Beach Road, Visakhapatnam', display_name: 'Rama Krishna Beach Road, Visakhapatnam, Andhra Pradesh', latitude: 17.7142, longitude: 83.3235 },
-      { name: 'RS Puram, Coimbatore', display_name: 'RS Puram, DB Road, Coimbatore, Tamil Nadu', latitude: 11.0089, longitude: 76.9507 },
-      { name: 'Sitabuldi, Nagpur', display_name: 'Sitabuldi Interchange, Nagpur, Maharashtra', latitude: 21.1458, longitude: 79.0882 },
-      { name: 'Golden Temple, Amritsar', display_name: 'Golden Temple (Sri Harmandir Sahib), Amritsar, Punjab', latitude: 31.6200, longitude: 74.8765 },
-      // Jharkhand (NIT Jamshedpur, Jamshedpur & Ranchi)
-      { name: 'NIT Jamshedpur, Adityapur', display_name: 'National Institute of Technology (NIT) Jamshedpur, Adityapur, Jamshedpur, Jharkhand', latitude: 22.7765, longitude: 86.1438 },
-      { name: 'NIT Jamshedpur Main Gate', display_name: 'NIT Jamshedpur Main Security Gate, Tata-Kandra Road, Adityapur, Jharkhand', latitude: 22.7765, longitude: 86.1438 },
-      { name: 'NIT Jamshedpur Academic Complex', display_name: 'Central Library & Diamond Jubilee Academic Complex, NIT Jamshedpur', latitude: 22.7775, longitude: 86.1445 },
-      { name: 'Adityapur, Jamshedpur', display_name: 'Adityapur Industrial Town, Tata-Kandra Road, Jamshedpur, Jharkhand', latitude: 22.7845, longitude: 86.1580 },
-      { name: 'Sakchi, Jamshedpur', display_name: 'Sakchi Market / Commercial Area, Jamshedpur, Jharkhand', latitude: 22.8056, longitude: 86.2086 },
-      { name: 'Bistupur, Jamshedpur', display_name: 'Bistupur Main Road, Jamshedpur, Jharkhand', latitude: 22.7958, longitude: 86.1854 },
-      { name: 'Jubilee Park, Jamshedpur', display_name: 'Jubilee Park, Sakchi Boulevard, Jamshedpur, Jharkhand', latitude: 22.8120, longitude: 86.1969 },
-      { name: 'Tatanagar Junction, Jamshedpur', display_name: 'Tatanagar Railway Junction Station, Jamshedpur, Jharkhand', latitude: 22.7667, longitude: 86.2023 },
-      { name: 'Main Road, Ranchi', display_name: 'Main Road, Albert Ekka Chowk, Ranchi, Jharkhand', latitude: 23.3697, longitude: 85.3253 },
-      { name: 'Lal Chowk, Srinagar', display_name: 'Lal Chowk, Srinagar, Jammu and Kashmir', latitude: 34.0725, longitude: 74.8085 },
-    ];
-
-    // Geocoding Autocomplete Logic with Pan-India Coverage (Google Maps style)
+    // Geocoding Autocomplete Logic
     function setupGeocoding(inputEl, latEl, lonEl, suggestionsEl) {
       if (!inputEl || !suggestionsEl) return;
       let debounceTimer = null;
 
       inputEl.addEventListener('input', () => {
-        inputEl.dataset.dirty = 'true';
         const query = inputEl.value.trim();
         clearTimeout(debounceTimer);
-        if (query.length < 2) {
+        if (query.length < 3) {
           suggestionsEl.style.display = 'none';
           suggestionsEl.innerHTML = '';
           return;
         }
 
-        // Show immediate loading indicator
-        suggestionsEl.innerHTML = `
-          <div class="saferoute-suggestion-loading">
-            <span class="saferoute-spinner"></span>
-            <span>Searching locations across India...</span>
-          </div>
-        `;
-        suggestionsEl.style.display = 'block';
-
         debounceTimer = setTimeout(async () => {
           let items = [];
           try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(query)}&limit=6`);
+            const res = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(query)}`);
             if (res.ok) {
               const data = await res.json();
-              if (Array.isArray(data) && data.length > 0) items = data;
+              if (Array.isArray(data)) items = data;
             }
           } catch (e) {
-            console.warn('SafeRoute geocode network issue:', e);
+            console.warn('SafeRoute geocode network issue, checking offline landmarks:', e);
           }
 
-          // Fallback attempt: if multi-word query returned 0, strip common location suffixes (e.g. "sakchi market" -> "sakchi")
-          if (items.length === 0 && /\s+/.test(query)) {
-            const stripped = query.replace(/\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b/gi, '').trim();
-            if (stripped && stripped.toLowerCase() !== query.toLowerCase() && stripped.length >= 3) {
-              try {
-                const res2 = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(stripped)}&limit=6`);
-                if (res2.ok) {
-                  const data2 = await res2.json();
-                  if (Array.isArray(data2) && data2.length > 0) items = data2;
-                }
-              } catch (err) {}
-            }
-          }
-
-          // Local pan-India landmarks catalog fallback
           if (items.length === 0) {
+            const landmarks = (window.SafeMateDemoData && window.SafeMateDemoData.DEMO_LANDMARKS) || [
+              { name: 'Connaught Place', display_name: 'Connaught Place, Inner Circle, New Delhi', latitude: 28.6315, longitude: 77.2167 },
+              { name: 'India Gate', display_name: 'India Gate, Rajpath, New Delhi', latitude: 28.6129, longitude: 77.2295 },
+              { name: 'Hauz Khas Village', display_name: 'Hauz Khas Village, New Delhi', latitude: 28.5494, longitude: 77.1936 },
+              { name: 'Select Citywalk Saket', display_name: 'Select Citywalk, Saket, New Delhi', latitude: 28.5283, longitude: 77.2190 },
+              { name: 'South Extension', display_name: 'South Extension Part II, New Delhi', latitude: 28.5689, longitude: 77.2223 },
+              { name: 'Lajpat Nagar Central Market', display_name: 'Lajpat Nagar Central Market, New Delhi', latitude: 28.5700, longitude: 77.2373 },
+              { name: 'Delhi University North Campus', display_name: 'DU North Campus, Delhi', latitude: 28.6903, longitude: 77.2066 },
+              { name: 'DLF Cyber Hub', display_name: 'DLF Cyber Hub, Gurugram', latitude: 28.4950, longitude: 77.0895 }
+            ];
             const qLower = query.toLowerCase();
-            const aliasMap = {
-              'nit surathkal': 'nitk',
-              'nitk surathkal': 'nitk',
-              'nit surathkal campus': 'nitk',
-              'nitk beach': 'surathkal beach',
-              'nit surathkal beach': 'surathkal beach',
-              'mit manipal': 'manipal institute of technology',
-              'kmc manipal': 'kasturba medical college',
-              'tiger circle': 'tiger circle manipal',
-              'mysore palace': 'mysuru palace',
-              'chamundi hill': 'chamundeshwari',
-              'bvb hubli': 'kle tech',
-            };
-            const alias = aliasMap[qLower];
-            items = PAN_INDIA_LANDMARKS.filter(lm => {
-              const n = lm.name.toLowerCase();
-              const d = lm.display_name.toLowerCase();
-              return n.includes(qLower) || d.includes(qLower) || (alias && (n.includes(alias) || d.includes(alias)));
-            });
+            items = landmarks.filter(lm => lm.name.toLowerCase().includes(qLower) || lm.display_name.toLowerCase().includes(qLower));
           }
 
           if (!Array.isArray(items) || items.length === 0) {
-            suggestionsEl.innerHTML = `
-              <div class="saferoute-suggestion-empty">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>No Indian locations found for "${query.replace(/"/g, '&quot;')}". Try adding city name (e.g. "NIT Surathkal" or "Hampankatta, Mangaluru").</span>
-              </div>
-            `;
-            suggestionsEl.style.display = 'block';
+            suggestionsEl.style.display = 'none';
             return;
           }
 
           suggestionsEl.innerHTML = items.map(item => {
             const itemLat = item.latitude !== undefined ? item.latitude : item.lat;
             const itemLon = item.longitude !== undefined ? item.longitude : item.lon;
-            const rawDisp = item.display_name || item.name || '';
-            const name = item.name || rawDisp.split(',')[0].trim();
-            const subtitle = rawDisp && rawDisp !== name ? rawDisp : '';
-            let selectionValue = name;
-            if (!selectionValue.toLowerCase().includes('surathkal') && rawDisp.toLowerCase().includes('surathkal')) {
-              selectionValue = `${name}, Surathkal`;
-            } else if (!selectionValue.toLowerCase().includes('mangaluru') && (rawDisp.toLowerCase().includes('mangaluru') || rawDisp.toLowerCase().includes('mangalore'))) {
-              selectionValue = `${name}, Mangaluru`;
-            } else if (!selectionValue.toLowerCase().includes('manipal') && rawDisp.toLowerCase().includes('manipal')) {
-              selectionValue = `${name}, Manipal`;
-            } else if (!selectionValue.toLowerCase().includes('jamshedpur') && rawDisp.toLowerCase().includes('jamshedpur')) {
-              selectionValue = `${name}, Jamshedpur`;
-            } else if (subtitle && !selectionValue.includes(',')) {
-              const parts = rawDisp.split(',').map(s => s.trim()).filter(Boolean);
-              if (parts.length >= 2) selectionValue = `${parts[0]}, ${parts[1]}`;
-            }
-
             return `
-              <div class="saferoute-suggestion-item" data-lat="${itemLat}" data-lon="${itemLon}" data-name="${selectionValue.replace(/"/g, '&quot;')}" data-full="${rawDisp.replace(/"/g, '&quot;')}">
-                <div class="sugg-pin-icon">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
-                <div class="sugg-text">
-                  <strong class="sugg-title">${name}</strong>
-                  ${subtitle ? `<span class="sugg-subtitle">${subtitle}</span>` : ''}
-                </div>
+              <div class="saferoute-suggestion-item" data-lat="${itemLat}" data-lon="${itemLon}" data-name="${item.name.replace(/"/g, '&quot;')}">
+                <strong>${item.name}</strong>
+                ${item.display_name && item.display_name !== item.name ? `<small>${item.display_name}</small>` : ''}
               </div>
             `;
           }).join('');
@@ -4952,13 +4880,12 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           suggestionsEl.querySelectorAll('.saferoute-suggestion-item').forEach(el => {
             el.addEventListener('click', () => {
               inputEl.value = el.getAttribute('data-name');
-              inputEl.dataset.dirty = 'false';
               if (latEl) latEl.value = el.getAttribute('data-lat');
               if (lonEl) lonEl.value = el.getAttribute('data-lon');
               suggestionsEl.style.display = 'none';
             });
           });
-        }, 260);
+        }, 320);
       });
 
       document.addEventListener('click', (e) => {
@@ -5043,16 +4970,8 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
         police: '#dc2626',
         fuel: '#8b5cf6',
         transit: '#6366f1',
-        cctv: '#0284c7'
+        cctv: '#94a3b8'
       };
-      if (category === 'cctv') {
-        return `<div style="background:#0284c7; width:22px; height:22px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="CCTV Surveillance Camera">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-            <circle cx="12" cy="13" r="4"></circle>
-          </svg>
-        </div>`;
-      }
       const color = catColors[category] || '#64748b';
       return `<div style="background:${color}; width:20px; height:20px; border-radius:50%; border:2px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; cursor:pointer;" title="${category}"></div>`;
     }
@@ -5324,10 +5243,6 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
           ? alt.assistance_nodes_count
           : (scoreBreakdown.assistance_points_count || 0);
 
-        const cctvCount = alt.cctv_nodes_count !== undefined
-          ? alt.cctv_nodes_count
-          : (scoreBreakdown.cctv_points_count || 0);
-
         const longestGap = alt.longest_low_activity_segment_meters !== undefined
           ? alt.longest_low_activity_segment_meters
           : (scoreBreakdown.longest_low_activity_segment_meters || 0);
@@ -5396,10 +5311,6 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
               <div class="ground-item">
                 <span class="ground-label">Assistance Nodes:</span>
                 <strong class="ground-val">${assistCount} nearby (Police/Medical)</strong>
-              </div>
-              <div class="ground-item">
-                <span class="ground-label">CCTV Surveillance:</span>
-                <strong class="ground-val">${cctvCount > 0 ? `${cctvCount} mapped camera(s)` : 'Unmapped corridor'}</strong>
               </div>
               <div class="ground-item">
                 <span class="ground-label">Longest Low-Activity Segment:</span>
@@ -5505,129 +5416,58 @@ Key Demands: Urgent injunctive relief, Section 91 CrPC notice to intermediary IS
         let destLat = parseFloat(destLatEl ? destLatEl.value : '');
         let destLon = parseFloat(destLonEl ? destLonEl.value : '');
 
-        // Helper: Resolve any location across India (supports typed names, addresses, coordinates, or presets)
-        async function resolveIndianLocation(inputVal, latVal, lonVal, isDirty) {
-          const raw = (inputVal || '').trim();
-          if (!raw) return null;
+        const landmarks = (window.SafeMateDemoData && window.SafeMateDemoData.DEMO_LANDMARKS) || [
+          { name: 'Connaught Place', display_name: 'Connaught Place, Inner Circle, New Delhi', latitude: 28.6315, longitude: 77.2167 },
+          { name: 'India Gate', display_name: 'India Gate, Rajpath, New Delhi', latitude: 28.6129, longitude: 77.2295 },
+          { name: 'Hauz Khas Village', display_name: 'Hauz Khas Village, New Delhi', latitude: 28.5494, longitude: 77.1936 },
+          { name: 'Select Citywalk Saket', display_name: 'Select Citywalk, Saket, New Delhi', latitude: 28.5283, longitude: 77.2190 },
+          { name: 'South Extension', display_name: 'South Extension Part II, New Delhi', latitude: 28.5689, longitude: 77.2223 },
+          { name: 'Lajpat Nagar Central Market', display_name: 'Lajpat Nagar Central Market, New Delhi', latitude: 28.5700, longitude: 77.2373 },
+          { name: 'Delhi University North Campus', display_name: 'DU North Campus, Delhi', latitude: 28.6903, longitude: 77.2066 },
+          { name: 'DLF Cyber Hub', display_name: 'DLF Cyber Hub, Gurugram', latitude: 28.4950, longitude: 77.0895 }
+        ];
 
-          // 1. Direct coordinate check: "lat, lon"
-          const coordParts = raw.split(',');
-          if (coordParts.length === 2) {
-            const pLat = parseFloat(coordParts[0].trim());
-            const pLon = parseFloat(coordParts[1].trim());
-            if (!isNaN(pLat) && !isNaN(pLon) && pLat >= -90 && pLat <= 90 && pLon >= -180 && pLon <= 180) {
-              return { lat: pLat, lon: pLon, name: `Location (${pLat.toFixed(4)}, ${pLon.toFixed(4)})` };
-            }
+        // Resolve origin coordinates from landmarks if unselected
+        if ((isNaN(originLat) || isNaN(originLon)) && originName) {
+          const m = landmarks.find(lm => originName.toLowerCase().includes(lm.name.toLowerCase()) || lm.name.toLowerCase().includes(originName.toLowerCase()));
+          if (m) {
+            originLat = m.latitude;
+            originLon = m.longitude;
+            if (originLatEl) originLatEl.value = originLat;
+            if (originLonEl) originLonEl.value = originLon;
+          } else {
+            originLat = 28.6315;
+            originLon = 77.2167;
           }
-
-          // 2. If user hasn't edited the text and valid coordinates exist, reuse them
-          if (!isDirty && !isNaN(latVal) && !isNaN(lonVal) && Math.abs(latVal) > 0.001) {
-            return { lat: latVal, lon: lonVal, name: raw };
-          }
-
-          // 3. Match against pan-India landmarks catalog (with alias expansion)
-          const qLower = raw.toLowerCase();
-          const aliasMap = {
-            'nit surathkal': 'nitk',
-            'nitk surathkal': 'nitk',
-            'nit surathkal campus': 'nitk',
-            'nitk beach': 'surathkal beach',
-            'nit surathkal beach': 'surathkal beach',
-            'mit manipal': 'manipal institute of technology',
-            'kmc manipal': 'kasturba medical college',
-            'tiger circle': 'tiger circle manipal',
-            'mysore palace': 'mysuru palace',
-            'chamundi hill': 'chamundeshwari',
-            'bvb hubli': 'kle tech',
-          };
-          const alias = aliasMap[qLower];
-          const localMatch = PAN_INDIA_LANDMARKS.find(lm => {
-            const n = lm.name.toLowerCase();
-            const d = lm.display_name.toLowerCase();
-            return n === qLower || d.includes(qLower) || qLower.includes(n) || (alias && (n.includes(alias) || d.includes(alias)));
-          });
-          if (localMatch) {
-            return { lat: localMatch.latitude, lon: localMatch.longitude, name: localMatch.name };
-          }
-
-          // 4. Real-time API geocoding anywhere across India
-          try {
-            const res = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(raw)}&limit=1`);
-            let items = [];
-            if (res.ok) {
-              items = await res.json();
-            }
-
-            // Suffix-stripping fallback for multi-word queries like "sakchi market"
-            if ((!Array.isArray(items) || items.length === 0) && /\s+/.test(raw)) {
-              const stripped = raw.replace(/\b(market|bazar|bazaar|mandi|haat|chowk|chauraha|circle|roundabout|station|bus stand|railway station|road|rd|marg|street|mall|complex|plaza)\b/gi, '').trim();
-              if (stripped && stripped.toLowerCase() !== raw.toLowerCase() && stripped.length >= 3) {
-                const res2 = await fetch(`${API_BASE_URL}/api/v1/routes/geocode?q=${encodeURIComponent(stripped)}&limit=1`);
-                if (res2.ok) items = await res2.json();
-              }
-            }
-
-            if (Array.isArray(items) && items.length > 0) {
-              const item = items[0];
-              return {
-                lat: item.latitude !== undefined ? item.latitude : item.lat,
-                lon: item.longitude !== undefined ? item.longitude : item.lon,
-                name: item.name || raw,
-                displayName: item.display_name
-              };
-            }
-          } catch (e) {
-            console.warn('Geocoding lookup error for', raw, e);
-          }
-
-          return null;
         }
 
-        const isOriginDirty = originInput && originInput.dataset.dirty === 'true';
-        const isDestDirty = destInput && destInput.dataset.dirty === 'true';
-
-        btnPlanRoutes.disabled = true;
-        if (btnPlanRoutesText) btnPlanRoutesText.textContent = 'Resolving Locations...';
-        if (statusBox) {
-          statusBox.style.display = 'block';
-          statusBox.className = 'saferoute-status-callout callout-info';
-          statusBox.textContent = 'Resolving route coordinates across India...';
+        // Resolve dest coordinates from landmarks if unselected
+        if ((isNaN(destLat) || isNaN(destLon)) && destName) {
+          const m = landmarks.find(lm => destName.toLowerCase().includes(lm.name.toLowerCase()) || lm.name.toLowerCase().includes(destName.toLowerCase()));
+          if (m) {
+            destLat = m.latitude;
+            destLon = m.longitude;
+            if (destLatEl) destLatEl.value = destLat;
+            if (destLonEl) destLonEl.value = destLon;
+          } else {
+            destLat = 28.6129;
+            destLon = 77.2295;
+          }
         }
 
-        const resolvedOrigin = await resolveIndianLocation(originName, originLat, originLon, isOriginDirty);
-        const resolvedDest = await resolveIndianLocation(destName, destLat, destLon, isDestDirty);
-
-        if (!resolvedOrigin) {
-          btnPlanRoutes.disabled = false;
-          if (btnPlanRoutesText) btnPlanRoutesText.textContent = 'Find My Routes';
-          alert(`Could not locate "${originName}" in India. Please enter a recognizable landmark, area, or city (e.g., "MG Road, Bengaluru" or "Marine Drive, Mumbai").`);
+        if (!originName || isNaN(originLat) || isNaN(originLon)) {
+          alert('Please enter or select a valid starting point.');
           if (originInput) originInput.focus();
           return;
         }
 
-        if (!resolvedDest) {
-          btnPlanRoutes.disabled = false;
-          if (btnPlanRoutesText) btnPlanRoutesText.textContent = 'Find My Routes';
-          alert(`Could not locate "${destName}" in India. Please enter a recognizable landmark, area, or city (e.g., "Koramangala, Bengaluru" or "Bandra West, Mumbai").`);
+        if (!destName || isNaN(destLat) || isNaN(destLon)) {
+          alert('Please enter or select a valid destination.');
           if (destInput) destInput.focus();
           return;
         }
 
-        originLat = resolvedOrigin.lat;
-        originLon = resolvedOrigin.lon;
-        if (originLatEl) originLatEl.value = originLat;
-        if (originLonEl) originLonEl.value = originLon;
-        if (originInput) originInput.dataset.dirty = 'false';
-
-        destLat = resolvedDest.lat;
-        destLon = resolvedDest.lon;
-        if (destLatEl) destLatEl.value = destLat;
-        if (destLonEl) destLonEl.value = destLon;
-        if (destInput) destInput.dataset.dirty = 'false';
-
         if (Math.abs(originLat - destLat) < 0.0001 && Math.abs(originLon - destLon) < 0.0001) {
-          btnPlanRoutes.disabled = false;
-          if (btnPlanRoutesText) btnPlanRoutesText.textContent = 'Find My Routes';
           alert('Origin and destination are identical. Please specify different starting and ending points.');
           return;
         }
