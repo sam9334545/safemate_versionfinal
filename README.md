@@ -98,7 +98,7 @@ Once a route is chosen, a single click transfers the itinerary to **SafeWalk**:
 * **Automatic Fail-Safe Escalation:** If the survivor does not tap "I Am Safe" when the timer expires, SafeWalk assumes incapacitation or coercion and immediately escalates an emergency distress alert with her last logged breadcrumb trail to her safety circle.
 * **Zero Overhead Companion:** Runs silently in the browser background, providing peace of mind during late-night rides, cab journeys, and solo walks.
 
-![Real Context Transit Escort](docs/screenshots/real_safewalk_context.jpg)
+
 
 ---
 
