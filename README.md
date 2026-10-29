@@ -7,6 +7,19 @@ Unlike conventional panic apps that demand intrusive sign-ups, store sensitive d
 
 ---
 
+## SafeMate Survivor Sanctuary: The Platform at a Glance
+
+When an individual in distress or an evaluator arrives at SafeMate, they are not met with jarring alarm graphics, intrusive tracking cookies, or aggressive sign-up demands. The interface is designed around trauma-informed design principles—a serene slate and crimson palette, clear emergency hotlines, zero tracking cookies, and instant pathways for evaluation and protection without forced sign-up barriers.
+
+![SafeMate Survivor Sanctuary Hub](docs/screenshots/01_survivor_sanctuary_hub.png)
+
+* **Trauma-Informed Minimalism:** Generous typography, high contrast, calming palettes, and clear iconography designed to lower anxiety spikes during crisis.
+* **Instant Emergency Hotline Dock:** Prominently anchored, one-tap connection to **112 (National Emergency)**, **181 (Women's Helpline)**, and **1930 (National Cybercrime)**.
+* **2-Tier Mobile-Optimized Header:** Seamlessly separates brand access from 3 primary, full-width emergency action targets (**SafeRoute**, **Disguise**, and **112 Emergency**) with zero crowding or overlapping.
+* **Zero Forced Onboarding:** Immediate access through **Try Demo Mode** and **Guest Mode**—evaluators and survivors can test every single feature without submitting personal credentials, phone numbers, or passwords.
+
+---
+
 ## The Survivor's Journey: A Story-Driven Trauma Response Architecture
 
 ```
@@ -53,7 +66,7 @@ When physical violence is imminent and quiet escape is impossible, tapping **112
 * **Safety Circle Dispatch:** Automatically dispatches SMS/location notifications to her pre-saved personal contacts, ensuring loved ones know her real-time location.
 * **Demo-Safe Isolation:** In evaluator demo mode, an explicit simulation banner prevents unauthorized transmission to real emergency lines.
 
-![Real Context Emergency SOS]
+
 
 #### 3. Fake Escape Call Simulator
 When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Call** simulator triggers an authentic incoming call screen with customizable ringtones, caller identities, and voice prompts, giving the survivor a socially clean exit excuse.
