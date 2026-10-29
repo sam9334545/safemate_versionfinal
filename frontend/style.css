@@ -5733,46 +5733,37 @@ body.modal-open .emergency-quick-dock,
   pointer-events: none !important;
 }
 
-/* 3. Sticky Quick Exit Button Responsive Docking */
+/* 3. Sticky Quick Exit Button Responsive Docking — Dock to Right Center Edge on Mobile (Never overlaps Navbar) */
 @media (max-width: 768px) {
   .sticky-leave-site-tab {
-    top: 68px !important;
-    right: 10px !important;
+    top: 50% !important;
+    right: 0 !important;
     bottom: auto !important;
     left: auto !important;
-    transform: none !important;
-    writing-mode: horizontal-tb !important;
-    text-orientation: unset !important;
-    padding: 6px 14px !important;
-    font-size: 0.74rem !important;
-    border-radius: 999px !important;
-    border-top-left-radius: 999px !important;
-    border-bottom-left-radius: 999px !important;
-    display: inline-flex !important;
+    transform: translateY(-50%) !important;
+    writing-mode: vertical-rl !important;
+    text-orientation: mixed !important;
+    padding: 14px 8px !important;
+    font-size: 0.76rem !important;
+    border-radius: 8px 0 0 8px !important;
+    border-top-left-radius: 8px !important;
+    border-bottom-left-radius: 8px !important;
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22) !important;
-    z-index: 1001 !important;
+    box-shadow: -3px 4px 14px rgba(0, 0, 0, 0.25) !important;
+    z-index: 995 !important;
   }
   
   .sticky-leave-site-tab:hover {
-    transform: translateY(-1px) !important;
-    padding-right: 14px !important;
+    transform: translateY(-50%) translateX(-2px) !important;
+    padding-right: 11px !important;
   }
 
   .sticky-leave-site-tab .leave-icon {
-    margin-bottom: 0 !important;
-    font-size: 0.85rem !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .sticky-leave-site-tab {
-    top: 62px !important;
-    right: 8px !important;
-    padding: 5px 10px !important;
-    font-size: 0.70rem !important;
+    margin-bottom: 2px !important;
+    font-size: 0.80rem !important;
   }
 }
 
