@@ -207,7 +207,6 @@ SafeMate's **Tell-Once Sanctuary** guides the survivor through a gentle, structu
 * **Trauma-Informed Pacing:** Step 1 evaluates immediate physical safety; "Take a Breather" pauses allow the user to stop, breathe, and resume whenever ready.
 * **Volatile RAM Pipeline:** Responses are synthesized in volatile memory without cloud database retention.
 
-![Real Context Tell-Once Counseling](docs/screenshots/tell_once_counsel_context.jpg)
 
 #### 2. Output A: Mandatory Zero FIR (Section 173 BNSS, 2023)
 Tell-Once automatically translates the narrative into a formal, statutory **Police Complaint & Zero FIR**:
@@ -241,7 +240,6 @@ Abusers frequently intimidate victims into deleting chat logs or photos, later c
 * **Built-In Audio Recording & Export:** Covertly records audio in native formats (`.m4a`, `.ogg`, `.webm`) with timeslice flushing and authorized token downloads.
 * **Calculator Camouflage:** One-click camouflage transforms the vault into a functional calculator.
 
-![Real Context Sealed Evidence](docs/screenshots/real_evidence_phone_context.jpg)
 
 #### 5. 24/7 Statutory Legal Assistant (AI Chatbot)
 For questions about rights, divorce, domestic violence protection orders, or emergency cybercrime reporting, survivors can consult the **Safety & Legal Assistant**:
