@@ -33,19 +33,19 @@
 
   <!-- Clean Maitri-Inspired Navbar -->
   <header class="navbar" id="navbar">
-    <a href="#" class="nav-brand" id="brand-link">
-      <div class="brand-icon-shield">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 18c-3.75-1.1-6.5-5.06-6.5-9.5V8.3l6.5-3.61 6.5 3.61V10.5c0 4.44-2.75 8.4-6.5 9.5z"/>
-        </svg>
-      </div>
-      <div class="brand-text-group">
-        <span class="brand-title">SafeMate</span>
-        <span class="brand-subtitle">Confidential Survivor Shield</span>
-      </div>
-    </a>
+    <div class="nav-top-row">
+      <a href="#" class="nav-brand" id="brand-link">
+        <div class="brand-icon-shield">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 18c-3.75-1.1-6.5-5.06-6.5-9.5V8.3l6.5-3.61 6.5 3.61V10.5c0 4.44-2.75 8.4-6.5 9.5z"/>
+          </svg>
+        </div>
+        <div class="brand-text-group">
+          <span class="brand-title">SafeMate</span>
+          <span class="brand-subtitle">Confidential Survivor Shield</span>
+        </div>
+      </a>
 
-    <div class="nav-actions">
       <!-- Access Mode & Auth Controls -->
       <div class="nav-access-group" id="nav-access-group">
         <button type="button" class="btn-nav-demo-highlight" id="btn-quick-demo-mode" title="Instant access for judges and evaluators without login">
@@ -60,10 +60,13 @@
           <span class="nav-label-mobile">Sign In</span>
         </button>
       </div>
+    </div>
 
+    <!-- Safety Action Row: SafeRoute, Disguise, 112 Emergency -->
+    <div class="nav-safety-strip" id="nav-safety-strip">
       <!-- SafeRoute Safety-Aware Route Planner Navigation -->
       <button type="button" class="btn-nav-saferoute" id="btn-nav-saferoute" title="Compare routes using available night-time activity and support information" data-open-workspace="modal-feature-saferoute" onclick="if(window.openWorkspaceModal)window.openWorkspaceModal('modal-feature-saferoute');">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="3 11 22 2 13 21 11 13 3 11"/>
         </svg>
         <span class="nav-label-saferoute">SafeRoute</span>
@@ -71,7 +74,7 @@
 
       <!-- Stealth Panic Switch (Recipe Disguise) -->
       <button class="btn-panic" id="panic-disguise-btn" title="Instantly hide this page with a recipe blog (ESC)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
           <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
           <line x1="12" y1="2" x2="12" y2="12"></line>
         </svg>
