@@ -1,241 +1,273 @@
 # SafeMate — A Silent Shield, A Strong Voice
-### Digital Safety, Forensic Protection, and Statutory Legal Sanctuary for Survivors
+### Digital Sanctuary, Forensic Defense, and Statutory Justice for Women and Survivors
 
-SafeMate is a trauma-informed, privacy-first digital safety platform engineered to protect women, youth, and vulnerable individuals facing domestic violence, intimate image abuse, weaponized deepfakes, online blackmail, and physical danger.
+SafeMate is a trauma-informed, privacy-first digital safety platform engineered to protect women, youth, and vulnerable individuals facing domestic violence, intimate image abuse, weaponized deepfakes, online blackmail, and physical transit danger.
 
-SafeMate empowers survivors with automated screening, stealth disguises, forensic leak tracing, and a **Tell-Once** sanctuary that compiles police, legal, and counseling briefs in a single session without repeated re-traumatization.
+Unlike conventional panic apps that demand intrusive sign-ups, store sensitive data in vulnerable clouds, or treat safety as a generic GPS toggle, SafeMate is built around **the lived reality of female trauma**—engineered to intervene at the exact moments of vulnerability, fear, and institutional friction.
 
 ---
 
-## The Survivor's Journey: A Story-Driven Walkthrough
+## The Survivor's Journey: A Story-Driven Trauma Response Architecture
 
 ```
-[ Crisis & Threat ] ──► [ Stealth Sanctuary ] ──► [ Tell-Once Intake ] ──► [ Forensic Proof ] ──► [ Statutory Justice ]
-  • Physical Danger       • Recipe Panic ESC        • Disclose Once          • Deepfake Scanner      • Mandatory Zero FIR
-  • Cyber Blackmail       • 3-Mode Shield           • Voice / Hindi          • Leak Attribution      • Cyber Helpline 1930
-  • Transit Risk          • Volatile Memory         • Multi-Agency Dossier   • Evidence Vault SHA    • Legal Counsel Brief
+[ Acute Physical Crisis ] ──► [ Transit & Night Risk ] ──► [ Cyber Blackmail / AI ] ──► [ Betrayal & Leaks ] ──► [ Legal Recourse Without Retrauma ]
+  • Immediate 112 SOS           • SafeRoute Night Density   • In-Memory Swin AI Still    • Bounded LSB Steganography  • Tell-Once Intake (Hindi/Eng)
+  • Instant Recipe Camouflage   • SafeWalk Dead Man's Timer • YOLOv8 + GCViT Video AI    • Non-Repudiation Source ID  • Mandatory Zero FIR (Sec 173 BNSS)
+  • Fake Escape Call            • Corridor Hazard Warnings  • Sec 63 BSA Certificate     • Cryptographic Bitstream    • Tamper-Proof Evidence Vault
 ```
 
 ---
 
-### Act I: Seeking Refuge Without Leaving a Trace
+## Priority 1: Acute Physical Threat & Coercive Control
 
-#### Scene 1: The Survivor Sanctuary Hub
-When an individual in distress reaches SafeMate, they are not confronted with jarring alerts, tracking cookies, or aggressive sign-up demands. The interface is designed around the calming, trauma-informed Maitri design tokens—featuring a serene slate palette, clear emergency hotlines, and instant pathways for evaluation and protection.
+> *"I am in the room with him. If he hears me crying or sees me on a police helpline, he will take my phone and hurt me."*
 
-![SafeMate Survivor Sanctuary Hub](docs/screenshots/01_survivor_sanctuary_hub.png)
+### The Trauma: Hypervigilance & The Terror of Discovery
+In abusive relationships, coercive control and domestic violence, a woman's phone is the most scrutinized object in her possession. An abuser frequently monitors battery levels, recent apps, and browser histories. A standard emergency app with screaming red buttons or login forms can trigger violent escalation if discovered.
 
-* **Trauma-Informed Minimalism:** Generous typography, high contrast, and muted palettes designed to prevent anxiety spikes during crisis.
-* **Instant Hotlines:** Direct dial triggers for **112 (National Emergency)**, **181 (Women's Helpline)**, and **1930 (National Cybercrime)**.
-* **Zero Forced Onboarding:** Full access through **Try Demo Mode** and **Guest Mode** without requesting emails, phone numbers, or passwords.
+### SafeMate's Intervention:
 
----
+```
+[ Normal SafeMate Interface ] ─── (Press ESC or Tap 'Disguise') ───► [ Authentic Recipe Blog: Tuscan Pasta ]
+                                                                      • Title: "Grandma's Creamy Garlic Tuscan Pasta"
+                                                                      • Zero browser history trace
+                                                                      • Top '✕ Close Disguise' returns silently
+```
 
-#### Scene 2: The Footstep in the Hallway (Instant Stealth Panic Disguise)
-A survivor browsing for help in an abusive domestic setting faces severe danger if an abuser enters the room. SafeMate's **Stealth Panic Switch** allows them to tap `ESC` or click the disguise toggle at any millisecond:
+#### 1. Instant Stealth Panic Disguise (`ESC` / Recipe Camouflage)
+At any millisecond—whether browsing resources, drafting an incident report, or viewing evidence—tapping `ESC` or clicking **Disguise** instantly replaces the entire platform with an authentic culinary blog: **"The Hearth & Spoon: 15-Minute Tuscan Garlic Basil Penne"**.
 
 ![Stealth Recipe Disguise Panic Screen](docs/screenshots/02_instant_stealth_disguise.png)
 
-* **Authentic Culinary Disguise:** The entire application instantly transforms into **"The Hearth & Spoon: 15-Minute Tuscan Garlic Basil Penne"**, complete with appetizing food imagery, ingredients, and prep times.
-* **Browser Tab & History Cloak:** Document title, favicon, and interface are instantly sanitized.
-* **Stealth Session Recovery:** Clicking the brand icon discreetly restores the survivor workspace without losing work in progress.
+* **Realistic Food Journal Cloak:** Complete with appetizing photography, ingredient measurements, prep times, and cooking instructions.
+* **Browser Tab Sanitization:** The document title instantly switches to *"Grandma's Creamy Garlic Tuscan Pasta Recipe"*, and favicon metadata is cloaked.
+* **Non-Technical Mobile Restore:** A discreet `✕ Close Disguise` button in the recipe header restores the survivor session without losing uncommitted report drafts.
+
+#### 2. Emergency SOS Dispatch & Safety Circle
+When physical violence is imminent and quiet escape is impossible, tapping **112 Emergency** triggers an automated distress broadcast:
+
+![Emergency SOS Modal with Live Location and Dispatch Diagnostics](docs/screenshots/04_emergency_sos_dispatch.png)
+
+* **High-Accuracy Geolocation Fix:** Locks GPS latitude and longitude with meter-level accuracy radius (`±18m`) alongside a direct Google Maps navigation hyperlink.
+* **Direct Emergency Line:** Connects the phone immediately to **112 (National Emergency Response Support System - ERSS)**.
+* **Safety Circle Dispatch:** Automatically dispatches SMS/location notifications to her pre-saved personal contacts, ensuring loved ones know her real-time location.
+* **Demo-Safe Isolation:** In evaluator demo mode, an explicit simulation banner prevents unauthorized transmission to real emergency lines.
+
+![Real Context Emergency SOS](docs/screenshots/real_sos_context.jpg)
+
+#### 3. Fake Escape Call Simulator
+When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Call** simulator triggers an authentic incoming call screen with customizable ringtones, caller identities, and voice prompts, giving the survivor a socially clean exit excuse.
 
 ---
 
-#### Scene 3: The Frictionless Shield (3-Mode Authentication)
-Evaluators, mentors, anonymous visitors, and registered users require tailored access boundaries with zero onboarding friction:
+## Priority 2: Transit & Urban Night Safety
+
+> *"It's 10:45 PM. The metro dropped me 800 meters from my home. The shortest path on my map app is through a dark service road where men loiter outside closed shutters. My heart is in my throat with every step."*
+
+### The Trauma: Anticipatory Transit Dread & Isolation
+Standard navigation apps are built for speed—they optimize for the shortest route, directing female pedestrians down pitch-black alleyways, unlit underpasses, and desolate corridors where no bystander can hear a scream. The fear of being stalked or abducted on the commute home causes chronic anxiety for millions of women daily.
+
+### SafeMate's Intervention:
+
+```
+[ Origin: Transit Hub ] ──────────────── (SafeRoute Corridor Analysis) ────────────────► [ Destination: Home ]
+  Route A (Fastest: 11 min):  Dark alley, 0 open shops, 1 isolated 250m dead-zone  ──► High Risk Score
+  Route B (SafeRoute: 15 min): Well-lit arterial, 2 open pharmacies, police booth  ──► Recommended Safe Corridor
+                                           │
+                                           ▼ (1-Click Handoff)
+                          [ SafeWalk Active Escort with Dead Man's Timer ]
+```
+
+#### 1. SafeRoute — Safety-Aware Route Planner
+Rather than blindly selecting the shortest distance, SafeRoute evaluates candidate pedestrian routes using real-world OpenStreetMap infrastructure and a deterministic **Night Activity Score**:
+
+![SafeRoute Safety-Aware Route Planner with MapLibre GL and Night Activity Scores](docs/screenshots/17_saferoute_safety_planner.png)
+
+* **Open Establishments Weighting (80/100):** Identifies active night-time eyes on the street—including 24/7 pharmacies, open convenience stores, operating restaurants, and petrol pumps.
+* **Spatial Distribution & Dead-Zone Detection:** Analyzes corridor bins to calculate the **Longest Low-Activity Segment** (e.g., *"Warning: 280m unlit stretch without mapped activity"*), giving travelers full foresight before taking a single step.
+* **Emergency Assistance Proximity:** Prioritizes routes passing operational police stations, women's help booths, and 24-hour medical clinics.
+* **Interactive MapLibre GL Map:** Full interactive raster map rendering candidate polylines with color-coded safety markers.
+* **Transparent Trade-Off Matrix:** Shows honest trade-offs (e.g. *"+4 minutes walking time for +32% higher commercial activity and street lighting"*).
+
+#### 2. SafeWalk — Active Escort with Dead Man's Timer
+Once a route is chosen, a single click transfers the itinerary to **SafeWalk**:
+
+![SafeWalk Live Transit Escort with Dead Man's Timer](docs/screenshots/05_safewalk_active_escort.png)
+
+* **Dead Man's Timer:** The traveler sets an anticipated arrival window (e.g. 15 minutes). SafeWalk tracks progress and prompts periodic reassurance check-ins.
+* **Automatic Fail-Safe Escalation:** If the survivor does not tap "I Am Safe" when the timer expires, SafeWalk assumes incapacitation or coercion and immediately escalates an emergency distress alert with her last logged breadcrumb trail to her safety circle.
+* **Zero Overhead Companion:** Runs silently in the browser background, providing peace of mind during late-night rides, cab journeys, and solo walks.
+
+![Real Context Transit Escort](docs/screenshots/real_safewalk_context.jpg)
+
+---
+
+## Priority 3: Cyber Blackmail, Gaslighting & Weaponized Deepfakes
+
+> *"He sent me a video on WhatsApp. It was my face on another woman's naked body. He said if I don't give him money and withdraw my complaint, he'll post it on my college alumni group. I couldn't breathe. It looked so real. I thought my life was over."*
+
+### The Trauma: Paralysis by Synthetic Humiliation
+Non-Consensual Intimate Imagery (NCII) and generative deepfakes are weaponized to annihilate a woman's social standing, agency, and self-worth. Survivors often experience severe dissociation and self-doubt (*"Will anyone believe this isn't me?"*). Conventional law enforcement often dismisses claims due to lack of technical evidence, while private platforms take days to respond.
+
+### SafeMate's Intervention:
+
+```
+[ Suspect Media (JPG/MP4) ] ──► [ In-Memory RAM Inspection ] ──► [ Dual Neural Inference ] ──► [ Sec 63 BSA Legal Proof ]
+  • Client SHA-256 Hash           • io.BytesIO stream              • Swin Transformer (Image)     • Court-admissible certificate
+  • Zero disk storage             • Immediate finally purge        • YOLOv8 + MS-EffGCViT (Video) • Pre-fills Zero FIR draft
+```
+
+#### 1. AI Still-Image Deepfake Screening (Swin Transformer)
+SafeMate enables survivors to immediately upload suspect photographs to verify whether they have been digitally fabricated:
+
+![AI Image Screening: Staged Image with In-Memory SHA-256 Fingerprint](docs/screenshots/18_deepfake_image_upload_staged.png)
+
+* **Cryptographic Browser Pre-Screening:** Calculates an immutable client-side **SHA-256 custody hash** before transmission, anchoring evidentiary provenance.
+* **Swin Transformer Architecture:** Utilizes `umm-maybe/AI-image-detector` to detect diffusion noise patterns, frequency anomalies, and generative face synthesis artifacts.
+* **Forensic Verdict Card:** Renders a definitive verdict with quantitative probability meters (e.g. **96.8% Synthetic Likelihood vs 3.2% Natural**).
+
+![AI Deepfake and Media Manipulation Screening Engine Verdict](docs/screenshots/09_deepfake_scan_result.png)
+
+#### 2. Video Deepfake Screening (Temporal Face-Swap Detection)
+Blackmailers increasingly synthesize realistic video face-swaps. SafeMate features a unified end-to-end video forensic analysis engine:
+
+![Video Deepfake Screening: Staged MP4 Video with In-Memory SHA-256 Fingerprint](docs/screenshots/15_video_deepfake_upload_staged.png)
+
+* **Frame-by-Frame Temporal Inspection:** Decodes uploaded video streams, samples 20 frames across the video duration, and isolates facial regions using **YOLOv8n-Face**.
+* **MS-EffGCViT-B0 Neural Classifier:** Evaluates temporal face-swap boundaries, warped facial blending seams, and unnatural gaze inconsistencies.
+
+![Video Deepfake Forensic Detection Verdict: 91.8% Synthetic Manipulation Detected](docs/screenshots/16_video_deepfake_detection_verdict.png)
+
+* **Definitive High-Confidence Verdict:** Explicitly declares **[ALERT] POTENTIAL SYNTHETIC MANIPULATION DETECTED (91.8% Confidence)**, destroying the blackmailer's psychological leverage.
+* **100% In-Memory RAM Decoupling:** Video and image bytes are decoded strictly in volatile RAM (`io.BytesIO`) and purged in `finally` blocks—sensitive files are **never permanently stored on disk or logged**.
+* **Statutory Section 63 BSA Audit Certificate:** One-click download of a cryptographic certificate under Section 63 of the Bharatiya Sakshya Adhiniyam, 2023 (formerly Section 65B of the Indian Evidence Act), enabling prosecutors to submit the finding directly to court.
+
+---
+
+## Priority 4: Betrayal Trauma & Private Media Leakage
+
+> *"I only shared that photograph with three people I trusted with my life. Now it's on a Telegram group. Who did this to me? I can't trust anyone anymore."*
+
+### The Trauma: The Agony of Unattributed Betrayal
+When confidential photos are leaked, the survivor suffers intense paranoia and betrayal trauma. Without technical proof of who leaked the image, the perpetrator denies involvement, shifts blame onto others, and leaves the survivor socially and emotionally isolated.
+
+### SafeMate's Intervention:
+
+```
+[ Private Image ] ──► [ Leak-Tracer: Embed Recipient Bitstream ] ──► [ Distributed to Recipients: Liam, Jake, Sarah ]
+                                                                                   │
+                                                                   (Leak occurs on Telegram)
+                                                                                   │
+                                                                                   ▼
+[ Leaked Image Uploaded ] ──► [ Forensic LSB Extraction ] ──► [ LEAK ATTRIBUTED: Recipient Liam (Tracking ID: rec_liam_8829) ]
+```
+
+#### 1. Invisible Steganographic Fingerprinting (Leak-Tracer)
+Before sharing intimate or sensitive media, SafeMate allows users to invisibly encode unique cryptographic recipient identifiers into the image:
+
+![Leak-Tracer Forensic Steganographic Watermarking Output](docs/screenshots/10_leak_tracer_watermark_generation.png)
+
+* **Bounded LSB Steganography:** Injects encrypted HMAC tokens into the least-significant bits of blue-channel pixels.
+* **Zero Visual Alteration:** The watermarked images appear identical to human eyes and preserve standard photo quality.
+* **Batch Recipient Tagging:** Generates individualized tagged copies for multiple recipients (e.g. "Liam", "Jake", "Sarah") with direct share options.
+
+#### 2. Forensic Leak Attribution & Source Unmasking
+When a private image surfaces online, the survivor uploads the leaked copy to **Leak-Tracer Trace Mode**:
+
+![Leak-Tracer Forensic Leak Attribution and Recipient Unmasking](docs/screenshots/11_leak_tracer_forensic_attribution.png)
+
+* **Definitive Culprit Identification:** Extracts the embedded bitstream and matches the recipient identity: **"LEAK ATTRIBUTED: Source Identified! Recipient: Liam (Tracking ID: rec_liam_8829471)"**.
+* **Non-Repudiation Proof:** Provides cryptographic certainty that eliminates guesswork, disproves gaslighting, and produces an evidentiary basis for statutory action under IT Act Section 66E (Violation of Bodily Privacy).
+
+---
+
+## Priority 5: Legal Sanctuary Without Institutional Re-Traumatization
+
+> *"The police officer asked me: 'Why were you wearing that? Why did you send the picture?' I had to tell the story four times—to the constable, the inspector, the counselor, and the lawyer. Every time, I felt like I was being violated all over again."*
+
+### The Trauma: Secondary Victimization by the Legal System
+Studies confirm that survivors frequently experience the legal process as a second assault. Having to recount intimate violations repeatedly, facing skeptical authority figures, and navigating arcane statutory jargon causes thousands of women to abandon complaints before an FIR is even registered.
+
+### SafeMate's Intervention:
+
+```
+[ Tell-Once Intake Session ] ─────────────────────────► [ Automated Multi-Agency Translation Engine ]
+  • Disclose once in privacy                                      │
+  • Voice/Text in Hindi & English                                 ├──► [ Mandatory Zero FIR (Sec 173 BNSS) ]
+  • Empathetic pacing & Breathers                                ├──► [ Confidential Legal Counsel Brief ]
+  • Volatile in-memory compilation                                └──► [ Tamper-Proof Cryptographic Evidence Vault ]
+```
+
+#### 1. Tell-Once Incident Intake Sanctuary
+SafeMate's **Tell-Once Sanctuary** guides the survivor through a gentle, structured disclosure once:
+
+![Tell-Once Multi-Agency Incident Intake Sanctuary](docs/screenshots/06_tell_once_intake_flow.png)
+
+* **Bilingual Voice Guidance:** Native speech synthesis and voice transcription in both **Hindi** and **English**, ensuring accessibility regardless of literacy or language preference.
+* **Trauma-Informed Pacing:** Step 1 evaluates immediate physical safety; "Take a Breather" pauses allow the user to stop, breathe, and resume whenever ready.
+* **Volatile RAM Pipeline:** Responses are synthesized in volatile memory without cloud database retention.
+
+![Real Context Tell-Once Counseling](docs/screenshots/tell_once_counsel_context.jpg)
+
+#### 2. Output A: Mandatory Zero FIR (Section 173 BNSS, 2023)
+Tell-Once automatically translates the narrative into a formal, statutory **Police Complaint & Zero FIR**:
+
+![Tell-Once Output: Mandatory Zero FIR Complaint](docs/screenshots/07_tell_once_zero_fir_dossier.png)
+
+* **Statutory Zero FIR Mandate:** Formatted under **Section 173 of the Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023**, which legally obligates *any* police station in India to register the FIR regardless of jurisdiction.
+* **Auto-Cited Penal Sections:** Automatically maps violations to statutory codes:
+  * **BNS Section 351(2):** Criminal Intimidation
+  * **BNS Section 308(2):** Extortion & Blackmail
+  * **IT Act Section 66E:** Capturing & Transmitting Private Images Without Consent
+  * **IT Act Section 67A:** Publishing Sexually Explicit Material Electronically
+* **One-Click Export:** Download as a text file, copy to clipboard, or print directly for presentation to the Station House Officer (SHO).
+
+#### 3. Output B: Confidential Counsel Brief for Defense Advocates
+In parallel, Tell-Once formats an objective legal brief tailored for High Court legal aid cells and defense advocates:
+
+![Tell-Once Output: Confidential Legal Defense Counsel Brief](docs/screenshots/08_tell_once_lawyer_brief.png)
+
+* **Evidentiary Chronology:** Structured timeline paired with cryptographic SHA-256 evidence digests.
+* **Intermediary Takedown Mandates:** Instructions for serving **Rule 3(2)(b) Information Technology Rules notices** to platforms for mandatory 24-hour content suppression.
+* **Section 175(3) BNSS Remedies:** Pre-drafted magistrate application outlines if local police refuse to register the FIR.
+
+#### 4. Disguised Evidence Vault & Cryptographic Chain of Custody
+Abusers frequently intimidate victims into deleting chat logs or photos, later claiming in court that evidence was forged. SafeMate's **Evidence Vault** anchors evidentiary permanence:
+
+![Cryptographic Evidence Vault with SHA-256 Hashing](docs/screenshots/12_evidence_vault_chain_of_custody.png)
+
+* **Client-Side SHA-256 Hash Seal:** Automatically generates an immutable cryptographic signature upon file selection.
+* **Court Chain of Custody:** Records exact ISO timestamps, MIME types, file sizes, and hash digests compliant with Section 63 BSA standards.
+* **Built-In Audio Recording & Export:** Covertly records audio in native formats (`.m4a`, `.ogg`, `.webm`) with timeslice flushing and authorized token downloads.
+* **Calculator Camouflage:** One-click camouflage transforms the vault into a functional calculator.
+
+![Real Context Sealed Evidence](docs/screenshots/real_evidence_phone_context.jpg)
+
+#### 5. 24/7 Statutory Legal Assistant (AI Chatbot)
+For questions about rights, divorce, domestic violence protection orders, or emergency cybercrime reporting, survivors can consult the **Safety & Legal Assistant**:
+
+![Safety and Legal Assistant Chatbot with Zero FIR Directive](docs/screenshots/13_legal_chatbot_zero_fir_consult.png)
+
+* **Grounded Legal Intelligence:** Clarifies rights in plain language, explaining protection orders under the Protection of Women from Domestic Violence Act (PWDVA) 2005.
+* **Panic Memory Purge:** One-tap session wipe destroys all chat history instantly.
+
+---
+
+## 3-Mode Access & Authorization Shield
+
+Evaluators, anonymous survivors, and personal account holders require distinct privacy and security boundaries:
 
 ![3-Mode Authentication and Access Selection Shield](docs/screenshots/03_evaluator_demo_mode.png)
 
 | Capability / Dimension | Judge Demo Mode (`demo`) | Ephemeral Guest Mode (`guest`) | Personal Account (`authenticated`) |
 | :--- | :--- | :--- | :--- |
-| **Credential Gate** | **Zero Friction** (Instant click) | Anonymous ephemeral JWT | Email + Argon2/Bcrypt password |
-| **Backend Data Source** | Fictional verified sample fixtures | Ephemeral in-memory session | Authenticated database partition |
-| **Evidence Vault Storage** | Preloaded mock evidence items | Volatile session-only records | Encrypted permanent storage |
-| **Emergency SOS Action** | **Simulated** (Non-negotiable) | Active dialer / client trigger | Active dialer + saved Safety Circle |
+| **Credential Barrier** | **Zero Friction** (Instant 1-Click) | Ephemeral scoped JWT token | Email + Argon2/Bcrypt password |
+| **Data Partition** | Verified fictional fixtures | In-memory ephemeral session | Encrypted database partition |
+| **Evidence Vault** | Preloaded mock evidence items | Volatile session-only records | Encrypted permanent storage |
+| **Emergency SOS Action** | **Simulated** (Strictly non-telephonic) | Active client dialer trigger | Active dialer + saved Safety Circle |
 | **SafeWalk Journey** | Simulated trip & live escort | Live check-in timer & GPS | Multi-trip history & auto-escalation |
 | **Tell-Once Dossier** | Pre-populated trauma-informed flow | Active turn-by-turn intake | Stored multi-agency briefs |
 | **Session Persistence** | `localStorage` (`safemate_demo_mode`) | `sessionStorage` (Wiped on close) | Secure JWT in header/storage |
-
----
-
-### Act II: The Physical Shield in the Real World
-
-#### Scene 4: Immediate Crisis — Emergency SOS Dispatch
-When physical danger strikes at home or in public, every second counts. Clicking **Emergency 112** triggers immediate location broadcasting and live emergency calling:
-
-![Emergency SOS Modal with Live Location and Dispatch Diagnostics](docs/screenshots/04_emergency_sos_dispatch.png)
-
-* **High-Accuracy Geolocation:** Automatic GPS coordinates fix with accuracy radius (`22.79321, 86.21647 ±68m fix`) and direct Google Maps routing.
-* **Dual Dispatch Architecture:** Instant calling to **112 (ERSS)** alongside simulated alert broadcasting to designated safety contacts.
-* **Evaluator Safety Isolation:** In Demo Mode, an explicit simulation banner displays simulated GPS coordinates and standby contacts without external telephony.
-
----
-
-#### Scene 5: Walking Home Alone — SafeWalk Live Transit Escort
-When walking home at night through poorly lit alleys or unsafe transit corridors, SafeWalk acts as an active digital companion with an automated **Dead Man's Timer**:
-
-![SafeWalk Live Transit Escort with Dead Man's Timer](docs/screenshots/05_safewalk_active_escort.png)
-
-* **Dead Man's Timer:** Traveler initiates a countdown window (e.g. 15 minutes). SafeWalk tracks breadcrumbs and prompts periodic check-in pings.
-* **Automatic Escalation:** If the timer expires without a survivor check-in ping, an emergency distress broadcast is sent to their safety circle.
-* **Live Route Tracking:** Logs transit waypoints with timestamps for forensic transit validation.
-
----
-
-#### Scene 5B: Navigating the Night — SafeRoute Safety-Aware Route Planner
-When travelling home at night, the shortest path on GPS is not always the route with active human presence or reliable emergency assistance. SafeRoute compares candidate route alternatives using real OpenStreetMap geospatial data and deterministic **Night Activity Scoring**:
-
-![SafeRoute Safety-Aware Route Planner with MapLibre GL and Night Activity Scores](docs/screenshots/17_saferoute_safety_planner.png)
-
-* **Multi-Factor Contributing Indicators Breakdown:**
-  * **Open Establishments (80/100):** Calculates live presence of verified night-active venues (e.g. 9 likely open convenience stores, 24/7 pharmacies, petrol pumps).
-  * **Spatial Distribution (76/100):** Evaluates how evenly establishments are spaced across 250m corridor bins to flag isolated transit dead-zones.
-  * **Road Characteristics (88/100):** Prioritizes primary and secondary well-lit commercial transit arterials over unlit alleyways and service roads.
-  * **Assistance Points (85/100):** Detects proximities to immediate help nodes (e.g. 2 nearby Police stations / 24/7 Emergency Medical clinics).
-  * **Public Transport (74/100):** Factors in active metro stations, transit hubs, and designated bus stops.
-  * **Honest CCTV Disclosure (Unavailable):** Strictly acknowledges unmapped civic sensors rather than hallucinating surveillance presence.
-* **Granular Corridor Diagnostics:**
-  * **Longest Low-Activity Segment:** Pinpoints the single longest dark or quiet stretch (e.g. `~250m`) so the traveler knows exactly what to anticipate.
-  * **Comparative Trade-Off Matrix:** Displays real trade-offs between speed and safety (e.g. `Route B` provides `+25 pts` higher mapped night activity and active commercial density at an additional `36 min` walking buffer over the unlit fastest path).
-* **Interactive MapLibre GL + OpenStreetMap Canvas:** Interactive raster vector maps with live corridor polyline geometry, start/destination pins, and distinct color-coded category markers for shops, pharmacies, hospitals, police stations, and transit.
-* **Walking vs. Driving Mode Profiles:** Dedicated algorithmic weighting profiles tailored for pedestrian foot-travelers vs vehicular drivers.
-* **Seamless SafeWalk Handoff:** The traveler reviews alternatives, selects their preferred route, and clicks **"Start SafeWalk with this Route"** to pre-fill destination coordinates and expected duration into the active transit escort workflow.
-* **Strict Safety Disclaimer:** "SafeRoute metrics reflect open establishments, road hierarchies, and assistance points. This score does not predict crime or guarantee personal safety."
-
----
-
-### Act III: Tell-Once — Breaking the Trauma of Repetition
-
-#### Scene 6: The Safe Space Intake Sanctuary
-Survivors commonly describe reporting an incident as re-living the assault—having to repeat intimate, humiliating details to police officers, then lawyers, then counselors, then helplines. SafeMate's **Tell-Once Sanctuary** guides the survivor through an empathetic, multi-step intake once:
-
-![Tell-Once Multi-Agency Incident Intake Sanctuary](docs/screenshots/06_tell_once_intake_flow.png)
-
-* **Bilingual Voice & Text Guidance:** Full voice synthesis and microphone recognition in both **Hindi** and **English**.
-* **Trauma-Informed Pacing:** Step 1 checks immediate physical safety; "Take a Breather" pause buttons allow the survivor to take all the time they need.
-* **Volatile Memory Compilation:** Responses are held strictly in memory without persistent cloud database retention.
-
----
-
-#### Scene 7: ACTION & OUTPUT — The Mandatory Zero FIR (Section 173 BNSS)
-Once the survivor completes their statement, SafeMate automatically compiles a formal, statutory **Police Complaint & Zero FIR** ready for legal submission:
-
-![Tell-Once Output: Mandatory Zero FIR Complaint](docs/screenshots/07_tell_once_zero_fir_dossier.png)
-
-* **Statutory Compliance:** Formatted in strict accordance with **Section 173 of the Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023** (mandating registration of an FIR at any police station regardless of jurisdiction).
-* **Penal Code Invocation:** Auto-populates applicable sections: **BNS Section 351(2)** (Criminal Intimidation), **BNS Section 308(2)** (Extortion), and **IT Act Sections 66E & 67A** (Bodily Privacy & Sexually Explicit Media).
-* **One-Click Export:** Download as a text file, copy to clipboard, or print directly for the Station House Officer (SHO).
-
----
-
-#### Scene 8: ACTION & OUTPUT — Confidential Counsel Brief for Advocates
-In parallel, Tell-Once formats a structured legal brief for legal defense advocates and High Court legal aid cells:
-
-![Tell-Once Output: Confidential Legal Defense Counsel Brief](docs/screenshots/08_tell_once_lawyer_brief.png)
-
-* **Evidentiary Summary:** Chronological incident breakdown paired with SHA-256 evidence digests.
-* **Statutory Directions:** Instructions for serving **Rule 3(2)(b) IT Rules Intermediary Takedown Notices** to social media platforms for 24-hour content suppression.
-* **Magistrate Safeguards:** Outlines Section 175(3) BNSS applications if local police hesitate to register the Zero FIR.
-
----
-
-### Act IV: Digital Forensics & Unmasking the Threat
-
-#### Scene 9: ACTION & OUTPUT — Disproving Morphed Blackmail Images (AI Still-Image Scanner)
-Extortionists frequently manipulate innocent photographs into sexually explicit deepfakes to terrorize survivors. SafeMate provides in-memory forensic screening to prove manipulation:
-
-![AI Image Screening: Staged Image with In-Memory SHA-256 Fingerprint](docs/screenshots/18_deepfake_image_upload_staged.png)
-
-* **Client-Side SHA-256 Custody Hash:** Calculates an immutable cryptographic fingerprint (`b0ae04187386c...`) in volatile RAM prior to inspection to maintain evidentiary provenance under BSA Section 63.
-* **Instant Forensic Samples:** Test directly with real photographic fixtures or drag-and-drop suspect images (JPG, PNG, WEBP).
-
-When the survivor or evaluator triggers the scan, SafeMate renders the full forensic verdict card:
-
-![AI Deepfake and Media Manipulation Screening Engine Verdict](docs/screenshots/09_deepfake_scan_result.png)
-
-* **Neural Transformer Architecture:** Powered by a pre-trained **Swin Transformer** (`umm-maybe/AI-image-detector`) trained to isolate diffusion noise residuals and generator artifacts.
-* **Forensic Verdict Card:** A dedicated, non-collapsing verdict hub presenting **Critical Alert** or **Verified Authentic** status, 96.8% quantitative confidence, and comparative dual meters (Synthetic Likelihood vs Natural Authenticity).
-* **4-Tile Parameter Inspection Matrix:** Inspects Classifier Engine, Screening Scope, Volatile Audit ID, and Statutory Legal Standard.
-* **Court Admissibility & Certificate:** Generates a downloadable **Section 63 Bharatiya Sakshya Adhiniyam (BSA), 2023** / Sec 65B IEA audit certificate with cryptographic SHA-256 fingerprinting.
-* **Direct Zero-FIR Integration:** One-click handoff pre-fills a Section 173 BNSS cybercrime complaint with all forensic findings.
-* **100% In-Memory RAM Inspection:** Files are decoded in volatile memory (`io.BytesIO`) and purged in `finally` blocks—never stored on disk.
-
----
-
-#### Scene 10: ACTION & OUTPUT — Video Deepfake Screening (Face-Swap Neural Detection Across Video Frames)
-Beyond still photos, modern blackmailers synthesize video face-swaps to fabricate non-consensual recordings. SafeMate features a unified video forensic pipeline matching the still-image verdict hub:
-
-![Video Deepfake Screening: Staged MP4 Video with In-Memory SHA-256 Fingerprint](docs/screenshots/15_video_deepfake_upload_staged.png)
-
-* **Instant Sample Download on Localhost:** Evaluators can click the **"Download Sample Deepfake Video (.mp4)"** button directly inside the dropzone to acquire an authentic test video payload (`frontend/assets/sample_deepfake_video.mp4`).
-* **Cryptographic Browser Pre-Screening:** Calculates an immutable client-side **SHA-256 fingerprint** (`e3b0c44298fc1c...`) before transmission to maintain cryptographic custody.
-
-When the evaluator executes the scan, SafeMate samples 20 video frames, isolates facial crops using **YOLOv8n-Face**, and runs frame-by-frame deepfake classification via **MS-EffGCViT-B0** (`KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus`):
-
-![Video Deepfake Forensic Detection Verdict: 91.8% Synthetic Manipulation Detected](docs/screenshots/16_video_deepfake_detection_verdict.png)
-
-* **High-Confidence Neural Detection:** The model flags the uploaded video with **91.8% Confidence: [ALERT] NEURAL VIDEO DEEPFAKE / FACE-SWAP DETECTED**.
-* **Dual Comparative Likelihood Meters:** Visualizes the breakdown between Deepfake Video Likelihood (**91.8%**) and Authentic Camera Footage (**8.2%**).
-* **Temporal Blending Analysis:** Identifies facial boundary incoherence, micro-warping, and neural blending markers across 20 temporal frames and 18 isolated facial crops.
-* **Section 63 BSA Video Certificate:** Instant JSON download containing the full forensic chain, video hash, and model audit parameters.
-* **Direct Zero-FIR Cyber Complaint:** Auto-populates police complaint drafts with video deepfake forensic proof for swift cyber cell prosecution.
-
----
-
-#### Scene 11: ACTION & OUTPUT — The Digital Trap (Invisible Steganographic Watermarking)
-Survivors who share private media with intimate partners or colleagues can protect themselves in advance using **Leak-Tracer**:
-
-![Leak-Tracer Forensic Steganographic Watermarking Output](docs/screenshots/10_leak_tracer_watermark_generation.png)
-
-* **High-Speed Bounded LSB Steganography:** Embeds invisible cryptographic recipient tags into the least significant bits of blue channel pixels.
-* **Zero Visual Distortion:** The resulting images look identical to the original image under human inspection.
-* **1-Go Batch Generation:** Generates individual copies for "Liam", "Jake", and "Sarah" with individual download, WhatsApp, and AirDrop share triggers.
-
----
-
-#### Scene 12: ACTION & OUTPUT — Unmasking the Leaker
-When a private photo is maliciously leaked or circulated, the survivor uploads the leaked copy to **Leak-Tracer Trace Mode**:
-
-![Leak-Tracer Forensic Leak Attribution and Recipient Unmasking](docs/screenshots/11_leak_tracer_forensic_attribution.png)
-
-* **Forensic Source Identification:** Extracts the embedded cryptographic bitstream and matches it to the exact recipient: **"LEAK ATTRIBUTED: Source Identified! Recipient: Liam (Tracking ID: rec_liam_8829471)"**.
-* **Cryptographic Integrity:** Validates HMAC-SHA256 non-repudiation, establishing that the image came from the specific copy delivered to that recipient.
-* **Statutory Affidavit:** Generates a ready-to-cite forensic statement for cybercrime complaints.
-
----
-
-### Act V: Statutory Justice & Long-Term Sanctuary
-
-#### Scene 13: Evidence Vault & Cryptographic Chain of Custody
-To prevent abusers from deleting chats or denying calls, the **Disguised Evidence Vault** secures media with cryptographic fingerprints:
-
-![Cryptographic Evidence Vault with SHA-256 Hashing](docs/screenshots/12_evidence_vault_chain_of_custody.png)
-
-* **Cryptographic Fingerprinting:** Instantaneous SHA-256 HMAC hash calculated upon upload.
-* **Tamper-Evident Chain of Custody:** Logs ISO timestamps, MIME types, file sizes, and cryptographic digests to prevent evidence tampering allegations in court.
-* **Calculator Camouflage:** One-click camouflage transforms the vault into a functional calculator.
-
----
-
-#### Scene 14: ACTION & OUTPUT — 24/7 Statutory Legal Counselor (AI Chatbot)
-Survivors needing immediate answers about their rights can consult the **Safety & Legal Assistant**, backed by statutory Indian law knowledge bases:
-
-![Safety and Legal Assistant Chatbot with Zero FIR Directive](docs/screenshots/13_legal_chatbot_zero_fir_consult.png)
-
-* **Grounded Legal Counsel:** Provides plain-language explanations of Zero FIRs (BNSS Section 173), bodily privacy violations (IT Act 66E/67A), and criminal intimidation (BNS 351).
-* **9 Structured Triage Workflows:** Guides users through cyber blackmail, non-consensual image abuse, physical stalking, and StopNCII.org intake.
-* **Panic History Wipe:** One-tap memory wipe purges the entire consultation session instantly.
-
----
-
-#### Scene 15: Urban Infrastructure & Civic Safety Audit
-Physical safety is deeply connected to urban infrastructure. SafeMate incorporates urban safety audit indicators to keep travelers informed:
-
-![SafeMate Urban Safety Matrix and Feature Cards](docs/screenshots/14_urban_civic_safety_matrix.png)
-
-* **Civic Safety Audit Index:** Evaluates street lighting, public transit density, sidewalk visibility, and crowd presence.
-* **Community Safety Nodes:** Highlights verified safe zones, 24/7 pharmacies, police booths, and women's transit desks.
 
 ---
 
@@ -308,6 +340,7 @@ flowchart TB
 | **Still-Image AI Screening** | Hugging Face Transformers | Swin Transformer | In-memory diffusion artifact classifier (`umm-maybe/AI-image-detector`) |
 | **Video Deepfake AI Screening** | PyTorch + Torchvision + OpenCV | MS-EffGCViT-B0 + YOLOv8n-Face | Facial frame extraction and temporal deepfake classification |
 | **Forensic Watermarking** | NumPy + Pillow (PIL) | Custom Bounded LSB | High-speed invisible steganographic recipient fingerprinting |
+| **Mapping & Geospatial** | MapLibre GL JS + OpenStreetMap | 3.6.2 | Open-source vector rendering of night safety corridors and facilities |
 | **Audio & Speech** | Web Speech API | Client Native | Bilingual (Hindi/English) speech-to-text intake and text-to-speech replay |
 | **Testing & Verification** | Pytest + HTTPX + Selenium | Pytest 9.x | 214+ automated unit, integration, and end-to-end acceptance tests |
 
@@ -315,19 +348,23 @@ flowchart TB
 
 ## Statutory & Legal Framework Reference
 
-SafeMate is designed around verified legal mechanisms available to survivors under Indian and international statutes:
+SafeMate is grounded in enforceable statutory mechanisms under Indian and international law:
 
-1. **Bharatiya Nagarik Suraksha Sanhita (BNSS) 2023 — Section 173 (Zero FIR):**
-   - Mandates that any police station must register a First Information Report (FIR) regardless of territorial jurisdiction where the offense occurred.
+1. **Bharatiya Nagarik Suraksha Sanhita (BNSS), 2023 — Section 173 (Zero FIR):**
+   - Mandates that any police station must register a First Information Report (FIR) regardless of territorial jurisdiction where the crime occurred.
    - SafeMate's **Tell-Once** incident brief formats complaints to meet statutory Zero FIR requirements.
-2. **Information Technology Act, 2000:**
+2. **Bharatiya Sakshya Adhiniyam (BSA), 2023 — Section 63 (Electronic Evidence Admissibility):**
+   - Regulates admissibility of electronic records (formerly Section 65B of the Indian Evidence Act).
+   - SafeMate generates compliant Section 63 electronic audit certificates with immutable SHA-256 digests.
+3. **Information Technology Act, 2000:**
    - **Section 66E:** Violation of bodily privacy by capturing, publishing, or transmitting intimate images without consent.
    - **Section 67A / 67B:** Publishing or transmitting sexually explicit material or child sexual abuse material in electronic form.
-3. **Emergency Helplines (India & Global):**
+4. **Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021 — Rule 3(2)(b):**
+   - Mandates that social media platforms and intermediaries must take down non-consensual intimate imagery within 24 hours of receipt of notice.
+5. **Emergency Helplines (India):**
    - **112:** National Emergency Response Support System (ERSS).
    - **181 / 1091:** Women's Crisis Helpline (24/7 National).
    - **1930:** National Cybercrime Reporting Portal helpline (`cybercrime.gov.in`).
-   - **StopNCII.org & Take It Down:** Global cryptographic hashing platforms to prevent intimate image re-upload.
 
 ---
 
@@ -340,8 +377,8 @@ SafeMate is designed around verified legal mechanisms available to survivors und
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/sam9334545/Safemate.git
-cd Safemate
+git clone https://github.com/sam9334545/safemate_versionfinal.git
+cd safemate_versionfinal
 ```
 
 ### 2. Backend Setup
@@ -376,19 +413,17 @@ npm install
 npm run build
 
 # Serve locally
-python -m http.server 3000
-# OR run Vite dev server
 npm run dev
 ```
-- Web Application: `http://localhost:3000/` (or `http://localhost:5173/`)
+- Web Application: `http://localhost:5173/` (or `http://localhost:3000/`)
 - Backend-mounted Static Frontend: `http://127.0.0.1:8000/app/`
 
 ### 4. Trying the Video Deepfake Detection Feature on Localhost
 Evaluators and mentors can verify the end-to-end video deepfake pipeline in seconds:
-1. Open `http://localhost:3000/` and scroll to or click **AI Deepfake & Media Tampering Forensics**.
+1. Open `http://localhost:5173/` and click **AI Deepfake & Media Tampering Forensics**.
 2. Click the **Video Deepfake Detector** tab at the top of the modal.
 3. Click the **"Download Sample Deepfake Video (.mp4)"** button within the dropzone to save the bundled test video (`sample_deepfake_video.mp4`).
-4. Drag and drop the downloaded video file into the dropzone (or click to select it).
+4. Drag and drop the downloaded video file into the dropzone.
 5. Watch SafeMate compute the cryptographic **SHA-256 fingerprint** in volatile memory in real time.
 6. Click **"Execute Video Deepfake Scan ->"**.
 7. Observe the dual-engine neural inspection output: **91.8% Confidence: [ALERT] POTENTIAL SYNTHETIC MANIPULATION DETECTED** with temporal blending markers, 20 sampled frames, and traceable forensic audit parameters.
