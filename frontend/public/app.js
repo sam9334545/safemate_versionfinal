@@ -2390,7 +2390,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!isRecordingVault) {
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
+          let preferredMime = 'audio/webm';
+          if (MediaRecorder.isTypeSupported('audio/mp4')) preferredMime = 'audio/mp4';
+          else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) preferredMime = 'audio/webm;codecs=opus';
+          else if (MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')) preferredMime = 'audio/ogg;codecs=opus';
+          mediaRecorder = new MediaRecorder(stream, preferredMime ? { mimeType: preferredMime } : {});
           audioChunks = [];
 
           mediaRecorder.ondataavailable = (e) => {
@@ -2399,12 +2403,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
           mediaRecorder.onstop = () => {
             stream.getTracks().forEach(track => track.stop());
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const recType = mediaRecorder.mimeType || 'audio/webm';
+            const ext = recType.includes('mp4') ? 'm4a' : (recType.includes('ogg') ? 'ogg' : 'webm');
+            const audioBlob = new Blob(audioChunks, { type: recType });
             const note = vaultNoteInput ? vaultNoteInput.value : '';
-            uploadEvidenceBlob(audioBlob, `incident_audio_${Date.now()}.webm`, note);
+            uploadEvidenceBlob(audioBlob, `incident_audio_${Date.now()}.${ext}`, note);
           };
 
-          mediaRecorder.start();
+          mediaRecorder.start(250);
           isRecordingVault = true;
           vaultSeconds = 0;
           btnRecordVault.style.background = '#dc2626';

@@ -28,6 +28,28 @@ logger = logging.getLogger(__name__)
 # Router definition with prefix /api/v1/evidence and tag "Disguised Evidence Vault"
 router = APIRouter(prefix="/api/v1/evidence", tags=["Disguised Evidence Vault"])
 
+def _resolve_media_type(filename: str) -> str:
+    lower = (filename or '').lower()
+    if lower.endswith(('.mp4', '.m4v')):
+        return 'video/mp4'
+    if lower.endswith('.m4a'):
+        return 'audio/mp4'
+    if lower.endswith('.webm'):
+        return 'audio/webm'
+    if lower.endswith(('.wav', '.wave')):
+        return 'audio/wav'
+    if lower.endswith(('.mp3', '.mpeg')):
+        return 'audio/mpeg'
+    if lower.endswith(('.ogg', '.oga')):
+        return 'audio/ogg'
+    if lower.endswith(('.jpg', '.jpeg')):
+        return 'image/jpeg'
+    if lower.endswith('.png'):
+        return 'image/png'
+    if lower.endswith('.webp'):
+        return 'image/webp'
+    return 'application/octet-stream'
+
 # ---------------------------------------------------------------------------
 # Private Secure Storage Directory Configuration
 # ---------------------------------------------------------------------------
@@ -321,7 +343,7 @@ async def download_evidence(
     return FileResponse(
         path=str(target_path),
         filename=entry.file_name,
-        media_type="application/octet-stream",
+        media_type=_resolve_media_type(entry.file_name),
     )
 
 
