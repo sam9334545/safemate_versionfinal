@@ -53,7 +53,7 @@ When physical violence is imminent and quiet escape is impossible, tapping **112
 * **Safety Circle Dispatch:** Automatically dispatches SMS/location notifications to her pre-saved personal contacts, ensuring loved ones know her real-time location.
 * **Demo-Safe Isolation:** In evaluator demo mode, an explicit simulation banner prevents unauthorized transmission to real emergency lines.
 
-![Real Context Emergency SOS](docs/screenshots/real_sos_context.jpg)
+![Real Context Emergency SOS]
 
 #### 3. Fake Escape Call Simulator
 When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Call** simulator triggers an authentic incoming call screen with customizable ringtones, caller identities, and voice prompts, giving the survivor a socially clean exit excuse.
