@@ -1,4 +1,4 @@
-﻿// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
+// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
 
 // Global helper stubs to guarantee safe early invocation before DOM ready
 window.toggleSpeechRecognition = window.toggleSpeechRecognition || function(e) {
@@ -153,6 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchAuthTab(tab) {
     if (!tabAuthLogin || !tabAuthRegister) return;
+    if (authAlertBox) {
+      authAlertBox.style.display = 'none';
+      authAlertBox.textContent = '';
+      authAlertBox.className = 'auth-alert';
+    }
     if (tab === 'login') {
       tabAuthLogin.classList.add('active');
       tabAuthRegister.classList.remove('active');

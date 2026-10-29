@@ -153,6 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchAuthTab(tab) {
     if (!tabAuthLogin || !tabAuthRegister) return;
+    if (authAlertBox) {
+      authAlertBox.style.display = 'none';
+      authAlertBox.textContent = '';
+      authAlertBox.className = 'auth-alert';
+    }
     if (tab === 'login') {
       tabAuthLogin.classList.add('active');
       tabAuthRegister.classList.remove('active');
