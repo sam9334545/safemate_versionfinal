@@ -1,4 +1,4 @@
-// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
+﻿// SafeMate - Intuitive & User-Friendly Safety Platform (Enhanced Client Engine)
 
 // Global helper stubs to guarantee safe early invocation before DOM ready
 window.toggleSpeechRecognition = window.toggleSpeechRecognition || function(e) {
@@ -185,10 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (judgeDemoBanner) judgeDemoBanner.style.display = 'flex';
       navAccessGroup.innerHTML = `
         <span class="access-mode-pill demo" title="Operating with simulated evaluator sample data">
-          Judge Demo Mode
+          <span class="nav-label-desktop">Judge Demo Mode</span>
+          <span class="nav-label-mobile">Demo</span>
         </span>
         <button type="button" class="btn-nav-auth" id="btn-navbar-exit-demo" title="Exit Demo and return to sign-in">
-          Exit Demo
+          <span class="nav-label-desktop">Exit Demo</span>
+          <span class="nav-label-mobile">Exit</span>
         </button>
       `;
       const exitBtn = document.getElementById('btn-navbar-exit-demo');
@@ -202,10 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
           Guest Mode
         </span>
         <button type="button" class="btn-nav-demo-highlight" id="btn-navbar-switch-demo" title="Instant evaluator demo mode">
-          Try Demo Mode
+          <span class="nav-label-desktop">Try Demo Mode</span>
+          <span class="nav-label-mobile">Demo</span>
         </button>
         <button type="button" class="btn-nav-auth" id="btn-navbar-open-auth" title="Sign in to personal account">
-          Sign In
+          <span class="nav-label-desktop">Sign In</span>
+          <span class="nav-label-mobile">Sign In</span>
         </button>
       `;
       const switchDemoBtn = document.getElementById('btn-navbar-switch-demo');
@@ -239,13 +243,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (judgeDemoBanner) judgeDemoBanner.style.display = 'none';
       navAccessGroup.innerHTML = `
         <button type="button" class="btn-nav-demo-highlight" id="btn-navbar-enter-demo" title="Zero-friction evaluator demo mode (no login required)">
-          Try Demo Mode
+          <span class="nav-label-desktop">Try Demo Mode</span>
+          <span class="nav-label-mobile">Demo</span>
         </button>
         <button type="button" class="btn-nav-guest" id="btn-navbar-enter-guest" title="Explore features as guest">
           Guest Mode
         </button>
         <button type="button" class="btn-nav-auth" id="btn-navbar-login-open" title="Sign in or register">
-          Sign In
+          <span class="nav-label-desktop">Sign In</span>
+          <span class="nav-label-mobile">Sign In</span>
         </button>
       `;
       const enterDemoBtn = document.getElementById('btn-navbar-enter-demo');
@@ -425,6 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (stickyLeaveBtn) stickyLeaveBtn.addEventListener('click', toggleRecipeDisguise);
   if (recipeSecretExit) recipeSecretExit.addEventListener('click', toggleRecipeDisguise);
   if (recipeRestoreLogo) recipeRestoreLogo.addEventListener('click', toggleRecipeDisguise);
+  const recipeNavExit = document.getElementById('btn-recipe-nav-exit');
+  if (recipeNavExit) recipeNavExit.addEventListener('click', toggleRecipeDisguise);
   if (footerRecipeTrigger) {
     footerRecipeTrigger.addEventListener('click', (e) => {
       e.preventDefault();
