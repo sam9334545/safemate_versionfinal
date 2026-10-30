@@ -6869,3 +6869,104 @@ body.modal-open .emergency-quick-dock,
   animation-duration: 0.75s;
   animation-delay: 0.25s;
 }
+
+/* ==========================================================================
+   Emergency SOS Modal Centering & Responsive Display Refinements
+   ========================================================================== */
+#sosModal.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(11, 19, 43, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 99996 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#sosModal.modal-overlay.active {
+  display: flex !important;
+}
+
+#sosModal .workspace-modal-card {
+  width: 100% !important;
+  max-width: 680px !important;
+  height: auto !important;
+  max-height: 90vh !important;
+  max-height: 90dvh !important;
+  background: #ffffff !important;
+  border: 1.5px solid #1C2541 !important;
+  border-radius: 0px !important;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 45px rgba(217, 4, 41, 0.22) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  margin: auto !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+#sosModal .workspace-modal-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 22px 26px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+}
+
+#sosModal .workspace-modal-footer {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: #070B19 !important;
+  border-top: 1px solid #1C2541 !important;
+  padding: 14px 24px !important;
+}
+
+@media (max-width: 768px) {
+  #sosModal.modal-overlay {
+    padding: 0 !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+  }
+
+  #sosModal .workspace-modal-card {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #sosModal .workspace-modal-header {
+    padding: 14px 16px !important;
+  }
+
+  #sosModal .workspace-modal-body {
+    padding: 16px 14px 30px 14px !important;
+    gap: 14px !important;
+  }
+
+  #sosModal .workspace-modal-footer {
+    padding: 12px 16px !important;
+    flex-direction: column-reverse !important;
+    gap: 10px !important;
+  }
+
+  #sosModal .workspace-modal-footer .btn-outline {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+}
