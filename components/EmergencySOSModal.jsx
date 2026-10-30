@@ -130,7 +130,34 @@ export default function EmergencySOSModal({
     setIsLocating(true);
     setStatusReport({ stage: 'locating', message: 'Acquiring high-precision satellite GPS coordinates...' });
 
-    const sendBroadcast = async (lat, lng, accuracy) => {
+    const sendBroadcast = async (lat, lng, accuracy, rawPos = null) => {
+      // Collect live browser device telemetry without fragile SDK wrappers
+      let batteryLevel = null;
+      let batteryCharging = null;
+      if (typeof navigator !== 'undefined' && navigator.getBattery) {
+        try {
+          const bat = await navigator.getBattery();
+          batteryLevel = bat.level;
+          batteryCharging = bat.charging;
+        } catch (e) {}
+      }
+
+      const connectionType = (typeof navigator !== 'undefined' && navigator.connection)
+        ? (navigator.connection.effectiveType || navigator.connection.type || 'unknown')
+        : null;
+
+      const liveTelemetry = {
+        accuracy: accuracy || null,
+        altitude: rawPos && rawPos.coords ? rawPos.coords.altitude : null,
+        altitude_accuracy: rawPos && rawPos.coords ? rawPos.coords.altitudeAccuracy : null,
+        heading: rawPos && rawPos.coords ? rawPos.coords.heading : null,
+        speed: rawPos && rawPos.coords ? rawPos.coords.speed : null,
+        battery_level: batteryLevel,
+        battery_charging: batteryCharging,
+        network_type: connectionType,
+        is_online: typeof navigator !== 'undefined' ? navigator.onLine : true,
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null
+      };
       setIsLocating(false);
       setIsBroadcasting(true);
 
@@ -158,7 +185,13 @@ export default function EmergencySOSModal({
                 phone: cleanPhone || contactPhone,
                 relationship: 'Primary Emergency Contact'
               }
-            ]
+            ],
+            telemetry: liveTelemetry,
+            user_details: {
+              user_id: userId,
+              name: contactName,
+              access_mode: 'emergency_active'
+            }
           })
         });
         if (res.ok) {
@@ -173,30 +206,50 @@ export default function EmergencySOSModal({
         // Fallback gracefully
       }
 
-      // Native Android Direct Silent Dispatch via Capacitor (0 Extra Taps)
-      let isNative = typeof window !== 'undefined' && window.Capacitor && window.Capacitor.isNativePlatform();
+      // Native Browser & REST Automated Dispatch Pipeline (Zero Fragile SDK Stubs)
       let nativeSmsSent = false;
       let nativeCallPlaced = false;
 
-      if (isNative && window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.EmergencyDirect) {
-        try {
-          const smsRes = await window.Capacitor.Plugins.EmergencyDirect.sendDirectSms({
-            phone: cleanPhone,
-            message: distressText
-          });
-          if (smsRes && smsRes.success) nativeSmsSent = true;
-        } catch (nativeSmsErr) {
-          console.warn('[SafeMate Android] Direct SMS dispatch note:', nativeSmsErr);
+      // 1. Automatically trigger native backend telephony call logging & dispatch
+      try {
+        const callRes = await fetch(`${resolvedApiBase}/api/v1/emergency/call`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phone_number: cleanPhone || '112',
+            contact_name: contactName || 'National Emergency (112)',
+            user_id: userId,
+            message: `URGENT DISTRESS: User ${userId} triggered emergency dispatch at GPS (${lat.toFixed(5)}, ${lng.toFixed(5)}).`
+          })
+        });
+        if (callRes.ok) {
+          nativeCallPlaced = true;
         }
+      } catch (callErr) {
+        console.warn('[SafeMate Dispatch] Automated backend voice trigger note:', callErr);
+      }
 
-        try {
-          const callRes = await window.Capacitor.Plugins.EmergencyDirect.makeDirectCall({
-            number: '112'
-          });
-          if (callRes && callRes.success) nativeCallPlaced = true;
-        } catch (nativeCallErr) {
-          console.warn('[SafeMate Android] Direct 112 call note:', nativeCallErr);
+      // 2. Establish native WebSocket live telemetry streaming if supported
+      try {
+        if (typeof window !== 'undefined' && window.WebSocket) {
+          const wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const host = resolvedApiBase ? resolvedApiBase.replace(/^https?:\/\//, '') : window.location.host;
+          const wsUrl = `${wsProto}//${host}/api/v1/emergency/ws/telemetry`;
+          const ws = new WebSocket(wsUrl);
+          ws.onopen = () => {
+            ws.send(JSON.stringify({
+              user_id: userId,
+              latitude: lat,
+              longitude: lng,
+              accuracy,
+              timestamp: new Date().toISOString(),
+              event: 'ACTIVE_DISTRESS_BROADCAST'
+            }));
+            setTimeout(() => { try { ws.close(); } catch(e){} }, 15000);
+          };
         }
+      } catch (wsErr) {
+        console.warn('[SafeMate Dispatch] Native WebSocket telemetry note:', wsErr);
       }
 
       setIsBroadcasting(false);
@@ -231,12 +284,12 @@ export default function EmergencySOSModal({
 
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => sendBroadcast(pos.coords.latitude, pos.coords.longitude, Math.round(pos.coords.accuracy)),
-        () => sendBroadcast(28.6139, 77.2090, 25), // Safe fallback coordinates (New Delhi)
+        (pos) => sendBroadcast(pos.coords.latitude, pos.coords.longitude, Math.round(pos.coords.accuracy), pos),
+        () => sendBroadcast(28.6139, 77.2090, 25, null),
         { enableHighAccuracy: true, timeout: 8000 }
       );
     } else {
-      sendBroadcast(28.6139, 77.2090, 25);
+      sendBroadcast(28.6139, 77.2090, 25, null);
     }
   }, [cleanPhone, onDispatched, resolvedApiBase, userId]);
 

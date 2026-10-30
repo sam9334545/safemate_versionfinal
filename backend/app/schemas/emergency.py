@@ -98,6 +98,29 @@ class NearestPoliceStationInfo(BaseModel):
     emergency_dial: str = Field(default="112", description="Standard 1-tap emergency dial number")
 
 
+class LiveTelemetry(BaseModel):
+    """Real-time live device telemetry captured at dispatch without SDK wrappers."""
+    accuracy: Optional[float] = Field(None, description="GPS accuracy radius in meters")
+    altitude: Optional[float] = Field(None, description="Altitude in meters")
+    altitude_accuracy: Optional[float] = Field(None, description="Altitude accuracy in meters")
+    heading: Optional[float] = Field(None, description="Direction of travel in degrees")
+    speed: Optional[float] = Field(None, description="Current velocity in m/s")
+    battery_level: Optional[float] = Field(None, description="Device battery fraction 0.0 to 1.0")
+    battery_charging: Optional[bool] = Field(None, description="Whether device is plugged in or charging")
+    network_type: Optional[str] = Field(None, description="Network connection type e.g. 4g, wifi, ethernet")
+    is_online: Optional[bool] = Field(True, description="Browser online connectivity status")
+    user_agent: Optional[str] = Field(None, description="Client device user agent")
+
+
+class UserDispatchDetails(BaseModel):
+    """User profile and identity details attached to emergency dispatch."""
+    user_id: Optional[str] = Field(None, description="Unique identifier of user")
+    email: Optional[str] = Field(None, description="Email address of user")
+    name: Optional[str] = Field(None, description="Full name or alias of user")
+    access_mode: Optional[str] = Field(None, description="Access mode: personal_account, guest, or demo")
+    phone: Optional[str] = Field(None, description="User telephone number if configured")
+
+
 class SOSRequest(BaseModel):
     """Request payload submitted when the emergency SOS panic button is pressed."""
 
@@ -133,6 +156,14 @@ class SOSRequest(BaseModel):
     client_contacts: Optional[List[EmergencyContact]] = Field(
         default=None,
         description="Optional list of trusted emergency contacts provided directly by the client",
+    )
+    telemetry: Optional[LiveTelemetry] = Field(
+        default=None,
+        description="Native live browser device telemetry (accuracy, battery, network, velocity)",
+    )
+    user_details: Optional[UserDispatchDetails] = Field(
+        default=None,
+        description="Client-packaged user profile and session identity details",
     )
 
     model_config = {
@@ -177,6 +208,14 @@ class SOSResponse(BaseModel):
     nearest_police: Optional[NearestPoliceStationInfo] = Field(
         default=None,
         description="Nearest police station or chowki identified from GPS coordinates",
+    )
+    telemetry: Optional[LiveTelemetry] = Field(
+        default=None,
+        description="Echo of recorded live device telemetry for audit trail",
+    )
+    user_details: Optional[UserDispatchDetails] = Field(
+        default=None,
+        description="Echo of user identity attached to dispatch incident",
     )
 
 

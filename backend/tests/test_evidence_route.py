@@ -247,3 +247,106 @@ def test_get_and_delete_evidence_record(client, auth_headers):
     assert get_after.status_code == 404
 
 
+
+
+def test_download_evidence_unauthenticated_returns_401(client, auth_headers):
+    """Verify downloading evidence without auth token returns 401 Unauthorized."""
+    content = b"evidence_binary_unauth_test"
+    files = {"file": ("unauth_test.wav", io.BytesIO(content), "audio/wav")}
+    form_data = {
+        "user_id": "usr_safemate_001",
+        "latitude": "37.774929",
+        "longitude": "-122.419416",
+        "note": "Unauth download test",
+    }
+    upload_res = client.post("/api/v1/evidence/upload", data=form_data, files=files, headers=auth_headers)
+    assert upload_res.status_code == 200
+    evidence_id = upload_res.json()["evidence_id"]
+
+    # Attempt download without Authorization header or token query param
+    download_res = client.get(f"/api/v1/evidence/download/{evidence_id}")
+    assert download_res.status_code == 401
+    assert "authentication required" in download_res.json()["detail"].lower()
+
+
+def test_export_evidence_authenticated_injects_credentials(client, auth_headers):
+    """Verify /export endpoint strictly authenticates and injects user credentials."""
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new("RGB", (32, 32), color="red").save(buf, format="PNG")
+    content = buf.getvalue()
+    files = {"file": ("sealed_photo.png", io.BytesIO(content), "image/png")}
+    form_data = {
+        "user_id": "usr_safemate_001",
+        "latitude": "37.774929",
+        "longitude": "-122.419416",
+        "note": "Sealed export test photo",
+    }
+    upload_res = client.post("/api/v1/evidence/upload", data=form_data, files=files, headers=auth_headers)
+    assert upload_res.status_code == 200
+    evidence_id = upload_res.json()["evidence_id"]
+
+    # 1. Unauthenticated export returns 401
+    unauth_res = client.get(f"/api/v1/evidence/export/{evidence_id}")
+    assert unauth_res.status_code == 401
+
+    # 2. Authenticated export succeeds and injects user credentials into headers
+    auth_export_res = client.get(f"/api/v1/evidence/export/{evidence_id}", headers=auth_headers)
+    assert auth_export_res.status_code == 200
+    assert "X-Sealed-By" in auth_export_res.headers
+    assert "test_evidence_user@safemate.org" in auth_export_res.headers["X-Sealed-By"]
+    assert "X-Seal-Timestamp" in auth_export_res.headers
+    assert "X-Verification-Hash" in auth_export_res.headers
+    assert auth_export_res.headers["X-Chain-Of-Custody"] == "VERIFIED_AUTHENTIC"
+
+
+def test_get_evidence_certificate_authenticated(client, auth_headers):
+    """Verify Section 63 BSA certificate generation endpoint."""
+    content = b"evidence_for_cert_test"
+    files = {"file": ("cert_test.m4a", io.BytesIO(content), "audio/mp4")}
+    form_data = {
+        "user_id": "usr_safemate_001",
+        "latitude": "28.6139",
+        "longitude": "77.2090",
+        "note": "Legal certification test record",
+    }
+    upload_res = client.post("/api/v1/evidence/upload", data=form_data, files=files, headers=auth_headers)
+    assert upload_res.status_code == 200
+    evidence_id = upload_res.json()["evidence_id"]
+
+    # 1. Unauthenticated returns 401
+    unauth_cert = client.get(f"/api/v1/evidence/certificate/{evidence_id}")
+    assert unauth_cert.status_code == 401
+
+    # 2. Authenticated returns certified Section 63 BSA record
+    cert_res = client.get(f"/api/v1/evidence/certificate/{evidence_id}", headers=auth_headers)
+    assert cert_res.status_code == 200
+    cert = cert_res.json()
+    assert "CERT-BSA63-" in cert["certificate_id"]
+    assert cert["certified_by"] == "test_evidence_user@safemate.org"
+    assert cert["evidence_id"] == evidence_id
+    assert cert["sha256_checksum"] == upload_res.json()["sha256_checksum"]
+    assert cert["integrity_status"] == "VERIFIED_TAMPER_EVIDENT_UNALTERED"
+    assert len(cert["verification_hash"]) == 64
+
+
+def test_seal_evidence_record_endpoint(client, auth_headers):
+    """Verify /seal endpoint creates cryptographic seal metadata."""
+    content = b"evidence_for_seal_endpoint"
+    files = {"file": ("seal_test.wav", io.BytesIO(content), "audio/wav")}
+    form_data = {
+        "user_id": "usr_safemate_001",
+        "latitude": "28.6139",
+        "longitude": "77.2090",
+        "note": "Seal test record",
+    }
+    upload_res = client.post("/api/v1/evidence/upload", data=form_data, files=files, headers=auth_headers)
+    assert upload_res.status_code == 200
+    evidence_id = upload_res.json()["evidence_id"]
+
+    seal_res = client.post(f"/api/v1/evidence/seal/{evidence_id}", headers=auth_headers)
+    assert seal_res.status_code == 200
+    seal_data = seal_res.json()
+    assert seal_data["status"] == "sealed"
+    assert seal_data["sealed_by"] == "test_evidence_user@safemate.org"
+    assert len(seal_data["verification_hash"]) == 64

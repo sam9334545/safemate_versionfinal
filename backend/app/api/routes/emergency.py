@@ -11,7 +11,7 @@ import uuid
 from typing import Any, Dict, List, Optional
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -497,15 +497,43 @@ async def trigger_sos(
             detail=f"No emergency contacts registered for user '{resolved_user_id}'.",
         )
 
-    # 3. Format Google Maps coordinates & distress message
+    # 3. Format Google Maps coordinates, live telemetry & distress message
     google_maps_url = f"https://maps.google.com/?q={payload.latitude},{payload.longitude}"
     custom_note = f"\nDistress Note: {payload.message}" if payload.message else ""
+
+    # Native live telemetry details packaging
+    telemetry_parts = []
+    if payload.telemetry:
+        if payload.telemetry.accuracy is not None:
+            telemetry_parts.append(f"GPS Fix: ±{payload.telemetry.accuracy:.0f}m")
+        if payload.telemetry.speed is not None and payload.telemetry.speed > 0:
+            telemetry_parts.append(f"Speed: {payload.telemetry.speed:.1f} m/s")
+        if payload.telemetry.heading is not None:
+            telemetry_parts.append(f"Heading: {payload.telemetry.heading:.0f}°")
+        if payload.telemetry.battery_level is not None:
+            pct = int(payload.telemetry.battery_level * 100)
+            chg = " (Charging)" if payload.telemetry.battery_charging else ""
+            telemetry_parts.append(f"Battery: {pct}%{chg}")
+        if payload.telemetry.network_type:
+            telemetry_parts.append(f"Network: {payload.telemetry.network_type}")
+    telemetry_note = f"\nLive Telemetry: {' • '.join(telemetry_parts)}" if telemetry_parts else ""
+
+    user_note = ""
+    if payload.user_details:
+        ud = payload.user_details
+        u_desc = []
+        if ud.name: u_desc.append(f"Name: {ud.name}")
+        if ud.email: u_desc.append(f"Email: {ud.email}")
+        if ud.access_mode: u_desc.append(f"Mode: {ud.access_mode}")
+        if u_desc:
+            user_note = f"\nUser Details: {', '.join(u_desc)}"
+
     distress_message = (
         f"🚨 EMERGENCY SOS [SAFEMATE ALERT] 🚨\n"
         f"User '{resolved_user_id}' activated the emergency panic button!\n"
         f"Timestamp: {dispatch_timestamp}\n"
         f"Live GPS Location: {payload.latitude}, {payload.longitude}\n"
-        f"Google Maps Link: {google_maps_url}{custom_note}\n"
+        f"Google Maps Link: {google_maps_url}{custom_note}{telemetry_note}{user_note}\n"
         f"PRIORITY: IMMEDIATE ASSISTANCE REQUIRED. Please check in or dispatch emergency response."
     )
 
@@ -553,6 +581,8 @@ async def trigger_sos(
         distress_message=distress_message,
         contacts=dispatched_alert_records,
         nearest_police=nearest_police,
+        telemetry=payload.telemetry,
+        user_details=payload.user_details,
     )
 
 
@@ -776,3 +806,62 @@ async def resolve_emergency_alert(
         resolution_notes=log.resolution_notes,
     )
 
+
+
+# ---------------------------------------------------------------------------
+# Native WebSocket & REST Real-Time Telemetry Streaming Endpoints
+# ---------------------------------------------------------------------------
+@router.websocket("/ws/telemetry")
+async def emergency_telemetry_ws(websocket: WebSocket):
+    """Real-time native WebSocket stream for live emergency telemetry coordinates without SDK dependencies."""
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+            user_tag = data.get("user_id") or "anonymous"
+            lat = data.get("latitude")
+            lng = data.get("longitude")
+            logger.info(f"[Emergency Telemetry WS] Live coordinate ping from {user_tag}: ({lat}, {lng})")
+            await websocket.send_json({
+                "event": "TELEMETRY_ACKNOWLEDGED",
+                "received_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "status": "STREAMING_ACTIVE",
+                "coordinates": {"latitude": lat, "longitude": lng},
+            })
+    except WebSocketDisconnect:
+        logger.info("[Emergency Telemetry WS] Client disconnected cleanly.")
+    except Exception as ws_err:
+        logger.warning(f"[Emergency Telemetry WS] Stream notification: {ws_err}")
+
+
+@router.post(
+    "/telemetry",
+    response_model=Dict[str, Any],
+    status_code=status.HTTP_200_OK,
+    summary="Post Live Telemetry Update",
+    description="Native REST endpoint to submit ongoing live telemetry pings (speed, heading, battery, accuracy) during an emergency.",
+)
+async def post_live_telemetry(
+    payload: SOSRequest,
+    current_user: Optional[UserModel] = Depends(get_optional_current_user),
+    db: Session = Depends(get_db),
+) -> Dict[str, Any]:
+    """Ingest native device telemetry update without fragile SDK wrappers."""
+    user_id = str(current_user.id) if current_user else (payload.user_id or "usr_safemate")
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    log_entry = {
+        "event": "LIVE_TELEMETRY_RECORDED",
+        "user_id": user_id,
+        "latitude": payload.latitude,
+        "longitude": payload.longitude,
+        "timestamp": now_iso,
+        "telemetry": payload.telemetry.model_dump() if payload.telemetry else None,
+    }
+    logger.info(json.dumps(log_entry))
+    return {
+        "status": "telemetry_recorded",
+        "timestamp": now_iso,
+        "user_id": user_id,
+        "coordinates": {"latitude": payload.latitude, "longitude": payload.longitude},
+        "telemetry": payload.telemetry,
+    }

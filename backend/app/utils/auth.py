@@ -21,6 +21,13 @@ except ImportError:
             pass
 
 try:
+    import bcrypt
+    if not hasattr(bcrypt, "__about__"):
+        class _About:
+            __version__ = getattr(bcrypt, "__version__", "4.0.1")
+        bcrypt.__about__ = _About()
+    _orig_hashpw = bcrypt.hashpw
+    bcrypt.hashpw = lambda p, s: _orig_hashpw(p[:72] if isinstance(p, (bytes, bytearray)) else p, s)
     from passlib.context import CryptContext
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 except ImportError:
@@ -45,13 +52,15 @@ from app.schemas.auth import TokenData
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain-text password against a stored bcrypt hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plain-text password against a stored bcrypt hash, safely respecting bcrypt 72-byte limit."""
+    truncated = plain_password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    return pwd_context.verify(truncated, hashed_password)
 
 
 def get_password_hash(password: str) -> str:
-    """Generate a secure bcrypt hash from a plain-text password."""
-    return pwd_context.hash(password)
+    """Generate a secure bcrypt hash from a plain-text password, safely respecting bcrypt 72-byte limit."""
+    truncated = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
+    return pwd_context.hash(truncated)
 
 
 # ---------------------------------------------------------------------------

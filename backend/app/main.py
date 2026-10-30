@@ -129,6 +129,11 @@ def create_app() -> FastAPI:
             "X-Watermark-ID",
             "X-Watermark-Fingerprint",
             "X-Recipient-Count",
+            "X-Sealed-By",
+            "X-Seal-Timestamp",
+            "X-Verification-Hash",
+            "X-Evidence-Checksum",
+            "X-Chain-Of-Custody",
         ],
     )
 
@@ -253,6 +258,8 @@ def create_app() -> FastAPI:
             "safewalk_my_trips": f"{settings.API_V1_PREFIX}/safewalk/my-trips",
             "evidence_upload": f"{settings.API_V1_PREFIX}/evidence/upload",
             "evidence_download": f"{settings.API_V1_PREFIX}/evidence/download/{{evidence_id}}",
+            "evidence_export": f"{settings.API_V1_PREFIX}/evidence/export/{{evidence_id}}",
+            "evidence_certificate": f"{settings.API_V1_PREFIX}/evidence/certificate/{{evidence_id}}",
             "evidence_record": f"{settings.API_V1_PREFIX}/evidence/record/{{evidence_id}}",
             "chatbot_ui": "/chatbot",
             "chatbot_health": f"{settings.API_V1_PREFIX}/chatbot/health",

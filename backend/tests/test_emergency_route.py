@@ -402,3 +402,62 @@ def test_sos_with_client_provided_loved_ones(client):
     assert "distance_text" in data["nearest_police"]
     assert data["nearest_police"]["emergency_dial"] == "112"
 
+
+
+def test_emergency_sos_with_live_telemetry_and_user_details(client, test_user):
+    """Verify live telemetry and user profile details are accepted and processed natively."""
+    payload = {
+        "latitude": 28.5456,
+        "longitude": 77.1926,
+        "message": "Night corridor distress alert with live telemetry fix.",
+        "user_id": test_user["email"],
+        "telemetry": {
+            "accuracy": 12.5,
+            "altitude": 218.0,
+            "heading": 85.0,
+            "speed": 1.4,
+            "battery_level": 0.88,
+            "battery_charging": False,
+            "network_type": "4g",
+            "is_online": True,
+            "user_agent": "Mozilla/5.0 SafeMateClient/1.0"
+        },
+        "user_details": {
+            "user_id": str(test_user["id"]),
+            "email": test_user["email"],
+            "name": "Emergency Test User",
+            "access_mode": "personal_account",
+            "phone": "+91-9876543210"
+        }
+    }
+
+    res = client.post("/api/v1/emergency/sos", json=payload, headers=test_user["headers"])
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert "Live Telemetry" in data["distress_message"]
+    assert "GPS Fix: ±12m" in data["distress_message"]
+    assert "Battery: 88%" in data["distress_message"]
+    assert data["telemetry"] is not None
+    assert data["telemetry"]["battery_level"] == 0.88
+    assert data["user_details"]["name"] == "Emergency Test User"
+
+
+def test_emergency_telemetry_rest_endpoint(client, test_user):
+    """Verify POST /api/v1/emergency/telemetry records live telemetry stream pings."""
+    payload = {
+        "latitude": 28.5460,
+        "longitude": 77.1930,
+        "user_id": test_user["email"],
+        "telemetry": {
+            "accuracy": 8.0,
+            "speed": 1.2,
+            "battery_level": 0.85,
+            "is_online": True
+        }
+    }
+    res = client.post("/api/v1/emergency/telemetry", json=payload, headers=test_user["headers"])
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "telemetry_recorded"
+    assert data["telemetry"]["accuracy"] == 8.0

@@ -6842,3 +6842,30 @@ body.modal-open .emergency-quick-dock,
 
 
 
+
+/* Tactical Fake Call Waveform Animation */
+@keyframes fakeWave {
+  0% { height: 6px; opacity: 0.4; }
+  50% { height: 26px; opacity: 1; }
+  100% { height: 10px; opacity: 0.7; }
+}
+
+.fake-call-bar.active {
+  animation: fakeWave 0.7s ease-in-out infinite alternate;
+}
+.fake-call-bar:nth-child(2).active {
+  animation-duration: 0.5s;
+  animation-delay: 0.15s;
+}
+.fake-call-bar:nth-child(3).active {
+  animation-duration: 0.65s;
+  animation-delay: 0.3s;
+}
+.fake-call-bar:nth-child(4).active {
+  animation-duration: 0.45s;
+  animation-delay: 0.1s;
+}
+.fake-call-bar:nth-child(5).active {
+  animation-duration: 0.75s;
+  animation-delay: 0.25s;
+}

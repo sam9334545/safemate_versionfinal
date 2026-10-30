@@ -90,3 +90,35 @@ class EvidenceDeleteResponse(BaseModel):
     message: str = Field(..., description="Confirmation explanation message")
     evidence_id: str = Field(..., description="Unique identifier of the deleted evidence record")
 
+
+
+class EvidenceCertificateResponse(BaseModel):
+    """Institutional Section 63 BSA / 65B IEA forensic certificate of evidence."""
+    certificate_id: str = Field(..., description="Unique legal certificate identifier")
+    compliance_standard: str = Field(..., description="Statutory compliance standard")
+    evidence_id: str = Field(..., description="Evidence tracking ID")
+    file_name: str = Field(..., description="Evidence file name")
+    file_size: int = Field(..., description="File size in bytes")
+    sha256_checksum: str = Field(..., description="Cryptographic SHA-256 fingerprint")
+    incident_timestamp: str = Field(..., description="Timestamp of evidence capture")
+    certified_at: str = Field(..., description="Timestamp of certificate issuance")
+    certified_by: str = Field(..., description="Authenticated certifier email or alias")
+    certifier_id: str = Field(..., description="Authenticated certifier user ID")
+    certifier_access_mode: str = Field(..., description="Session authentication mode")
+    latitude: float = Field(..., description="Incident latitude coordinate")
+    longitude: float = Field(..., description="Incident longitude coordinate")
+    verification_hash: str = Field(..., description="HMAC-SHA256 seal verification signature")
+    integrity_status: str = Field(..., description="Chain of custody integrity verdict")
+    chain_of_custody_statement: str = Field(..., description="Statutory legal attestation statement")
+
+
+class EvidenceSealResponse(BaseModel):
+    """Cryptographic seal confirmation metadata for an evidence record."""
+    status: str = Field(default="sealed", description="Seal status")
+    evidence_id: str = Field(..., description="Evidence identifier")
+    sealed_by: str = Field(..., description="Authenticated user email")
+    sealed_by_id: str = Field(..., description="Authenticated user identifier")
+    seal_timestamp: str = Field(..., description="Timestamp of cryptographic seal")
+    sha256_checksum: str = Field(..., description="SHA-256 hash of original file")
+    verification_hash: str = Field(..., description="HMAC-SHA256 verification hash")
+    message: str = Field(..., description="Status summary message")

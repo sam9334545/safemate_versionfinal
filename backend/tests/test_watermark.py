@@ -6,12 +6,35 @@ import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
+import datetime
 from app.main import app
+from app.database import SessionLocal
+from app.models import UserModel
+from app.utils.auth import create_access_token
 
 
 @pytest.fixture
 def client():
     return TestClient(app)
+
+
+@pytest.fixture
+def auth_headers():
+    email = "test_watermark_user@safemate.org"
+    with SessionLocal() as db:
+        user = db.query(UserModel).filter(UserModel.email == email).first()
+        if not user:
+            user = UserModel(
+                email=email,
+                hashed_password="mock_hashed_password",
+                created_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                is_active=True,
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+    token = create_access_token(data={"sub": email, "user_id": user.id})
+    return {"Authorization": f"Bearer {token}"}
 
 
 def _create_sample_image(width: int = 256, height: int = 256, color=(100, 140, 180)) -> bytes:
@@ -32,7 +55,7 @@ def test_watermark_routes_in_openapi(client):
     assert "/api/v1/watermark/health" in paths
 
 
-def test_embed_single_watermark_success(client):
+def test_embed_single_watermark_success(client, auth_headers):
     """Verify embedding per-recipient watermark returns valid image and headers."""
     sample_bytes = _create_sample_image()
     files = {"file": ("test.png", sample_bytes, "image/png")}
@@ -42,7 +65,7 @@ def test_embed_single_watermark_success(client):
         "notes": "Strictly confidential - do not distribute",
     }
 
-    response = client.post("/api/v1/watermark/embed", files=files, data=data)
+    response = client.post("/api/v1/watermark/embed", files=files, data=data, headers=auth_headers)
     assert response.status_code == 200
     assert response.headers["content-type"] == "image/png"
     assert response.headers["x-watermark-recipient"] == "Liam Walker"
@@ -51,7 +74,7 @@ def test_embed_single_watermark_success(client):
     assert len(response.content) > 100
 
 
-def test_extract_watermark_identifies_leaker(client):
+def test_extract_watermark_identifies_leaker(client, auth_headers):
     """Verify extraction correctly attributes leaked media to the recipient."""
     sample_bytes = _create_sample_image()
     # 1. Embed watermark for Jake Miller
@@ -59,6 +82,7 @@ def test_extract_watermark_identifies_leaker(client):
         "/api/v1/watermark/embed",
         files={"file": ("photo.png", sample_bytes, "image/png")},
         data={"recipient_name": "Jake Miller", "owner_id": "usr_maya"},
+        headers=auth_headers,
     )
     assert embed_res.status_code == 200
     watermarked_bytes = embed_res.content
@@ -94,7 +118,7 @@ def test_extract_clean_unwatermarked_image(client):
     assert data["recipient_name"] is None
 
 
-def test_batch_embed_bundle_zip(client):
+def test_batch_embed_bundle_zip(client, auth_headers):
     """Verify batch watermark generator creates individual copies for each recipient."""
     sample_bytes = _create_sample_image()
     files = {"file": ("group_photo.png", sample_bytes, "image/png")}
@@ -103,7 +127,7 @@ def test_batch_embed_bundle_zip(client):
         "owner_id": "usr_sarah",
     }
 
-    response = client.post("/api/v1/watermark/batch-embed", files=files, data=data)
+    response = client.post("/api/v1/watermark/batch-embed", files=files, data=data, headers=auth_headers)
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/zip"
     assert response.headers["x-recipient-count"] == "3"
@@ -134,7 +158,7 @@ def test_watermark_health(client):
     assert response.json()["service"] == "forensic_leak_tracer"
 
 
-def test_embed_stealth_mode_without_visible_stamp(client):
+def test_embed_stealth_mode_without_visible_stamp(client, auth_headers):
     """Verify stealth mode (visible_stamp='false') embeds invisible watermark and extracts accurately."""
     sample_bytes = _create_sample_image(300, 300)
     files = {"file": ("stealth.png", sample_bytes, "image/png")}
@@ -142,7 +166,7 @@ def test_embed_stealth_mode_without_visible_stamp(client):
         "recipient_name": "Stealth Recipient",
         "visible_stamp": "false",
     }
-    res = client.post("/api/v1/watermark/embed", files=files, data=data)
+    res = client.post("/api/v1/watermark/embed", files=files, data=data, headers=auth_headers)
     assert res.status_code == 200
     assert res.headers["x-watermark-recipient"] == "Stealth Recipient"
 
@@ -158,14 +182,14 @@ def test_embed_stealth_mode_without_visible_stamp(client):
     assert report["confidence_score"] == 1.0
 
 
-def test_cors_watermark_headers_exposed(client):
+def test_cors_watermark_headers_exposed(client, auth_headers):
     """Verify CORS preflight / headers expose watermark tracking fields."""
     sample_bytes = _create_sample_image()
     res = client.post(
         "/api/v1/watermark/embed",
         files={"file": ("test.png", sample_bytes, "image/png")},
         data={"recipient_name": "CORS Check"},
-        headers={"Origin": "http://localhost:5173"},
+        headers={"Origin": "http://localhost:5173", **auth_headers},
     )
     assert res.status_code == 200
     exposed = res.headers.get("access-control-expose-headers", "")

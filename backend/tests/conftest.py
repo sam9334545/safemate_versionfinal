@@ -1,3 +1,10 @@
+import bcrypt
+if not hasattr(bcrypt, "__about__"):
+    class _About:
+        __version__ = getattr(bcrypt, "__version__", "4.0.1")
+    bcrypt.__about__ = _About()
+_orig_hashpw = bcrypt.hashpw
+bcrypt.hashpw = lambda p, s: _orig_hashpw(p[:72] if isinstance(p, (bytes, bytearray)) else p, s)
 """Pytest fixtures and mocked dependencies for isolated, fast test execution."""
 
 import io
