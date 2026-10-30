@@ -3223,6 +3223,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const fakeCallActionHint = document.getElementById('fake-call-action-hint');
   const fakeScenarioBtns = document.querySelectorAll('.btn-fake-scenario');
 
+  // Custom Loved One Audio Elements
+  const inputCustomVoiceFile = document.getElementById('input-custom-voice-file');
+  const btnRecordVoiceNote = document.getElementById('btn-record-voice-note');
+  const recordBtnIcon = document.getElementById('record-btn-icon');
+  const recordBtnText = document.getElementById('record-btn-text');
+  const recordingStatus = document.getElementById('recording-status');
+  const btnTestCustomAudio = document.getElementById('btn-test-custom-audio');
+  const btnRemoveCustomAudio = document.getElementById('btn-remove-custom-audio');
+  const btnOpenVoiceSetup = document.getElementById('btn-open-voice-setup');
+
+  const STORAGE_KEY_CUSTOM_VOICE = 'safemate_custom_escape_audio';
+  let activeCustomAudio = null;
+  let escapeMediaRecorder = null;
+  let escapeAudioChunks = [];
+  let isRecordingVoice = false;
+
   let audioContext = null;
   let ringInterval = null;
   let callTimerInterval = null;
@@ -3230,6 +3246,178 @@ document.addEventListener('DOMContentLoaded', () => {
   let isCallConnected = false;
   let currentScenarioKey = 'family';
   let conversationTurnTimeout = null;
+
+  // Custom Loved One Voice Storage Helpers
+  function getCustomVoiceData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_CUSTOM_VOICE);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setCustomVoiceData(name, dataUrl) {
+    try {
+      const obj = { name, dataUrl, date: new Date().toISOString() };
+      localStorage.setItem(STORAGE_KEY_CUSTOM_VOICE, JSON.stringify(obj));
+      updateCustomVoiceUI();
+      return true;
+    } catch (e) {
+      console.error('Storage error:', e);
+      alert('Unable to save audio locally (storage quota reached). Please try an audio clip under 30 seconds.');
+      return false;
+    }
+  }
+
+  function removeCustomVoiceData() {
+    try {
+      localStorage.removeItem(STORAGE_KEY_CUSTOM_VOICE);
+    } catch (e) {}
+    if (activeCustomAudio) {
+      try { activeCustomAudio.pause(); } catch (err) {}
+      activeCustomAudio = null;
+    }
+    updateCustomVoiceUI();
+  }
+
+  function updateCustomVoiceUI() {
+    const data = getCustomVoiceData();
+    const activeBox = document.getElementById('custom-audio-active-box');
+    const badge = document.getElementById('custom-voice-badge');
+    const nameEl = document.getElementById('custom-audio-name');
+    const sosLabel = document.getElementById('sos-custom-audio-label');
+    const sosIndicator = document.getElementById('sos-custom-audio-indicator');
+
+    if (data && data.dataUrl) {
+      if (activeBox) activeBox.style.display = 'flex';
+      if (badge) {
+        badge.textContent = 'Custom Voice Active';
+        badge.style.background = 'rgba(16, 185, 129, 0.2)';
+        badge.style.color = '#10b981';
+      }
+      if (nameEl) nameEl.textContent = data.name || 'Loved_One_Voice';
+      if (sosLabel) sosLabel.textContent = `Voice: Loved One (${data.name || 'Custom'})`;
+      if (sosIndicator) sosIndicator.style.background = '#10b981';
+    } else {
+      if (activeBox) activeBox.style.display = 'none';
+      if (badge) {
+        badge.textContent = 'Default Voice';
+        badge.style.background = '#334155';
+        badge.style.color = '#94a3b8';
+      }
+      if (sosLabel) sosLabel.textContent = 'Voice: Default System Decoy';
+      if (sosIndicator) sosIndicator.style.background = '#94a3b8';
+    }
+  }
+
+  // File Upload Handler (e.g. WhatsApp voice notes, pre-recorded MP3/WAV/M4A)
+  if (inputCustomVoiceFile) {
+    inputCustomVoiceFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 8 * 1024 * 1024) {
+        alert('File size exceeds 8 MB. Please select a shorter audio clip.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        setCustomVoiceData(file.name, reader.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // In-Browser Audio Recording via Mic (MediaRecorder API)
+  if (btnRecordVoiceNote) {
+    btnRecordVoiceNote.addEventListener('click', async () => {
+      if (!isRecordingVoice) {
+        try {
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Audio recording is not supported in this browser. You can upload an audio file instead.');
+            return;
+          }
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          escapeAudioChunks = [];
+          escapeMediaRecorder = new MediaRecorder(stream);
+          escapeMediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) escapeAudioChunks.push(event.data);
+          };
+          escapeMediaRecorder.onstop = () => {
+            const audioBlob = new Blob(escapeAudioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onload = () => {
+              setCustomVoiceData('Recorded_Loved_One.webm', reader.result);
+            };
+            reader.readAsDataURL(audioBlob);
+            stream.getTracks().forEach(t => t.stop());
+          };
+          escapeMediaRecorder.start();
+          isRecordingVoice = true;
+          if (recordBtnIcon) recordBtnIcon.textContent = '⏹️';
+          if (recordBtnText) recordBtnText.textContent = 'Stop Recording';
+          if (recordingStatus) recordingStatus.style.display = 'block';
+        } catch (err) {
+          console.error('Microphone error:', err);
+          alert('Microphone access was denied or unavailable. Please enable mic access or upload an audio file directly.');
+        }
+      } else {
+        if (escapeMediaRecorder && escapeMediaRecorder.state !== 'inactive') {
+          escapeMediaRecorder.stop();
+        }
+        isRecordingVoice = false;
+        if (recordBtnIcon) recordBtnIcon.textContent = '🎙️';
+        if (recordBtnText) recordBtnText.textContent = 'Record Voice';
+        if (recordingStatus) recordingStatus.style.display = 'none';
+      }
+    });
+  }
+
+  // Preview / Test Audio Button
+  if (btnTestCustomAudio) {
+    btnTestCustomAudio.addEventListener('click', () => {
+      const data = getCustomVoiceData();
+      if (!data || !data.dataUrl) return;
+      if (activeCustomAudio && !activeCustomAudio.paused) {
+        activeCustomAudio.pause();
+        activeCustomAudio = null;
+        btnTestCustomAudio.textContent = 'Play ▶';
+        return;
+      }
+      activeCustomAudio = new Audio(data.dataUrl);
+      btnTestCustomAudio.textContent = 'Pause ⏸';
+      activeCustomAudio.onended = () => {
+        btnTestCustomAudio.textContent = 'Play ▶';
+        activeCustomAudio = null;
+      };
+      activeCustomAudio.play().catch(() => {
+        btnTestCustomAudio.textContent = 'Play ▶';
+      });
+    });
+  }
+
+  // Remove Custom Voice Button
+  if (btnRemoveCustomAudio) {
+    btnRemoveCustomAudio.addEventListener('click', () => {
+      removeCustomVoiceData();
+    });
+  }
+
+  // Open Voice Setup from SOS Modal
+  if (btnOpenVoiceSetup) {
+    btnOpenVoiceSetup.addEventListener('click', () => {
+      startEscapeModal();
+      setTimeout(() => {
+        const settingsEl = document.getElementById('fake-call-voice-settings');
+        if (settingsEl) {
+          settingsEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 150);
+    });
+  }
+
+  // Initialize UI on load
+  updateCustomVoiceUI();
 
   const FAKE_CALL_SCENARIOS = {
     family: {
@@ -3387,6 +3575,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startEscapeModal() {
     if (!fakeCallModal) return;
     endEscapeModal();
+    updateCustomVoiceUI();
     fakeCallModal.classList.add('active');
     applyScenario(currentScenarioKey);
     isCallConnected = false;
@@ -3406,6 +3595,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ringInterval) { clearInterval(ringInterval); ringInterval = null; }
     if (callTimerInterval) { clearInterval(callTimerInterval); callTimerInterval = null; }
     if (conversationTurnTimeout) { clearTimeout(conversationTurnTimeout); conversationTurnTimeout = null; }
+
+    if (activeCustomAudio) {
+      try { activeCustomAudio.pause(); } catch (err) {}
+      activeCustomAudio = null;
+    }
 
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -3445,66 +3639,112 @@ document.addEventListener('DOMContentLoaded', () => {
         if (callStatus) callStatus.textContent = `Connected (${mins}:${secs}) • High Definition Voice`;
       }, 1000);
 
-      const scenario = FAKE_CALL_SCENARIOS[currentScenarioKey] || FAKE_CALL_SCENARIOS.family;
-      const turns = scenario.turns;
-      let turnIdx = 0;
+      // -------------------------------------------------------------
+      // Audio Execution: Custom Loved One Audio OR Default Synthesis
+      // -------------------------------------------------------------
+      const customVoice = getCustomVoiceData();
 
-      function playNextTurn() {
-        if (!isCallConnected || turnIdx >= turns.length) {
-          conversationTurnTimeout = setTimeout(() => {
-            if (isCallConnected) endEscapeModal();
-          }, 2500);
-          return;
+      if (customVoice && customVoice.dataUrl) {
+        // MODE A: Real Pre-Recorded Audio of Loved One
+        if (fakeCallSubtitle) {
+          fakeCallSubtitle.textContent = `"${customVoice.name}" (Playing your saved loved one's audio...)`;
         }
-
-        const turn = turns[turnIdx];
-        turnIdx++;
-
-        if (fakeCallSubtitle) fakeCallSubtitle.textContent = `"${turn.subtitle}"`;
         if (fakeCallWaveform) {
           fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.add('active'));
         }
 
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utterance = new SpeechSynthesisUtterance(turn.text);
-          const voice = getBestNaturalVoice();
-          if (voice) {
-            utterance.voice = voice;
-            utterance.lang = voice.lang;
-          }
-          utterance.rate = 0.98;
-          utterance.pitch = 1.03;
-          utterance.volume = 1.0;
+        try {
+          const audio = new Audio(customVoice.dataUrl);
+          activeCustomAudio = audio;
 
-          utterance.onend = () => {
+          audio.onended = () => {
             if (!isCallConnected) return;
             if (fakeCallWaveform) {
               fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.remove('active'));
             }
-            if (fakeCallSubtitle) fakeCallSubtitle.textContent = '[Listening to your response...]';
-
-            conversationTurnTimeout = setTimeout(() => {
-              playNextTurn();
-            }, turn.listenPauseMs || 1800);
-          };
-
-          utterance.onerror = () => {
-            conversationTurnTimeout = setTimeout(playNextTurn, 2000);
-          };
-
-          window.speechSynthesis.speak(utterance);
-        } else {
-          conversationTurnTimeout = setTimeout(() => {
-            if (fakeCallWaveform) {
-              fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.remove('active'));
+            if (fakeCallSubtitle) {
+              fakeCallSubtitle.textContent = '[Loved one finished speaking — speak naturally to your phone]';
             }
-            conversationTurnTimeout = setTimeout(playNextTurn, turn.listenPauseMs || 1800);
-          }, 2800);
+          };
+
+          audio.onerror = () => {
+            // Fallback to default synthesis if audio format playback fails
+            runDefaultTurnDialogue();
+          };
+
+          audio.play().catch(() => {
+            runDefaultTurnDialogue();
+          });
+        } catch (err) {
+          runDefaultTurnDialogue();
         }
+      } else {
+        // MODE B: Default Synthetic Multi-Turn Dialogue
+        runDefaultTurnDialogue();
       }
 
-      playNextTurn();
+      function runDefaultTurnDialogue() {
+        const scenario = FAKE_CALL_SCENARIOS[currentScenarioKey] || FAKE_CALL_SCENARIOS.family;
+        const turns = scenario.turns;
+        let turnIdx = 0;
+
+        function playNextTurn() {
+          if (!isCallConnected || turnIdx >= turns.length) {
+            conversationTurnTimeout = setTimeout(() => {
+              if (isCallConnected) endEscapeModal();
+            }, 2500);
+            return;
+          }
+
+          const turn = turns[turnIdx];
+          turnIdx++;
+
+          if (fakeCallSubtitle) fakeCallSubtitle.textContent = `"${turn.subtitle}"`;
+          if (fakeCallWaveform) {
+            fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.add('active'));
+          }
+
+          if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(turn.text);
+            const voice = getBestNaturalVoice();
+            if (voice) {
+              utterance.voice = voice;
+              utterance.lang = voice.lang;
+            }
+            utterance.rate = 0.98;
+            utterance.pitch = 1.03;
+            utterance.volume = 1.0;
+
+            utterance.onend = () => {
+              if (!isCallConnected) return;
+              if (fakeCallWaveform) {
+                fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.remove('active'));
+              }
+              if (fakeCallSubtitle) fakeCallSubtitle.textContent = '[Listening to your response...]';
+
+              conversationTurnTimeout = setTimeout(() => {
+                playNextTurn();
+              }, turn.listenPauseMs || 1800);
+            };
+
+            utterance.onerror = () => {
+              conversationTurnTimeout = setTimeout(playNextTurn, 2000);
+            };
+
+            window.speechSynthesis.speak(utterance);
+          } else {
+            conversationTurnTimeout = setTimeout(() => {
+              if (fakeCallWaveform) {
+                fakeCallWaveform.querySelectorAll('.fake-call-bar').forEach(b => b.classList.remove('active'));
+              }
+              conversationTurnTimeout = setTimeout(playNextTurn, turn.listenPauseMs || 1800);
+            }, 2800);
+          }
+        }
+
+        playNextTurn();
+      }
     });
   }
 

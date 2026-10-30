@@ -683,6 +683,16 @@
             <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             📲 Trigger Fake Incoming Call (Escape)
           </button>
+          <!-- Loved One's Custom Voice Option -->
+          <div style="margin-top: 9px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 7px 11px; border: 1px dashed #cbd5e1; border-radius: 4px;">
+            <div style="font-size: 0.72rem; color: #475569; display: flex; align-items: center; gap: 6px;">
+              <span id="sos-custom-audio-indicator" style="width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; display: inline-block;"></span>
+              <span id="sos-custom-audio-label">Voice: Default System Decoy</span>
+            </div>
+            <button type="button" id="btn-open-voice-setup" style="background: none; border: none; color: #2563eb; font-size: 0.72rem; font-weight: 700; cursor: pointer; text-decoration: underline; padding: 2px 4px;">
+              Use Loved One's Audio 🎙️
+            </button>
+          </div>
         </div>
 
         <!-- Primary Action Button: Obsidian High-Contrast SOS Trigger -->
@@ -1378,6 +1388,44 @@
           <button type="button" class="btn-fake-scenario" data-scenario="manager" style="padding:6px 4px; font-size:0.72rem; font-weight:600; background:#1e293b; color:#94a3b8; border:1px solid #334155; border-radius:6px; cursor:pointer;">
             Work Lead
           </button>
+        </div>
+      </div>
+
+      <!-- Custom Voice Setup Drawer (Pre-recorded loved one's voice) -->
+      <div id="fake-call-voice-settings" style="margin-bottom:14px; background:#1e293b; border:1px solid #334155; border-radius:10px; padding:10px 12px; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:0.7rem; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.04em;">🎙️ Loved One's Voice (Pre-Recorded)</span>
+          <span id="custom-voice-badge" style="font-size:0.65rem; background:#334155; color:#94a3b8; padding:2px 6px; border-radius:4px; font-weight:600;">Default Voice</span>
+        </div>
+        <p style="font-size:0.72rem; color:#94a3b8; margin:0 0 8px 0; line-height:1.35;">
+          Upload a real WhatsApp voice note or audio clip of your loved one, or record directly.
+        </p>
+
+        <!-- Current Custom Audio Info & Preview -->
+        <div id="custom-audio-active-box" style="display:none; background:#0f172a; border:1px solid #10b981; padding:8px 10px; border-radius:6px; margin-bottom:8px; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+            <span style="color:#10b981; font-size:12px; font-weight:700;">✓</span>
+            <span id="custom-audio-name" style="font-size:0.72rem; color:#f8fafc; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:140px;">Loved_One_Voice.mp3</span>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" id="btn-test-custom-audio" style="background:#10b981; color:#ffffff; border:none; border-radius:4px; padding:3px 8px; font-size:0.68rem; font-weight:700; cursor:pointer;">Play ▶</button>
+            <button type="button" id="btn-remove-custom-audio" style="background:#ef4444; color:#ffffff; border:none; border-radius:4px; padding:3px 8px; font-size:0.68rem; font-weight:700; cursor:pointer;">Reset ✕</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons: Upload or Record -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+          <label style="background:#0f172a; color:#f8fafc; border:1px solid #475569; padding:7px 8px; font-size:0.72rem; font-weight:600; border-radius:6px; text-align:center; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; margin:0;">
+            <input type="file" id="input-custom-voice-file" accept="audio/*" style="display:none;">
+            <span>📁 Upload Audio</span>
+          </label>
+          <button type="button" id="btn-record-voice-note" style="background:#0f172a; color:#f8fafc; border:1px solid #475569; padding:7px 8px; font-size:0.72rem; font-weight:600; border-radius:6px; text-align:center; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px;">
+            <span id="record-btn-icon">🎙️</span>
+            <span id="record-btn-text">Record Voice</span>
+          </button>
+        </div>
+        <div id="recording-status" style="display:none; margin-top:6px; font-size:0.7rem; color:#ef4444; font-weight:600; text-align:center;">
+          🔴 Recording... Speak into mic (Tap button to stop)
         </div>
       </div>
 
