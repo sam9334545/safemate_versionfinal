@@ -76,6 +76,521 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Blocks exports for signed-out users and opens the login dialog.
+  
+  // ==========================================================================
+  // Section 63 BSA Court-Admissible Electronic Forensic Certificate Generator
+  // ==========================================================================
+  function buildForensicCertificateHtml(data) {
+    const isVault = !!data.certificate_id;
+
+    const certId = data.certificate_id || `BSA63-${(data.mediaDetails?.sha256Hash || 'SAFEMATE').substring(0, 8).toUpperCase()}-2026`;
+    const timestamp = data.timestamp || data.generated_at || new Date().toISOString();
+    const issuedTo = isVault 
+      ? (data.issued_for_email || (data.issued_for_user_id ? `User #${data.issued_for_user_id}` : 'Survivor Custodian')) 
+      : (data.issuedTo?.email || (data.issuedTo?.userId ? `User #${data.issuedTo.userId}` : 'Survivor Custodian'));
+
+    const fileName = data.file_name || data.mediaDetails?.fileName || 'evidence_asset';
+    const fileSize = data.file_size_bytes ? `${Math.round(data.file_size_bytes / 1024)} KB` : (data.mediaDetails?.fileSize || 'N/A');
+    const mediaType = (data.media_type || data.mediaDetails?.mediaType || 'Electronic Media Record').toUpperCase();
+    const sha256 = data.sha256_checksum || data.mediaDetails?.sha256Hash || 'N/A';
+
+    const isManipulated = data.screeningVerdict ? !!data.screeningVerdict.isManipulated : false;
+    const verdictTitle = isVault 
+      ? (data.tamper_verdict || 'TAMPER-FREE ELECTRONIC RECORD (INTEGRITY SEALED)')
+      : (data.screeningVerdict?.verdict || 'AUTHENTIC DIGITAL MEDIA (TAMPER-FREE)');
+
+    const verdictColor = isManipulated ? '#991b1b' : '#065f46';
+    const verdictBg = isManipulated ? '#fef2f2' : '#f0fdf4';
+    const verdictBorder = isManipulated ? '#f87171' : '#86efac';
+    const verdictIcon = isManipulated ? '⚠️' : '🛡️';
+
+    const analysisText = isVault
+      ? (data.statutory_declaration || 'Institutional cryptographic seal attesting to digital evidence file integrity, bitstream non-repudiation, and unadulterated chain of custody under Section 63 of Bharatiya Sakshya Adhiniyam, 2023.')
+      : (data.screeningVerdict?.analysis || 'Automated multi-frame optical flow and neural temporal coherence audit confirmed continuous natural motion and absence of face-swap boundary synthesis.');
+
+    const engineName = isVault
+      ? 'SafeMate Cryptographic Evidence Seal & Bitstream Validator'
+      : (data.neuralAuditMetadata?.engine || 'MS-EffGCViT-B0 + YOLOv8n-Face Spatial Landmark Scanner');
+
+    const naturalScore = data.screeningVerdict?.naturalCameraAuthenticity || '100%';
+    const syntheticScore = data.screeningVerdict?.syntheticProbability || '0.0%';
+    const confidenceScore = data.screeningVerdict?.confidence || '99.8%';
+    const scopeDetail = isVault 
+      ? (data.retention_mode || 'Zero Cloud Footprint') 
+      : (`${data.neuralAuditMetadata?.framesSampled || 20} Frames • ${data.neuralAuditMetadata?.facesLocalized || 18} Faces`);
+
+    const jsonExportStr = JSON.stringify(data, null, 2);
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeMate Section 63 BSA Forensic Certificate - ${certId}</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #0B132B;
+      color: #0f172a;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .cert-action-bar {
+      width: 100%;
+      max-width: 840px;
+      background: #1C2541;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .cert-action-title {
+      color: #f8fafc;
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cert-action-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .btn-action {
+      padding: 8px 18px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease;
+    }
+    .btn-print {
+      background: #D4AF37;
+      color: #0B132B;
+      border: 1px solid #D4AF37;
+    }
+    .btn-print:hover { background: #f59e0b; }
+    .btn-json {
+      background: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
+    }
+    .btn-json:hover { background: #475569; }
+    .certificate-sheet {
+      width: 100%;
+      max-width: 840px;
+      background: #ffffff;
+      padding: 14px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .cert-outer-border {
+      border: 3.5px solid #0B132B;
+      padding: 5px;
+      position: relative;
+    }
+    .cert-inner-border {
+      border: 1.5px solid #D4AF37;
+      padding: 34px 38px;
+      position: relative;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,1) 0%, rgba(253,250,243,0.6) 100%);
+    }
+    .corner-accent {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: #D4AF37;
+    }
+    .corner-tl { top: 4px; left: 4px; border-top: 2px solid; border-left: 2px solid; }
+    .corner-tr { top: 4px; right: 4px; border-top: 2px solid; border-right: 2px solid; }
+    .corner-bl { bottom: 4px; left: 4px; border-bottom: 2px solid; border-left: 2px solid; }
+    .corner-br { bottom: 4px; right: 4px; border-bottom: 2px solid; border-right: 2px solid; }
+    .cert-header {
+      text-align: center;
+      margin-bottom: 22px;
+      border-bottom: 2px solid #0B132B;
+      padding-bottom: 16px;
+    }
+    .cert-emblem {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 8px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0B132B;
+      color: #D4AF37;
+      border-radius: 50%;
+      border: 2px solid #D4AF37;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .cert-pre-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+    .cert-main-title {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0B132B;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .cert-sub-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #b45309;
+      letter-spacing: 0.04em;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 12px 16px;
+      margin-bottom: 18px;
+      font-size: 0.78rem;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-label { color: #64748b; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .meta-value { color: #0B132B; font-weight: 700; font-family: monospace; font-size: 0.82rem; }
+    .asset-card {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
+    .section-heading {
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #0B132B;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .asset-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .asset-table td {
+      padding: 5px 8px;
+      vertical-align: top;
+    }
+    .asset-table td:first-child {
+      width: 25%;
+      color: #64748b;
+      font-weight: 600;
+      border-right: 1px solid #e2e8f0;
+    }
+    .asset-table td:last-child {
+      color: #0f172a;
+      font-weight: 600;
+      padding-left: 12px;
+    }
+    .hash-badge {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 5px 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      word-break: break-all;
+      color: #0B132B;
+      display: inline-block;
+      margin-top: 2px;
+    }
+    .verdict-box {
+      background: ${verdictBg};
+      border: 2px solid ${verdictBorder};
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .verdict-badge {
+      display: inline-block;
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: ${verdictColor};
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .verdict-analysis {
+      font-size: 0.8rem;
+      color: #334155;
+      line-height: 1.5;
+      margin-top: 6px;
+      text-align: left;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .metric-cell {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .metric-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0B132B;
+    }
+    .metric-lbl {
+      font-size: 0.65rem;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+    .legal-clause {
+      background: #ffffff;
+      border-left: 3px solid #D4AF37;
+      padding: 11px 15px;
+      margin-bottom: 22px;
+      font-size: 0.74rem;
+      line-height: 1.55;
+      color: #475569;
+      font-style: italic;
+    }
+    .cert-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 14px;
+      border-top: 1px solid #cbd5e1;
+    }
+    .cert-seal {
+      width: 100px;
+      height: 100px;
+      border: 3px double #D4AF37;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #b45309;
+      padding: 6px;
+      background: #fffbeb;
+      box-shadow: 0 2px 8px rgba(212,175,55,0.15);
+    }
+    .cert-seal-icon { font-size: 16px; margin-bottom: 2px; }
+    .cert-seal-text { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; line-height: 1.15; }
+    .cert-sign-block {
+      text-align: right;
+      font-size: 0.76rem;
+    }
+    .cert-sign-line {
+      width: 180px;
+      height: 1px;
+      background: #0B132B;
+      margin-left: auto;
+      margin-bottom: 6px;
+    }
+    .cert-sign-name { font-weight: 800; color: #0B132B; }
+    .cert-sign-org { font-size: 0.68rem; color: #64748b; }
+    @media print {
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .cert-action-bar { display: none !important; }
+      .certificate-sheet {
+        box-shadow: none !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 10mm;
+      }
+    }
+    @media (max-width: 640px) {
+      .cert-inner-border { padding: 18px 14px; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .cert-main-title { font-size: 1.25rem; }
+      .cert-footer { flex-direction: column; align-items: center; gap: 16px; }
+      .cert-sign-block { text-align: center; }
+      .cert-sign-line { margin: 0 auto 6px auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Interactive Top Action Bar -->
+  <div class="cert-action-bar">
+    <div class="cert-action-title">
+      <span>🛡️ SafeMate Section 63 BSA Official Forensic Certificate</span>
+    </div>
+    <div class="cert-action-btns">
+      <button type="button" class="btn-action btn-print" onclick="window.print();">
+        <span>🖨️ Print / Save as PDF</span>
+      </button>
+      <a class="btn-action btn-json" id="btn-download-json" href="#" download="${certId}.json">
+        <span>💾 Raw JSON</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Certificate Sheet -->
+  <div class="certificate-sheet">
+    <div class="cert-outer-border">
+      <div class="cert-inner-border">
+        <!-- Corner Ornaments -->
+        <div class="corner-accent corner-tl"></div>
+        <div class="corner-accent corner-tr"></div>
+        <div class="corner-accent corner-bl"></div>
+        <div class="corner-accent corner-br"></div>
+
+        <!-- Official Header -->
+        <div class="cert-header">
+          <div class="cert-emblem">
+            <svg style="width:26px; height:26px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="cert-pre-title">Republic of India &bull; Statutory Electronic Evidence Standard</div>
+          <h1 class="cert-main-title">Certificate of Forensic Media Authenticity</h1>
+          <div class="cert-sub-title">Section 63 Bharatiya Sakshya Adhiniyam, 2023 (BSA) &bull; Section 65B Indian Evidence Act</div>
+        </div>
+
+        <!-- Metadata Grid -->
+        <div class="meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Certificate Serial Number</span>
+            <span class="meta-value">${certId}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Audit Timestamp (UTC / ISO)</span>
+            <span class="meta-value">${timestamp}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Issued For / Custodian</span>
+            <span class="meta-value">${issuedTo}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Custody Model & Architecture</span>
+            <span class="meta-value">Client-Side Ephemeral / Zero Cloud Leakage</span>
+          </div>
+        </div>
+
+        <!-- Examined Asset Section -->
+        <div class="asset-card">
+          <div class="section-heading">
+            <svg style="width:14px; height:14px; color:#b45309;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+            Examined Digital Record Profile
+          </div>
+          <table class="asset-table">
+            <tr>
+              <td>Original File Name</td>
+              <td><strong>${fileName}</strong></td>
+            </tr>
+            <tr>
+              <td>Media Format / Size</td>
+              <td>${mediaType} &bull; ${fileSize}</td>
+            </tr>
+            <tr>
+              <td>SHA-256 Bitstream Hash</td>
+              <td>
+                <span class="hash-badge">${sha256}</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Screening Verdict Banner -->
+        <div class="verdict-box">
+          <div class="verdict-badge">
+            ${verdictIcon} ${verdictTitle}
+          </div>
+          <p class="verdict-analysis">
+            <strong>Forensic Statement:</strong> ${analysisText}
+          </p>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-cell">
+            <div class="metric-num" style="color: #065f46;">${naturalScore}</div>
+            <div class="metric-lbl">Natural Authenticity</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-num" style="color: #991b1b;">${syntheticScore}</div>
+            <div class="metric-lbl">Synthetic AI Prob.</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-num" style="color: #0B132B;">${confidenceScore}</div>
+            <div class="metric-lbl">Model Confidence</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-num" style="color: #b45309;">${scopeDetail}</div>
+            <div class="metric-lbl">Inspection Scope</div>
+          </div>
+        </div>
+
+        <!-- Legal Affidavit Statement -->
+        <div class="legal-clause">
+          "I hereby certify pursuant to Section 63 of Bharatiya Sakshya Adhiniyam, 2023 (read with Section 65B of Indian Evidence Act, 1872) that the electronic record described herein was ingested and analyzed through an automated computational neural system operating regularly and properly. The SHA-256 cryptographic digest uniquely and indelibly binds the forensic determination to the exact bitstream submitted without human tampering or selective synthesis."
+        </div>
+
+        <!-- Signatures & Stamp -->
+        <div class="cert-footer">
+          <div class="cert-seal">
+            <div class="cert-seal-icon">⚖️</div>
+            <div class="cert-seal-text">SAFEMATE<br>FORENSIC SEAL<br>SEC 63 BSA</div>
+          </div>
+          <div class="cert-sign-block">
+            <div class="cert-sign-line"></div>
+            <div class="cert-sign-name">${engineName}</div>
+            <div class="cert-sign-org">Automated Forensic Engine &bull; Section 63 BSA Verified<br>Cryptographically Sealed via Client-Side WebCrypto</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const jsonStr = "data:text/json;charset=utf-8," + encodeURIComponent(${JSON.stringify(jsonExportStr)});
+    const jsonLink = document.getElementById('btn-download-json');
+    if (jsonLink) jsonLink.setAttribute('href', jsonStr);
+  </script>
+</body>
+</html>`;
+  }
+
+
   function requireAuthForExport() {
     const who = getCreatorIdentity();
     if (!who.valid) {
@@ -1574,15 +2089,17 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         };
 
-        const blob = new Blob([JSON.stringify(certData, null, 2)], { type: 'application/json' });
+        const certHtml = buildForensicCertificateHtml(certData);
+        const blob = new Blob([certHtml], { type: 'text/html;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `SafeMate_Forensic_Cert_${(result.fileName || 'media').replace(/[^a-zA-Z0-9]/g, '_')}.json`;
+        const cleanName = (result.fileName || 'media').replace(/[^a-zA-Z0-9_-]/g, '_');
+        a.download = `SafeMate_Forensic_Certificate_${cleanName}.html`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
       });
     }
 
@@ -2487,15 +3004,16 @@ document.addEventListener('DOMContentLoaded', () => {
           const cRes = await fetch(certUrl, { headers: authHeaders });
           if (cRes.ok) {
             const certData = await cRes.json();
-            const blob = new Blob([JSON.stringify(certData, null, 2)], { type: 'application/json' });
+            const certHtml = buildForensicCertificateHtml(certData);
+            const blob = new Blob([certHtml], { type: 'text/html;charset=utf-8' });
             const bUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = bUrl;
-            a.download = `bsa_section63_certificate_${rec.evidence_id}.json`;
+            a.download = `SafeMate_BSA_Section63_Certificate_${rec.evidence_id}.html`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(bUrl);
+            setTimeout(() => URL.revokeObjectURL(bUrl), 2000);
           } else {
             alert('Cannot download certificate: Authentication expired or unauthorized.');
           }

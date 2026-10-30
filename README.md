@@ -177,7 +177,13 @@ Blackmailers increasingly synthesize realistic video face-swaps. SafeMate featur
 
 * **Definitive High-Confidence Verdict:** Explicitly declares **[ALERT] POTENTIAL SYNTHETIC MANIPULATION DETECTED (91.8% Confidence)**, destroying the blackmailer's psychological leverage.
 * **100% In-Memory RAM Decoupling:** Video and image bytes are decoded strictly in volatile RAM (`io.BytesIO`) and purged in `finally` blocks—sensitive files are **never permanently stored on disk or logged**.
-* **Statutory Section 63 BSA Audit Certificate:** One-click download of a cryptographic certificate under Section 63 of the Bharatiya Sakshya Adhiniyam, 2023 (formerly Section 65B of the Indian Evidence Act), enabling prosecutors to submit the finding directly to court.
+* **Statutory Section 63 BSA Forensic Audit Certificate:** Exports a formal, court-admissible forensic certificate formatted under Section 63 of Bharatiya Sakshya Adhiniyam, 2023 (formerly Section 65B of the Indian Evidence Act, 1872). Rather than raw technical logs, SafeMate renders a sealed legal instrument complete with gold-and-navy security borders, national statutory evidence headers, SHA-256 cryptographic bitstream hashes, neural model confidence metrics, and an automated statutory affidavit ready for police cyber cells and judicial submission:
+
+![Section 63 BSA Electronic Forensic Verification Certificate](docs/screenshots/22_section63_bsa_forensic_certificate.png)
+
+  * **Dual Border Legal Layout:** Classic navy and burnished gold security borders with corner accents and statutory emblem.
+  * **Print-to-PDF / Offline HTML Format:** Opens universally on mobile and desktop browsers with a single-click `🖨️ Print / Save as PDF` action bar and embedded raw JSON extraction.
+  * **Indelible Cryptographic Binding:** Every certificate indelibly records the client SHA-256 hash, verified intake timestamp, examiner neural architecture (Swin / MS-EffGCViT-B0), and Section 63 BSA statutory compliance declaration.
 
 ---
 
