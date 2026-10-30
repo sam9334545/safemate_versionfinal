@@ -68,14 +68,25 @@ When physical violence is imminent and quiet escape is impossible, tapping **112
 
 
 
-#### 3. Fake Escape Call Simulator
-When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Call** simulator triggers an authentic incoming call screen with customizable ringtones, caller identities, and voice prompts, giving the survivor a socially clean exit excuse.
+#### 3. Fake Escape Call Simulator & Loved One Voice Decoy
+When trapped in a coercive situation, an uncomfortable dinner, or an escalating confrontation, finding an excuse to leave can be lifesaving. SafeMate's **Fake Escape Call** simulator triggers an authentic incoming phone call interface with customizable dual-tone ringtones, situational caller identities, and voice prompts, providing survivors with a socially clean, believable de-escalation exit.
 
-![Fake Escape Call Simulator: Incoming Ringing Screen for Discreet De-escalation](docs/screenshots/19_fake_escape_call_simulator.png)
+![Emergency SOS Modal: Integrated Stealth Exit Strategy Trigger & Decoy Pill](docs/screenshots/20_emergency_sos_escape_option.png)
 
-* **Realistic Incoming Call Screen:** Simulates an authentic full-screen incoming phone call from "Mom" (or customizable contact) with native-style answer and decline controls.
-* **Audio Ringtone & Speech Synthesis:** Triggers a genuine ringing tone via Web Audio API, followed by an automatic spoken voice prompt (*"Hey, please come home right now, there is an urgent family emergency"*) when answered to justify an immediate exit.
-* **Dual Action Protocol:** If an actual threat escalates, survivors can tap the instant red button to immediately connect a real phone call to their emergency circle or 112.
+![Fake Escape Call Simulator: Incoming Ringing Screen with Pre-Recorded Loved One Voice Settings](docs/screenshots/19_fake_escape_call_simulator.png)
+
+* **Integrated Stealth Exit Trigger:** Accessible directly within the Emergency SOS dashboard via the dedicated *Stealth Exit Strategy* launcher and quick voice configuration pill (`Voice: Default System Decoy` / `Loved One Active`).
+* **Realistic Full-Screen Telephony Cadence:** Mimics native mobile incoming call screens (iOS/Android) complete with dual-tone multi-frequency (DTMF 440Hz/480Hz) phone cadence via Web Audio API, animated pulsing avatar rings, and green/red answer-and-decline controls.
+* **Pre-Recorded Loved One Voice Integration:**
+  * **WhatsApp Voice Note & Audio Upload:** Survivors can upload authentic audio clips (`.mp3`, `.m4a`, `.wav`, `.aac`) of their mom, dad, partner, or friend for 100% natural conversational excuses.
+  * **Direct In-Browser Voice Recording:** Tap to record an authentic 10–15s voice note straight into the browser using the HTML5 `MediaRecorder` API.
+  * **Zero Cloud Footprint (100% Client-Side):** Audio files are encoded and stored strictly inside local browser storage (`localStorage`). No voice clips are ever uploaded to remote servers or third-party clouds.
+  * **One-Click Audio Preview & Reset:** Features live test playback (`Play ▶`) to preview audio volume and instant single-tap reversion (`Reset ✕`) back to system defaults.
+* **Out-of-the-Box Multi-Turn Scenario Decoys:** If no custom audio is uploaded, SafeMate defaults to three realistic, conversational scenarios powered by neural speech synthesis with animated voice waveforms:
+  * **Family Emergency (Mom):** *"Hey, where are you right now? Dad is asking for you, please come home immediately. We are waiting outside with the car."*
+  * **Cab Driver (Waiting Outside):** *"Hello ma'am, I am outside your location in the silver sedan with hazard lights on. Traffic police is asking me to move. Please come down quickly."*
+  * **Work Escalation (Team Lead):** *"Hi, sorry to interrupt your evening, but our production server has a critical incident. The client VP is on the emergency bridge and asking for you."*
+* **Live Equalizer Waveform & Emergency Escalation:** Renders an animated 5-bar voice equalizer and real-time subtitle feed while the caller speaks. If the situation abruptly escalates into active violence, survivors can tap the instant red button to immediately connect a real phone call to `112` or their verified emergency contacts.
 
 ---
 
